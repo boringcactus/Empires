@@ -27,6 +27,11 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class CityChat implements Channel {
 	/*
 	 * Thanks to the Factions team for pioneering this code.

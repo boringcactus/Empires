@@ -1,5 +1,10 @@
 package com.pixelgriffin.empires.exception;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class EmpiresEmptyTerritoryException extends Exception {
 	
 	private static final long serialVersionUID = -4564632736048933904L;

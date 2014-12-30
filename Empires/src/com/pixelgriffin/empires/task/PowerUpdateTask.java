@@ -17,8 +17,6 @@ public class PowerUpdateTask implements Runnable {
 	
 	@Override
 	public void run() {
-		//DEBUG
-		//System.out.println("Running power update task");
 		
 		int powerVal;
 		for(Player online : Bukkit.getOnlinePlayers()) {

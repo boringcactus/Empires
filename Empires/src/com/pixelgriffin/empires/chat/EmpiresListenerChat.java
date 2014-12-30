@@ -15,10 +15,14 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class EmpiresListenerChat implements Listener {
 	
 	public EmpiresListenerChat(Empires _inst) {
-		//LOWEST?
 		Bukkit.getPluginManager().registerEvent(AsyncPlayerChatEvent.class, this, EventPriority.HIGHEST, new ChatFormatExecutor(), _inst, true);
 	}
 	

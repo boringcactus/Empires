@@ -1,5 +1,10 @@
 package com.pixelgriffin.empires.exception;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class EmpiresJoinableDoesNotExistException extends Exception {
 	
 	private static final long serialVersionUID = 2968320851946745307L;

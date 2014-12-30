@@ -28,6 +28,11 @@ import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class AllyChat implements Channel {
 	/*
 	 * Thanks to the Factions team for pioneering this code.

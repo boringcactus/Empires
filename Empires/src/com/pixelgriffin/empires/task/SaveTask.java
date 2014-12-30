@@ -2,6 +2,11 @@ package com.pixelgriffin.empires.task;
 
 import com.pixelgriffin.empires.Empires;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class SaveTask implements Runnable {
 
 	@Override

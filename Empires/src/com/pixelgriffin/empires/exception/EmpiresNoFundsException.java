@@ -1,5 +1,10 @@
 package com.pixelgriffin.empires.exception;
 
+/**
+ * 
+ * @author Nathan
+ *
+ */
 public class EmpiresNoFundsException extends Exception {
 	
 	private static final long serialVersionUID = 5085847188150278507L;

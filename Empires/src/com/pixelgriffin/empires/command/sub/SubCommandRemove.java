@@ -24,7 +24,7 @@ public class SubCommandRemove extends SubCommand {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
 				String invokerName = invoker.getName();
-				String otherName = _args[0];
+				String otherName = _args[0].toLowerCase();
 				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
 				
 				//no default civ actions
@@ -43,7 +43,7 @@ public class SubCommandRemove extends SubCommand {
 							//do we have that kingdom in our empire?
 							if(Empires.m_joinableHandler.getJoinableKingdomList(joinedName).contains(otherName)) {
 								//remove them
-								Empires.m_joinableHandler.joinableSecedeEmpire(joinedName);
+								Empires.m_joinableHandler.joinableSecedeEmpire(otherName);
 								
 								//inform everyone
 								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherName);

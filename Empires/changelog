@@ -126,3 +126,9 @@ Fixed improper save of role (not saved with .toString())
 Fixed not ignoring case when setting user's title
 Fixed multiple leaders being assigned when a leader leaves without an inheriter.
 Fixed not using civilization display name when chatting
+
+12/29/2014:
+Fixed renaming not updating references in related empires/kingdoms
+Fixed the chunk command not affecting single chunks
+Added SPAWN_MOBS flag
+Added /e remove [who] command

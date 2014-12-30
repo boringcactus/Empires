@@ -455,6 +455,28 @@ public class JoinableHandler extends DataHandler {
 	}
 	
 	/**
+	 * Updates all territory when the flag is toggled
+	 */
+	public boolean toggleJoinableAllowsMobs(String _id) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_id))
+			return false;
+		
+		YamlConfiguration conf = getFileConfiguration();
+		
+		_id = _id.toLowerCase();
+		
+		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		
+		boolean toggleVal = !sect.getBoolean("spawn-mobs");
+		sect.set("spawn-mobs", toggleVal);
+		
+		//update territory
+		Empires.m_boardHandler.updateTerritoryAllowsMobs(_id, toggleVal);
+		
+		return toggleVal;
+	}
+	
+	/**
 	 * Removes a player from a civilization joined-player list. Does not change player's "j" pointer data
 	 * @param _id - civ id
 	 * @param _playerName - player name
@@ -1453,6 +1475,18 @@ public class JoinableHandler extends DataHandler {
 		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
 		
 		return sect.getBoolean("ignore-relations");
+	}
+	
+	public boolean getJoinableAllowsMobs(String _id) throws EmpiresJoinableDoesNotExistException {
+		//return false if we are searching for default information
+		if(getCheck(_id))
+			return false;
+		
+		YamlConfiguration conf = getFileConfiguration();
+		
+		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		
+		return sect.getBoolean("spawn-mobs");
 	}
 	
 	public boolean getEmpireRequestedKingdom(String _id, String _kingdom) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {

@@ -86,15 +86,30 @@ public class SubCommandChunk extends SubCommand {
 				}
 				
 				//single value territory shit
+				//IGNORE_RELATIONS
 				outString = ChatColor.GRAY + "IGNORE_RELATIONS: ";
 				boolean val = Empires.m_boardHandler.territoryIgnoresRelations(invokerLoc);
 				
 				accessCol = ChatColor.RED;
-				if(val) {
+				if(val)
 					accessCol = ChatColor.GREEN;
-				}
 				
 				invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
+				
+				//SPAWN_MOBS
+				try {
+				outString = ChatColor.GRAY + "SPAWN_MOBS: ";
+					val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+					
+					accessCol = ChatColor.RED;
+					if(val)
+					accessCol = ChatColor.GREEN;
+					
+					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
+				} catch(EmpiresJoinableDoesNotExistException e) {
+					setError("Something went wrong");
+					return false;
+				}
 				
 				return true;
 				
@@ -110,9 +125,18 @@ public class SubCommandChunk extends SubCommand {
 						
 						return true;
 					} catch (EmpiresEmptyTerritoryException e) {
-						e.printStackTrace();
-						
 						setError("You cannot toggle IGNORE_RELATIONS on empty territory!");
+						return false;
+					}
+				} else if(_args[0].equalsIgnoreCase("SPAWN_MOBS")) {
+					try {
+						if(Empires.m_boardHandler.toggleTerritoryAllowsMobs(invokerLoc)) {
+							invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS:" + ChatColor.GREEN + " TRUE");
+						} else {
+							invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS:" + ChatColor.RED + " FALSE");
+						}
+					} catch(EmpiresEmptyTerritoryException e) {
+						setError("You cannot toggle SPAWN_MOBS on empty territory!");
 						return false;
 					}
 				}

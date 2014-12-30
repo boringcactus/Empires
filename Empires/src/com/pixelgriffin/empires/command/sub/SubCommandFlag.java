@@ -78,14 +78,24 @@ public class SubCommandFlag extends SubCommand {
 						invoker.sendMessage(outString);
 					}
 					
-					//single value territory shit
+					//single value territory
+					//IGNORE_RELATIONS
 					outString = ChatColor.GRAY + "IGNORE_RELATIONS: ";
 					boolean val = Empires.m_joinableHandler.getJoinableIgnoresRelations(joinedName);
 					
 					accessCol = ChatColor.RED;
-					if(val) {
+					if(val)
 						accessCol = ChatColor.GREEN;
-					}
+					
+					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
+					
+					//SPAWN_MOBS
+					outString = ChatColor.GRAY + "SPAWN_MOBS: ";
+					val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+					
+					accessCol = ChatColor.RED;
+					if(val)
+						accessCol = ChatColor.GREEN;
 					
 					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
 					
@@ -108,6 +118,23 @@ public class SubCommandFlag extends SubCommand {
 							col = ChatColor.GREEN;
 						
 						invoker.sendMessage(ChatColor.GRAY + "IGNORE_RELATIONS: " + col + String.valueOf(val).toUpperCase());
+						
+						return true;
+					} catch (EmpiresJoinableDoesNotExistException e) {
+						e.printStackTrace();
+						
+						setError("Something went wrong!");
+						return false;
+					}
+				} else if(_args[0].equalsIgnoreCase("SPAWN_MOBS")) {
+					try {
+						boolean val = Empires.m_joinableHandler.toggleJoinableAllowsMobs(joinedName);
+						ChatColor col = ChatColor.RED;
+						
+						if(val)
+							col = ChatColor.GREEN;
+						
+						invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS: " + col + String.valueOf(val).toUpperCase());
 						
 						return true;
 					} catch (EmpiresJoinableDoesNotExistException e) {

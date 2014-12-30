@@ -139,6 +139,7 @@ public class BoardHandler extends DataHandler {
 		
 		//add the single value flags
 		sect.set("ignore-relations", Empires.m_joinableHandler.getJoinableIgnoresRelations(_id));
+		sect.set("spawn-mobs", Empires.m_joinableHandler.getJoinableAllowsMobs(_id));
 	}
 	
 	/**
@@ -398,6 +399,18 @@ public class BoardHandler extends DataHandler {
 			return false;//otherwise we will not ignore relations
 	}
 	
+	public boolean territoryAllowsMobs(Location _loc) {
+		ConfigurationSection sect;
+		
+		sect = getTerritorySection(_loc);
+		
+		//if the territory exists
+		if(sect != null)
+			return sect.getBoolean("spawn-mobs");//return the ignore-relations value
+		else
+			return false;//otherwise we will not ignore relations
+	}
+	
 	public boolean toggleTerritoryIgnoresRelations(Location _loc) throws EmpiresEmptyTerritoryException {
 		ConfigurationSection sect = getTerritorySection(_loc);
 		
@@ -407,6 +420,19 @@ public class BoardHandler extends DataHandler {
 		//toggle
 		boolean toggleVal = !sect.getBoolean("ignore-relations");
 		sect.set("ignore-relations", toggleVal);
+		
+		return toggleVal;
+	}
+	
+	public boolean toggleTerritoryAllowsMobs(Location _loc) throws EmpiresEmptyTerritoryException {
+		ConfigurationSection sect = getTerritorySection(_loc);
+		
+		if(sect == null)
+			throw new EmpiresEmptyTerritoryException("Tried to toggle SPAWN_MOBS for empty territory");
+		
+		//toggle
+		boolean toggleVal = !sect.getBoolean("spawn-mobs");
+		sect.set("spawn-mobs", toggleVal);
 		
 		return toggleVal;
 	}
@@ -429,6 +455,30 @@ public class BoardHandler extends DataHandler {
 					//is the territory _id's?
 					if(workingSect.getString("h").equals(_id)) {
 						workingSect.set("ignore-relations", _val);
+					}
+				}
+			}
+		}
+	}
+	
+	public void updateTerritoryAllowsMobs(String _id, boolean _val) {
+		YamlConfiguration conf = getFileConfiguration();
+		
+		//proper lookup
+		_id = _id.toLowerCase();
+		
+		ConfigurationSection workingSect;
+		for(String path : conf.getKeys(true)) {
+			//could hold territory
+			if(conf.isConfigurationSection(path)) {
+				//set to allocated object
+				workingSect = conf.getConfigurationSection(path);
+				
+				//is it territory?
+				if(workingSect.contains("h")) {
+					//is the territory _id's?
+					if(workingSect.getString("h").equals(_id)) {
+						workingSect.set("spawn-mobs", _val);
 					}
 				}
 			}

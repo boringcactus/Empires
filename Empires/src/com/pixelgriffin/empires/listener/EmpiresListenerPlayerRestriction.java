@@ -7,12 +7,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -407,6 +409,18 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 						return;
 					}
 				}
+			}
+		}
+	}
+	
+	/*
+	 * Stop mob spawns
+	 */
+	@EventHandler
+	public void onMobSpawnsInTerritory(CreatureSpawnEvent _evt) {
+		if(_evt.getEntity() instanceof Monster) {
+			if(!Empires.m_boardHandler.territoryAllowsMobs(_evt.getLocation())) {
+				_evt.setCancelled(true);
 			}
 		}
 	}

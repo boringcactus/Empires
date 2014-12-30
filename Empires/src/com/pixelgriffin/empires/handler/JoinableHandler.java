@@ -829,12 +829,12 @@ public class JoinableHandler extends DataHandler {
 			
 			//gather kingdoms. Can use the new or old section
 			ArrayList<String> empireKingdoms = Empires.m_joinableHandler.getJoinableKingdomList(_id);
-			for(String kingdom : empireKingdoms) {
-				try {
+			try {
+				for(String kingdom : empireKingdoms) {
 					Empires.m_joinableHandler.setJoinableEmpire(kingdom, _name);
-				} catch(Exception e) {
-					e.printStackTrace();
 				}
+			} catch(Exception e) {
+					e.printStackTrace();//TODO send a message (could not set empire)
 			}
 		}
 		

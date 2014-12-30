@@ -1,7 +1,6 @@
 package com.pixelgriffin.empires.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import com.pixelgriffin.empires.util.IOUtility;
  * @author Nathan
  *
  */
+@SuppressWarnings("unchecked")
 public class JoinableHandler extends DataHandler {
 	
 	//the civ file without plugin data folder directory
@@ -157,7 +157,6 @@ public class JoinableHandler extends DataHandler {
 		sect.set("ignore-relations", false);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void broadcastToJoined(String _id, String _msg) throws EmpiresJoinableDoesNotExistException {
 		//cannot broadcast to wilderness
 		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
@@ -339,7 +338,6 @@ public class JoinableHandler extends DataHandler {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")//suppressed due to unverified ArrayList casting
 	public ArrayList<String> getFlagsForGroup(String _id, TerritoryGroup _group) throws EmpiresJoinableDoesNotExistException {
 		//if the group we're fetching is the default (wilderness) for whatever reason
 		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
@@ -482,7 +480,6 @@ public class JoinableHandler extends DataHandler {
 	 * @param _playerName - player name
 	 * @throws EmpiresJoinableDoesNotExistException _id does not exist in YML
 	 */
-	@SuppressWarnings("unchecked")
 	public void removeJoinedPlayerForCivilization(String _id, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't remove a player
@@ -663,7 +660,6 @@ public class JoinableHandler extends DataHandler {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void addPlayerToCivilization(String _id, String _name) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't add a player
@@ -767,7 +763,6 @@ public class JoinableHandler extends DataHandler {
 		double bank = oldSect.getDouble("bank");
 		String empire = oldSect.getString("empire");
 		boolean isEmpire = oldSect.getBoolean("is-empire");
-		ArrayList<String> kingdoms = (ArrayList<String>) oldSect.getList("kingdoms");
 		ArrayList<String> requestedKingdoms = (ArrayList<String>) oldSect.getList("requested-kingdoms");
 		ConfigurationSection home = oldSect.getConfigurationSection("home");
 		ConfigurationSection relationWish = oldSect.getConfigurationSection("relation-wish");
@@ -948,7 +943,6 @@ public class JoinableHandler extends DataHandler {
 		return new Location(world, x, y, z);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public ArrayList<String> getJoinedPlayersForCivilization(String _id) throws EmpiresJoinableDoesNotExistException {
 		//return an empty list if we are searching for default information
 		if(getCheck(_id))
@@ -1168,7 +1162,6 @@ public class JoinableHandler extends DataHandler {
 		setJoinableHeir(_id, "");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public ArrayList<String> getJoinableKingdomList(String _id) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_id))
 			return new ArrayList<String>();
@@ -1287,7 +1280,6 @@ public class JoinableHandler extends DataHandler {
 		return sect.getString("empire");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void disbandJoinable(String _id) throws EmpiresJoinableDoesNotExistException {
 		//cannot disband the default civ (wilderness)
 		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))

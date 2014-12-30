@@ -1,18 +1,14 @@
 package com.pixelgriffin.empires.handler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pixelgriffin.empires.Empires;
-import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresPlayerExistsException;
-import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 

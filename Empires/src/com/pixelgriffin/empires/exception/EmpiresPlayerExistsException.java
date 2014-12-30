@@ -2,6 +2,8 @@ package com.pixelgriffin.empires.exception;
 
 public class EmpiresPlayerExistsException extends Exception {
 	
+	private static final long serialVersionUID = -2184592585571643176L;
+
 	public EmpiresPlayerExistsException(String _msg) {
 		super(_msg);
 	}

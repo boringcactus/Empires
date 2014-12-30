@@ -21,7 +21,6 @@ import com.pixelgriffin.empires.listener.EmpiresListenerPlayerTag;
 import com.pixelgriffin.empires.task.InactivityTask;
 import com.pixelgriffin.empires.task.PowerUpdateTask;
 import com.pixelgriffin.empires.task.SaveTask;
-import com.pixelgriffin.empires.util.FileUtility;
 import com.pixelgriffin.empires.util.IOUtility;
 
 /**

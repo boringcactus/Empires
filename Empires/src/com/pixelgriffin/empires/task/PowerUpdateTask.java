@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 
 import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.EmpiresConfig;
-import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
-import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
  * 

@@ -1,7 +1,6 @@
 package com.pixelgriffin.empires.handler;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -13,13 +12,13 @@ import com.pixelgriffin.empires.enums.TerritoryFlag;
 import com.pixelgriffin.empires.enums.TerritoryGroup;
 import com.pixelgriffin.empires.exception.EmpiresEmptyTerritoryException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
-import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 
  * @author Nathan
  *
  */
+@SuppressWarnings("unchecked")
 public class BoardHandler extends DataHandler {
 	
 	//the board file without plugin data folder directory

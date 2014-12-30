@@ -12,12 +12,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.EmpiresConfig;
-import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Relation;
-import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
-import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 

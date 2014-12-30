@@ -2,6 +2,8 @@ package com.pixelgriffin.empires.exception;
 
 public class EmpiresJoinableInvalidCharacterException extends Exception {
 	
+	private static final long serialVersionUID = -3261519246464578310L;
+
 	public EmpiresJoinableInvalidCharacterException(String _msg) {
 		super(_msg);
 	}

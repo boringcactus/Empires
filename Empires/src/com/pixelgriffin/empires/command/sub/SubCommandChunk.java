@@ -135,6 +135,8 @@ public class SubCommandChunk extends SubCommand {
 						} else {
 							invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS:" + ChatColor.RED + " FALSE");
 						}
+						
+						return true;
 					} catch(EmpiresEmptyTerritoryException e) {
 						setError("You cannot toggle SPAWN_MOBS on empty territory!");
 						return false;

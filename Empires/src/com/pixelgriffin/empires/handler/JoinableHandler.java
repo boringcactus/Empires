@@ -810,6 +810,34 @@ public class JoinableHandler extends DataHandler {
 			Empires.m_playerHandler.overridePlayerJoinedCivilization(player, _name);
 		}
 		
+		//change empire (if any) name pointer
+		if(!isEmpire && empire != null && !empire.isEmpty()) {
+			//since we are not an empire we need to change our empire's list name
+			
+			//leave the empire with the old name
+			Empires.m_joinableHandler.joinableSecedeEmpire(_id);
+			
+			//join it again under a different name
+			try {
+				Empires.m_joinableHandler.setJoinableEmpire(_name, empire);
+			} catch (EmpiresJoinableIsNotEmpireException e) {
+				e.printStackTrace();
+			}
+			
+		} else if(isEmpire) {
+			//since we are an empire we need to have our kingdoms update their names
+			
+			//gather kingdoms. Can use the new or old section
+			ArrayList<String> empireKingdoms = Empires.m_joinableHandler.getJoinableKingdomList(_id);
+			for(String kingdom : empireKingdoms) {
+				try {
+					Empires.m_joinableHandler.setJoinableEmpire(kingdom, _name);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		//update other joinable's relationship names towards us
 		Relation value;
 		for(String other : conf.getKeys(false)) {

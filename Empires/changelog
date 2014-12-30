@@ -1,0 +1,128 @@
+2/12/2014:
+Change log created
+Added secede command (untested)
+Refactored BoardHandler.java to accept Locations
+Added build allow checking
+Started on player restriction listener
+Added default flag settings
+Added flag gathering
+Fixed perm & flag saving for joinable.dat
+
+2/16/2014:
+The below still require testing
+Added functionality: territory flag for breaking blocks
+Added functionality: territory flag for landing ender pearls
+Added functionality: territory flag for ignoring relations when damaged
+
+Found bugs: can ally/enemy/neutral self, cannot ally/enemy/neutral via references
+Fixed bugs: cannot ally via references. Could still potentially not enemy/neutral via references
+
+2/24/2014:
+Fixed not using references in ally/enemy/neutral
+Fixed possibly maintaining relations with self
+Fixed interworldClaim flag not being utilized in /e claim
+
+Added claim method in BoardHandler
+
+Added power subsystem
+Added power update task for players
+Added /e power command
+Added power vs claim size check in /e claim
+
+---
+
+Fixed power not being updated when the player's power is updated
+Added power loss on death
+Added /e unclaim command
+
+Created "unclaim" single territory in BoardHandler
+
+Added external dependency settings in config
+
+Added keep power on death Bukkit permission
+
+Added /e inherit [who] command
+Added heir functionality
+
+Added /e kick [who] command
+
+Added /e desc [...] command
+
+Have not tested inherit/kick/desc functionality
+
+2/27/2014:
+Tested desc/kick/inherit
+
+Fixed kick message not being sent to kicked player
+Fixed leaders not able to invite other players
+Fixed players not removed from requested list when accepting invite
+Fixed JDNEE when leaving a joinable as the last member
+Fixed no color for leader change message when inheriting
+Fixed wrong name for leader change message when not inheriting & color issue
+Fixed inheritance when not in the joinable
+
+Added /e promote [who] command
+Added /e demote [who] command
+Added /e map command
+Started on /e autoclaim command
+
+Have not tested promote/demote/map functionality
+
+3/1/2014:
+Tested promote/demote/map functionality
+
+Fixed null roles in demote/promote commands
+Fixed incorrect failure message in demote/promote
+Fixed no return true in map command
+
+Added /e autoclaim command
+Added /e deposit [money] command
+Added /e withdraw [money] command
+
+Added /e home command
+Added /e sethome command
+Added /e name command
+Added /e leader command
+Added /e blacklist command - no functionality yet
+
+Have not tested home/sethome/leader/withdraw/deposit functionality
+
+3/2/2014:
+Tested home/sethome/withdraw/deposit functionality
+
+Fixed not clearing TPID after teleport
+Fixed setting home in non-claimed areas
+Fixed dependency booleans not being set before command creation
+Fixed blacklist not being used when claiming
+Fixed power not being limited by power cap
+
+Added /e access [who] command
+Added /e help [page] command
+Added /e chunk ... command
+Added /e flag ... command
+Added /e perm ... command
+
+Added inactivity functionality
+
+Have not tested blacklist/access
+Have not finished writing help pages
+
+3/6/2014:
+Added functionality for all flags
+Added damage reduction on certain land
+
+Finished writing help pages
+
+All that's left is file migration..
+
+3/7/2014:
+Added board file update
+
+4/3/2014:
+Fixed improper save system where files would be overwritten on load error.
+Fixed improper save of role (not saved with .toString())
+
+7/8/2014:
+Fixed not ignoring case when setting user's title
+Fixed multiple leaders being assigned when a leader leaves without an inheriter.
+Fixed not using civilization display name when chatting

@@ -1,0 +1,28 @@
+name: Empires
+main: com.pixelgriffin.empires.Empires
+version: 2.1.1
+softdepend: [TagAPI, Vault, Herochat]
+commands:
+  Empires:
+    description: Commands of the Empires plugin.
+    usage: /empires
+    aliases: [e]
+permissions:
+  Empires.blacklist:
+    description: Allows the changing of the blacklist.
+    default: op
+  Empires.disband.other:
+    description: Allows the disbanding of other civilizations.
+    default: op
+  Empires.force.join:
+    description: Allows a player to join without invitation.
+    default: op
+  Empires.force.leader:
+    description: Allows a player to become leader instantly.
+    default: op
+  Empires.power.keep:
+    description: Allows a player to keep their power on death.
+    default: false
+  Empires.power.extra:
+    description: Overrides the 15 power to allow configurable power.
+    default: false

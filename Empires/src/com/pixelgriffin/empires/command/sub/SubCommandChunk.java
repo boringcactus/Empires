@@ -68,6 +68,7 @@ public class SubCommandChunk extends SubCommand {
 						
 						if(Empires.m_boardHandler.territoryHasFlag(invokerLoc, g, f)) {
 							accessCol = ChatColor.GREEN;
+							
 						}
 						
 						if(g.equals(TerritoryGroup.OFFICER_1)) {
@@ -120,12 +121,13 @@ public class SubCommandChunk extends SubCommand {
 				return false;
 			} else if(_args.length == 2) {//changing regular territory flag
 				try {
+					System.out.println("Chunkin'");
 					TerritoryFlag f = TerritoryFlag.valueOf(_args[0].toUpperCase());
 					TerritoryGroup g = TerritoryGroup.valueOf(_args[1].toUpperCase());
 					
-					boolean val = Empires.m_boardHandler.toggleTerritoryFlag(invokerLoc, g, f);
 					ChatColor accessCol = ChatColor.RED;
-					if(val)
+					
+					if(Empires.m_boardHandler.toggleTerritoryFlag(invokerLoc, g, f))
 						accessCol = ChatColor.GREEN;
 					
 					invoker.sendMessage(ChatColor.GRAY + f.toString().toUpperCase() + ": " + accessCol + g.toString().toUpperCase());

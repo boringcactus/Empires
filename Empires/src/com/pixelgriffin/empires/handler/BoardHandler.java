@@ -130,7 +130,7 @@ public class BoardHandler extends DataHandler {
 				flags = Empires.m_joinableHandler.getFlagsForGroup(_id, grouping);
 				
 				//set flags for this group
-				sect.set("f." + grouping.toString(), flags);
+				sect.set("f." + grouping.toString(), flags.clone());
 				
 			} catch (EmpiresJoinableDoesNotExistException e) {//impossible? but hey, that's programming!
 				e.printStackTrace();//default
@@ -178,6 +178,8 @@ public class BoardHandler extends DataHandler {
 	
 	public String getTerritoryHost(Location _loc) {
 		ConfigurationSection sect = getTerritorySection(_loc);
+		
+		System.out.println("ter host");
 		
 		//if the path exists
 		//meaning somewhere along the lines that shit was set
@@ -338,6 +340,8 @@ public class BoardHandler extends DataHandler {
 	 * This method could potentially be much faster by storing flags NOT as lists
 	 * but as sections, then checking if something exists is as simple as
 	 * sect.contains(_flag.toString());
+	 * 
+	 * or even just getting tempList once
 	 */
 	public boolean territoryHasFlag(Location _loc, TerritoryGroup _group, TerritoryFlag _flag) {
 		ConfigurationSection sect;
@@ -359,18 +363,27 @@ public class BoardHandler extends DataHandler {
 		ConfigurationSection sect;
 		sect = getTerritorySection(_loc);
 		
+		System.out.println("flag toggle ter");
+		
 		if(sect == null)
 			throw new EmpiresEmptyTerritoryException("Tried to toggle " + _flag.toString() + " for " + _group.toString() +" for empty territory");
 		
 		ArrayList<String> flags = (ArrayList<String>)sect.getConfigurationSection("f").getList(_group.toString());
 		
+		boolean ret;
+		
 		if(flags.contains(_flag.toString())) {
 			flags.remove(_flag.toString());
-			return false;
+			ret = false;
 		} else {
 			flags.add(_flag.toString());
-			return true;
+			ret = true;
 		}
+		
+		//update the flags
+		sect.getConfigurationSection("f").set(_group.toString(), flags.clone());
+		
+		return ret;
 	}
 	
 	public boolean territoryIgnoresRelations(Location _loc) {
@@ -425,6 +438,8 @@ public class BoardHandler extends DataHandler {
 	public void updateTerritoryWithFlags(String _id, TerritoryGroup _g, ArrayList<String> _flags) {
 		YamlConfiguration conf = getFileConfiguration();
 		
+		System.out.println("update");
+		
 		//proper lookup
 		_id = _id.toLowerCase();
 		
@@ -439,7 +454,7 @@ public class BoardHandler extends DataHandler {
 				if(workingSect.contains("h")) {
 					//is the territory _id's?
 					if(workingSect.getString("h").equals(_id)) {
-						workingSect.getConfigurationSection("f").set(_g.toString(), _flags);
+						workingSect.getConfigurationSection("f").set(_g.toString(), _flags.clone());
 					}
 				}
 			}
@@ -448,7 +463,7 @@ public class BoardHandler extends DataHandler {
 	
 	/**
 	 * 
-	 * @param _loc location of the swag yolo
+	 * @param _loc location of the territory
 	 * @return returns the configuration section or null if the section does not exist
 	 */
 	private ConfigurationSection getTerritorySection(Location _loc) {
@@ -456,6 +471,7 @@ public class BoardHandler extends DataHandler {
 		String path;
 		
 		path = _loc.getWorld().getName() + "." + _loc.getChunk().getX() + "." + _loc.getChunk().getZ();
+		System.out.println("path: " + path);
 		
 		if(getFileConfiguration().isConfigurationSection(path)) {
 			sect = getFileConfiguration().getConfigurationSection(path);

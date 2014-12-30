@@ -31,9 +31,6 @@ import com.pixelgriffin.empires.util.IOUtility;
  */
 public class Empires extends JavaPlugin {
 	
-	//test commit change
-	private static char a = 'a';
-	
 	public static boolean SAVE_FILE = true;
 	
 	public static final JoinableHandler m_joinableHandler = new JoinableHandler();

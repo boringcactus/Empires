@@ -24,10 +24,11 @@ public enum GroupPermission {
 	UNCLAIM(9, false, false),
 	INVITE(10, false, true),
 	SECEDE(11, false, false),
-	ACCESS(12, false, false),
-	PERMS(15, false, false),
-	SET_HOME(16, false, false),
-	SET_TITLE(17, false, true);
+	REMOVE(12, false, false),
+	ACCESS(13, false, false),
+	PERMS(14, false, false),
+	SET_HOME(15, false, false),
+	SET_TITLE(16, false, true);
 	
 	GroupPermission(int _id, boolean _member, boolean _officer) {
 		this.m_id = _id;

@@ -57,6 +57,7 @@ public class EmpiresCommands implements CommandExecutor {
 		m_commandMap.put("chunk", new SubCommandChunk());
 		m_commandMap.put("flag", new SubCommandFlag());
 		m_commandMap.put("perm", new SubCommandPerm());
+		m_commandMap.put("remove", new SubCommandRemove());//TODO: TEST
 		
 		if(Empires.m_vaultActive) {
 			//vault specific

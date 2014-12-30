@@ -31,7 +31,7 @@ public class SubCommandHelp extends SubCommand {
 	}
 	
 	private void showHelp (int _pg, CommandSender _cs) {
-		_cs.sendMessage(ChatColor.GRAY + "________[" + ChatColor.GOLD + "Empires Help (" + (_pg + 1) + "/9)" + ChatColor.GRAY + "]________");
+		_cs.sendMessage(ChatColor.GRAY + "________[" + ChatColor.GOLD + "Empires Help (" + (_pg + 1) + "/10)" + ChatColor.GRAY + "]________");
 		
 		switch(_pg) {
 		case 0:
@@ -91,17 +91,23 @@ public class SubCommandHelp extends SubCommand {
 			break;
 			
 		case 7:
+			_cs.sendMessage(ChatColor.GRAY + "/e remove" + ChatColor.WHITE + " [kingdom]" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "Removes a kingdom [kingdom] from an empire");
 			_cs.sendMessage(ChatColor.GRAY + "/e secede - " + ChatColor.LIGHT_PURPLE + "Leaves your civilization's current empire");
 			_cs.sendMessage(ChatColor.GRAY + "/e sethome - " + ChatColor.LIGHT_PURPLE + "Sets your civilization's home at your location");
 			_cs.sendMessage(ChatColor.GRAY + "/e title " + ChatColor.WHITE + "[who] [title]" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "Sets player [who]'s title to [title]");
 			_cs.sendMessage(ChatColor.GRAY + "/e unclaim - " + ChatColor.LIGHT_PURPLE + "Unclaims the chunk you are standing on");
-			_cs.sendMessage(ChatColor.GRAY + "/e unclaimall - " + ChatColor.LIGHT_PURPLE + "Unclaims all chunks your civilization owns");
 			break;
 			
 		case 8:
+			_cs.sendMessage(ChatColor.GRAY + "/e unclaimall - " + ChatColor.LIGHT_PURPLE + "Unclaims all chunks your civilization owns");
 			_cs.sendMessage(ChatColor.GRAY + "/e who [who] - " + ChatColor.LIGHT_PURPLE + "Shows the civilization [who] or your civilization's info");
 			_cs.sendMessage(ChatColor.GRAY + "/e withdraw " + ChatColor.WHITE + "[money]" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "Withdraws the amount [money] from the civilization bank");
 			_cs.sendMessage(ChatColor.GRAY + "/e help [page] - " + ChatColor.LIGHT_PURPLE + "Shows the help pages at page [page] or 9");
+			break;
+			
+		case 9:
+			_cs.sendMessage(ChatColor.GRAY + "Written by Pixelgriffin");
+			_cs.sendMessage(ChatColor.YELLOW + "" + ChatColor.UNDERLINE + "http://pixelgriffin.com/");
 			break;
 			
 		default:

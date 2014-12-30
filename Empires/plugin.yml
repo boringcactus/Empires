@@ -1,6 +1,6 @@
 name: Empires
 main: com.pixelgriffin.empires.Empires
-version: 2.1.1
+version: 1.0.0
 softdepend: [TagAPI, Vault, Herochat]
 commands:
   Empires:

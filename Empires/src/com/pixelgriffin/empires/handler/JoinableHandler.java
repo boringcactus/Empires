@@ -765,7 +765,7 @@ public class JoinableHandler extends DataHandler {
 		newSect.set("empire", empire);
 		newSect.set("d-name", _name);//set to our new name
 		newSect.set("is-empire", isEmpire);
-		newSect.set("kingdoms", kingdoms.clone());
+		newSect.set("kingdoms", new ArrayList<String>());
 		newSect.set("requested-kingdoms", requestedKingdoms.clone());
 		
 		ConfigurationSection homeSect = newSect.createSection("home");
@@ -826,8 +826,11 @@ public class JoinableHandler extends DataHandler {
 			
 		} else if(isEmpire) {
 			//since we are an empire we need to have our kingdoms update their names
+			//and add our kingdoms from the old id to our new id
+			//best way to do this in this framework is to just set their empire
+			//to the new section
 			
-			//gather kingdoms. Can use the new or old section
+			//gather kingdoms from the old ID, current id has no kingdoms in it yet
 			ArrayList<String> empireKingdoms = Empires.m_joinableHandler.getJoinableKingdomList(_id);
 			try {
 				for(String kingdom : empireKingdoms) {

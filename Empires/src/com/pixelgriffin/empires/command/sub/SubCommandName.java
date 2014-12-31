@@ -34,7 +34,7 @@ public class SubCommandName extends SubCommand {
 				
 				try {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.RENAME)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RENAME, invokerRole)) {
 						setError("You do not have permission to rename your civilization!");
 						return false;
 					}

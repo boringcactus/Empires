@@ -51,7 +51,7 @@ public class SubCommandNeutral extends SubCommand {
 				
 				try {
 					//does the player have permission?
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.RELATION)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
 						Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.NEUTRAL);
 						
 						//get our new relation

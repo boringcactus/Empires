@@ -32,7 +32,7 @@ public class SubCommandPerm extends SubCommand {
 			
 			try {
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invoker.getName());
-				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.PERMS)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
 					setError("You do not have permission to edit permissions!");
 					return false;
 				}
@@ -55,7 +55,7 @@ public class SubCommandPerm extends SubCommand {
 							
 							ChatColor accessCol = ChatColor.RED;
 							
-							if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, r, p))
+							if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, p, r))
 								accessCol = ChatColor.GREEN;
 							
 							if(r.equals(Role.OFFICER_1)) {

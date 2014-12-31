@@ -50,7 +50,7 @@ public class SubCommandTitle extends SubCommand {
 				
 				//does the invoker have permission to set titles?
 				try {
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(invokerJoinedName, invokerRole, GroupPermission.SET_TITLE)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(invokerJoinedName, GroupPermission.SET_TITLE, invokerRole)) {
 						setError("You do not have permission to set titles!");
 						return false;
 					}

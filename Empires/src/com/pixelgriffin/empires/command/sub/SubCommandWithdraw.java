@@ -35,7 +35,7 @@ public class SubCommandWithdraw extends SubCommand {
 				try {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
 					
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.WITHDRAW)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.WITHDRAW, invokerRole)) {
 						setError("You do not have permission to withdraw money!");
 						return false;
 					}

@@ -37,7 +37,7 @@ public class SubCommandInvite extends SubCommand {
 				
 				try {
 					//do we have permission?
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.INVITE)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.INVITE, invokerRole)) {
 						//is the arg0 a player?
 						if(Empires.m_playerHandler.playerExists(_args[0])) {
 							//handle player

@@ -121,7 +121,7 @@ public class SubCommandCreate extends SubCommand {
 							try {
 								//if we're not an empire already
 								if(!Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-									Empires.m_joinableHandler.setJoinableAsEmpire(joinedName);
+									Empires.m_joinableHandler.setKingdomAsEmpire(joinedName);
 									
 									//remove money from balance
 									if(Empires.m_vaultActive)

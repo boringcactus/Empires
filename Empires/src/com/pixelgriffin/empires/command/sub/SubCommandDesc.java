@@ -35,7 +35,7 @@ public class SubCommandDesc extends SubCommand {
 				try {
 					//do we have permission?
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SET_DESC)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_DESC, invokerRole)) {
 						//build description
 						String desc = "";
 						for(int i = 0; i < _args.length; i++) {

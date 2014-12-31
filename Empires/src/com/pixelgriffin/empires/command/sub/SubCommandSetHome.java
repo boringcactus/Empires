@@ -34,7 +34,7 @@ public class SubCommandSetHome extends SubCommand {
 			
 			try {
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SET_HOME)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_HOME, invokerRole)) {
 					setError("You do not have permission to set the home of your civilization!");
 					return false;
 				}

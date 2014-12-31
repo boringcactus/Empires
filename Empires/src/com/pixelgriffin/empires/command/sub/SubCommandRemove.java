@@ -39,7 +39,7 @@ public class SubCommandRemove extends SubCommand {
 						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
 						
 						//are we the leader?
-						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.REMOVE)) {
+						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.REMOVE, invokerRole)) {
 							//do we have that kingdom in our empire?
 							if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(otherName)) {
 								//remove them

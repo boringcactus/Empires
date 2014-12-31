@@ -43,7 +43,7 @@ public class SubCommandDemote extends SubCommand {
 				
 				try {
 					//check for the promote permission
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.DEMOTE)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DEMOTE, invokerRole)) {
 						//no permission, terminate
 						setError("You do not have permission to demote players!");
 						return false;

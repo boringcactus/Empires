@@ -43,7 +43,7 @@ public class SubCommandChunk extends SubCommand {
 			
 			try {
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invoker.getName());
-				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.PERMS)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
 					setError("You do not have permission to edit chunk flags!");
 					return false;
 				}

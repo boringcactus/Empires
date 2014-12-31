@@ -66,7 +66,7 @@ public class SubCommandJoin extends SubCommand {
 								if(Empires.m_joinableHandler.getEmpireRequestedKingdom(newJoinedName, joinedName)) {
 									//set our empire
 									try {
-										Empires.m_joinableHandler.setJoinableEmpire(joinedName, newJoinedName);
+										Empires.m_joinableHandler.setKingdomEmpire(joinedName, newJoinedName);
 										
 										//inform
 										String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);

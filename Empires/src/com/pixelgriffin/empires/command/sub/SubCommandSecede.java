@@ -38,7 +38,7 @@ public class SubCommandSecede extends SubCommand {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
 					
 					//player has permission
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SECEDE)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SECEDE, invokerRole)) {
 						//secede
 						Empires.m_joinableHandler.invokeKingdomSecedeEmpire(joinedName);
 						

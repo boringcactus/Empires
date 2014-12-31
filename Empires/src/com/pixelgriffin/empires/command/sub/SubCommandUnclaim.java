@@ -40,7 +40,7 @@ public class SubCommandUnclaim extends SubCommand {
 				
 				try {
 					//if the player has permission to unclaim
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, playerRole, GroupPermission.UNCLAIM)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.UNCLAIM, playerRole)) {
 						
 						//is this OUR territory?
 						String host = Empires.m_boardHandler.getTerritoryHost(loc);

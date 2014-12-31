@@ -37,7 +37,7 @@ public class SubCommandDisband extends SubCommand {
 				if(Empires.m_joinableHandler.getJoinableExists(joinedName)) {
 					try {
 						//player has permission to disband
-						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, Empires.m_playerHandler.getPlayerRole(playerName), GroupPermission.DISBAND)) {
+						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DISBAND, Empires.m_playerHandler.getPlayerRole(playerName))) {
 							Empires.m_joinableHandler.invokeJoinableDisband(joinedName);//run disband
 							
 							//we disbanded successfully

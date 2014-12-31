@@ -45,7 +45,7 @@ public class SubCommandKick extends SubCommand {
 				
 				try {
 					//do they have permission to kick?
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.KICK)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.KICK, invokerRole)) {
 						//are they ranked higher than the one they're trying to kick?
 						Role otherRole = Empires.m_playerHandler.getPlayerRole(other);
 						

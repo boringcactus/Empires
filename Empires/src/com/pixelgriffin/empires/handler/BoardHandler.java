@@ -74,7 +74,7 @@ public class BoardHandler extends DataHandler {
 		Empires.m_joinableHandler.setJoinableClaimSize(_id, -1, true);
 	}
 	
-	public void removeTerritoryAt(Location _loc) throws EmpiresEmptyTerritoryException {
+	private void removeTerritoryAt(Location _loc) throws EmpiresEmptyTerritoryException {
 		ConfigurationSection sect = getTerritorySection(_loc);
 		
 		//guess the territory is already gone!

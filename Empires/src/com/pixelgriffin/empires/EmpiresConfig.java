@@ -30,6 +30,7 @@ public class EmpiresConfig {
 	public static boolean m_damageReduc;//done
 	public static boolean m_empireCreation;//done
 	public static boolean m_kingdomCreation;//done
+	public static boolean m_mobSpawnManaging;//done
 	
 	//dependency settings
 	public static boolean m_useHerochat;
@@ -138,6 +139,13 @@ public class EmpiresConfig {
 			m_kingdomCreation = true;
 		} else {
 			m_kingdomCreation = m_config.getBoolean("kingdomCreation");
+		}
+		
+		if(!m_config.contains("mobSpawnFlag")) {
+			m_config.set("mobSpawnFlag", true);
+			m_mobSpawnManaging = true;
+		} else {
+			m_mobSpawnManaging = m_config.getBoolean("mobSpawnFlag");
 		}
 		
 		//externals

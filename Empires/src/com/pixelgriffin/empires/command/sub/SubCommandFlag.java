@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.pixelgriffin.empires.Empires;
+import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
@@ -35,7 +36,7 @@ public class SubCommandFlag extends SubCommand {
 			
 			try {
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invoker.getName());
-				if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.PERMS)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.PERMS)) {
 					setError("You do not have permission to edit flags!");
 					return false;
 				}
@@ -47,7 +48,7 @@ public class SubCommandFlag extends SubCommand {
 			}
 			
 			if(_args.length == 0) {
-				invoker.sendMessage(ChatColor.GRAY + "Chunk Flag Default Settings:");
+				invoker.sendMessage(ChatColor.GRAY + "Global Flag Settings:");
 				try {
 					ArrayList<String> flags;
 					String outString = "";
@@ -57,7 +58,7 @@ public class SubCommandFlag extends SubCommand {
 						outString = ChatColor.GRAY + f.toString() + ": ";
 						
 						for(TerritoryGroup g : TerritoryGroup.values()) {
-							flags = Empires.m_joinableHandler.getFlagsForGroup(joinedName, g);
+							flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(joinedName, g);
 							accessCol = ChatColor.RED;
 							
 							if(flags.contains(f.toString())) {
@@ -90,15 +91,16 @@ public class SubCommandFlag extends SubCommand {
 					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
 					
 					//SPAWN_MOBS
-					outString = ChatColor.GRAY + "SPAWN_MOBS: ";
-					val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
-					
-					accessCol = ChatColor.RED;
-					if(val)
-						accessCol = ChatColor.GREEN;
-					
-					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
-					
+					if(EmpiresConfig.m_mobSpawnManaging) {
+						outString = ChatColor.GRAY + "SPAWN_MOBS: ";
+						val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+						
+						accessCol = ChatColor.RED;
+						if(val)
+							accessCol = ChatColor.GREEN;
+						
+						invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
+					}
 				} catch (EmpiresJoinableDoesNotExistException e) {
 					e.printStackTrace();
 					
@@ -126,7 +128,7 @@ public class SubCommandFlag extends SubCommand {
 						setError("Something went wrong!");
 						return false;
 					}
-				} else if(_args[0].equalsIgnoreCase("SPAWN_MOBS")) {
+				} else if(EmpiresConfig.m_mobSpawnManaging && _args[0].equalsIgnoreCase("SPAWN_MOBS")) {
 					try {
 						boolean val = Empires.m_joinableHandler.toggleJoinableAllowsMobs(joinedName);
 						ChatColor col = ChatColor.RED;

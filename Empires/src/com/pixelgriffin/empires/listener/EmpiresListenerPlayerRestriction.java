@@ -316,7 +316,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 				defHost = Empires.m_playerHandler.getPlayerJoinedCivilization(defender.getName());
 				atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getName());
 				
-				Relation rel = Empires.m_joinableHandler.getRelationTo(defHost, atkHost);
+				Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(defHost, atkHost);
 				
 				//message string
 				String message = "";
@@ -374,14 +374,14 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 						if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
 							//we are an empire
 							//check if host is in our empire
-							if(Empires.m_joinableHandler.getJoinableKingdomList(joinedName).contains(host.toLowerCase())) {
+							if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(host.toLowerCase())) {
 								damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
 								_evt.setDamage(_evt.getDamage() * 0.7D);
 							}
 						} else {
 							//we are kingdom
 							//gather empire name
-							String empireName = Empires.m_joinableHandler.getJoinableEmpire(joinedName);
+							String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
 							
 							//no empire, no need to check
 							if(empireName.equals(""))
@@ -393,7 +393,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 								_evt.setDamage(_evt.getDamage() * 0.7D);
 							} else {
 								//is the host part of our empire?
-								if(Empires.m_joinableHandler.getJoinableKingdomList(empireName).contains(host.toLowerCase())) {
+								if(Empires.m_joinableHandler.getEmpireKingdomList(empireName).contains(host.toLowerCase())) {
 									damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
 									_evt.setDamage(_evt.getDamage() * 0.7D);
 								}
@@ -416,9 +416,11 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 	 */
 	@EventHandler
 	public void onMobSpawnsInTerritory(CreatureSpawnEvent _evt) {
-		if(_evt.getEntity() instanceof Monster) {
-			if(!Empires.m_boardHandler.territoryAllowsMobs(_evt.getLocation())) {
-				_evt.setCancelled(true);
+		if(EmpiresConfig.m_mobSpawnManaging) {
+			if(_evt.getEntity() instanceof Monster) {
+				if(!Empires.m_boardHandler.territoryAllowsMobs(_evt.getLocation())) {
+					_evt.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -454,7 +456,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		
 		Relation rel = null;
 		try {
-			rel = Empires.m_joinableHandler.getRelationTo(joinedName, _host);
+			rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, _host);
 		} catch (EmpiresJoinableDoesNotExistException e) {
 			e.printStackTrace();
 		}

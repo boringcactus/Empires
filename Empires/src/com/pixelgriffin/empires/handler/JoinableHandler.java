@@ -84,44 +84,44 @@ public class JoinableHandler extends DataHandler {
 	/**
 	 * <br />
 	 * <p>
-	 * Checks if a joinable exists by the name of <b>_name</b>
+	 * Checks if a joinable exists by the name of <b>_joinableName</b>
 	 * </p>
 	 * <br />
 	 * 
-	 * @param _name - The {@link String} of the name of the joinable
+	 * @param _joinableName - The {@link String} of the name of the joinable
 	 * @return Returns true if the joinable exists
 	 */
-	public boolean getJoinableExists(String _name) {
-		return getFileConfiguration().isConfigurationSection(_name.toLowerCase());
+	public boolean getJoinableExists(String _joinableName) {
+		return getFileConfiguration().isConfigurationSection(_joinableName.toLowerCase());
 	}
 	
 	/**
 	 * <br />
 	 * <p>
-	 * Creates a blank default joinable with the name <b>_name</b>
+	 * Creates a blank default joinable with the name <b>_joinableName</b>
 	 * </p>
 	 * <br />
 	 * 
-	 * @param _name - The {@link String} of the joinable name
-	 * @throws EmpiresJoinableExistsException <p>Thrown when a joinable by the name of <b>_name</b> already exists</p>
-	 * @throws EmpiresJoinableInvalidCharacterException <p>Thrown when the name <b>_name</b> contains a ':', '.', or '&' character</p>
+	 * @param _joinableName - The {@link String} of the joinable name
+	 * @throws EmpiresJoinableExistsException <p>Thrown when a joinable by the name of <b>_joinableName</b> already exists</p>
+	 * @throws EmpiresJoinableInvalidCharacterException <p>Thrown when the name <b>_joinableName</b> contains a ':', '.', or '&' character</p>
 	 */
-	public void invokeCreateBlankJoinable(String _name) throws EmpiresJoinableExistsException, EmpiresJoinableInvalidCharacterException {
+	public void invokeCreateBlankJoinable(String _joinableName) throws EmpiresJoinableExistsException, EmpiresJoinableInvalidCharacterException {
 		//we cannot create a blank joinable with the same name as the default
-		if(_name.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
-			throw new EmpiresJoinableExistsException("Attempted to create blank joinable with default name '" + _name + "'");
+		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+			throw new EmpiresJoinableExistsException("Attempted to create blank joinable with default name '" + _joinableName + "'");
 		
-		if(_name.contains(":") || _name.contains(".") || _name.contains("&"))
-			throw new EmpiresJoinableInvalidCharacterException("Attempted to create joinable with the name '" + _name + "'");
+		if(_joinableName.contains(":") || _joinableName.contains(".") || _joinableName.contains("&"))
+			throw new EmpiresJoinableInvalidCharacterException("Attempted to create joinable with the name '" + _joinableName + "'");
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lower case the id for case insensitive lookup
-		String lookupID = _name.toLowerCase();
+		String lookupID = _joinableName.toLowerCase();
 		
 		//we cannot overwrite an existing joinable
 		if(conf.isConfigurationSection(lookupID))
-			throw new EmpiresJoinableExistsException("Found existing joinable when attempting to create blank joinable '" + _name + "'");
+			throw new EmpiresJoinableExistsException("Found existing joinable when attempting to create blank joinable '" + _joinableName + "'");
 		
 		//create default joinable
 		ConfigurationSection sect = conf.createSection(lookupID);
@@ -135,7 +135,7 @@ public class JoinableHandler extends DataHandler {
 		sect.set("empire", "");//empire pointer
 		
 		//new values
-		sect.set("d-name", _name);//display name
+		sect.set("d-name", _joinableName);//display name
 		sect.set("is-empire", false);//is empire?
 		sect.set("kingdoms", new ArrayList<String>());//kingdom list for empires
 		sect.set("requested-kingdoms", new ArrayList<String>());
@@ -194,29 +194,29 @@ public class JoinableHandler extends DataHandler {
 	/**
 	 * <br />
 	 * <p>
-	 * Sends a message <b>_msg</b> to all online players in the joinable <b>_name</b>
+	 * Sends a message <b>_msg</b> to all online players in the joinable <b>_joinableName</b>
 	 * </p>
 	 * <br />
 	 * 
-	 * @param _name - The {@link String} of the joinable name
+	 * @param _joinableName - The {@link String} of the joinable name
 	 * @param _msg - The {@link String} of the message sent
-	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_name</b> does not exist</p>
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
 	 */
-	public void invokeJoinableBroadcastToJoined(String _name, String _msg) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableBroadcastToJoined(String _joinableName, String _msg) throws EmpiresJoinableDoesNotExistException {
 		//cannot broadcast to wilderness
-		if(_name.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//proper lookup (not case sensitive)
-		_name = _name.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
 		//make sure the joinable exists
-		if(!conf.isConfigurationSection(_name))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _name + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _joinableName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_name);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		
 		//gather players
 		ArrayList<String> joinedPlayers = (ArrayList<String>)sect.getList("joined-players");
@@ -236,29 +236,29 @@ public class JoinableHandler extends DataHandler {
 	/**
 	 * <br />
 	 * <p>
-	 * Sends a message <b>_msg</b> to all online players in the empire '<b>_name</b>', including involved kingdoms
+	 * Sends a message <b>_msg</b> to all online players in the empire '<b>_empireName</b>', including involved kingdoms
 	 * </p>
 	 * <br />
 	 * 
-	 * @param _name - The {@link String} of the empire name
+	 * @param _empireName - The {@link String} of the empire name
 	 * @param _msg - The {@link String} of the message to send
 	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the empire is found to not exist. This is not thrown when the joinable is not an empire.</p>
 	 */
-	public void invokeEmpireBroadcastToNetwork(String _name, String _msg) throws EmpiresJoinableDoesNotExistException {
+	public void invokeEmpireBroadcastToNetwork(String _empireName, String _msg) throws EmpiresJoinableDoesNotExistException {
 		//nope
-		if(_name.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_empireName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_name = _name.toLowerCase();
+		_empireName = _empireName.toLowerCase();
 		
 		//make sure the joinable exists
-		if(!conf.isConfigurationSection(_name))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _name + "'");
+		if(!conf.isConfigurationSection(_empireName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _empireName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_name);
+		ConfigurationSection sect = conf.getConfigurationSection(_empireName);
 		
 		//iterate through joined kingdoms
 		ArrayList<String> players;
@@ -276,7 +276,7 @@ public class JoinableHandler extends DataHandler {
 		}
 		
 		//send to ourselves
-		invokeJoinableBroadcastToJoined(_name, _msg);
+		invokeJoinableBroadcastToJoined(_empireName, _msg);
 	}
 	
 	/**
@@ -441,69 +441,87 @@ public class JoinableHandler extends DataHandler {
 	}
 	
 	/**
-	 * Updates all territory when the flag is toggled
-	 * @param _id
-	 * @param _g
-	 * @param _f
-	 * @return
-	 * @throws EmpiresJoinableDoesNotExistException
+	 * <br />
+	 * <p>
+	 * Toggles a {@link TerritoryFlag} globally on or off for a {@link TerritoryGroup} and then updates all existing territories with that change.
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName - The {@link String} name of the joinable whose flags we're editing
+	 * @param _group - The {@link TerritoryGroup} that is affected by the flag changes
+	 * @param _flag - The {@link TerritoryFlag} that is going to be toggled
+	 * @return Returns true if the flag was turned on by the method
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
 	 */
-	public boolean toggleJoinableFlag(String _id, TerritoryGroup _g, TerritoryFlag _f) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public boolean toggleJoinableFlag(String _joinableName, TerritoryGroup _group, TerritoryFlag _flag) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		ConfigurationSection flagSect = sect.getConfigurationSection("flags");
 		
-		ArrayList<String> flags = (ArrayList<String>)flagSect.getList(_g.toString());
+		ArrayList<String> flags = (ArrayList<String>)flagSect.getList(_group.toString());
 		
-		if(flags.contains(_f.toString())) {
-			flags.remove(_f.toString());
+		if(flags.contains(_flag.toString())) {
+			flags.remove(_flag.toString());
 			
-			flagSect.set(_g.toString(), flags);
+			flagSect.set(_group.toString(), flags);
 			
 			//update territory
-			Empires.m_boardHandler.updateTerritoryWithFlags(_id, _g, flags);
+			Empires.m_boardHandler.updateTerritoryWithFlags(_joinableName, _group, flags);
 			
 			return false;
 		} else {
-			flags.add(_f.toString());
+			flags.add(_flag.toString());
 			
-			flagSect.set(_g.toString(), flags);
+			flagSect.set(_group.toString(), flags);
 			
 			//update territory
-			Empires.m_boardHandler.updateTerritoryWithFlags(_id, _g, flags);
+			Empires.m_boardHandler.updateTerritoryWithFlags(_joinableName, _group, flags);
 			
 			return true;
 		}
 	}
 	
-	public boolean toggleJoinablePermission(String _id, GroupPermission _p, Role _r) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	/**
+	 * <br />
+	 * <p>
+	 * Toggles a {@link GroupPermission} on or off for a {@link Role}.
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName - The {@link String} name of the joinable to change permissions
+	 * @param _permission - The {@link GroupPermission} to change
+	 * @param _role - The {@link Role} that is affected by the permission change
+	 * @return Returns true if the permission was turned on by the method
+	 * @throws EmpiresJoinableDoesNotExistException <p><Thrown when the joinable <b>_joinableName</b> does not exist/p>
+	 */
+	public boolean toggleJoinablePermission(String _joinableName, GroupPermission _permission, Role _role) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		ConfigurationSection permSect = sect.getConfigurationSection("permissions");
 		
-		ArrayList<String> flags = (ArrayList<String>)permSect.getList(_r.toString());
+		ArrayList<String> flags = (ArrayList<String>)permSect.getList(_role.toString());
 		
-		if(flags.contains(_p.toString())) {
-			flags.remove(_p.toString());
+		if(flags.contains(_permission.toString())) {
+			flags.remove(_permission.toString());
 			
-			permSect.set(_r.toString(), flags);
+			permSect.set(_role.toString(), flags);
 			return false;
 		} else {
-			flags.add(_p.toString());
+			flags.add(_permission.toString());
 			
-			permSect.set(_r.toString(), flags);
+			permSect.set(_role.toString(), flags);
 			return true;
 		}
 	}
@@ -511,21 +529,21 @@ public class JoinableHandler extends DataHandler {
 	/**
 	 * Updates all territory when the flag is toggled
 	 */
-	public boolean toggleJoinableIgnoresRelations(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public boolean toggleJoinableIgnoresRelations(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		
 		boolean toggleVal = !sect.getBoolean("ignore-relations");
 		sect.set("ignore-relations", toggleVal);
 		
 		//update territory
-		Empires.m_boardHandler.updateTerritoryIgnoresRelations(_id, toggleVal);
+		Empires.m_boardHandler.updateTerritoryIgnoresRelations(_joinableName, toggleVal);
 		
 		return toggleVal;
 	}
@@ -533,21 +551,21 @@ public class JoinableHandler extends DataHandler {
 	/**
 	 * Updates all territory when the flag is toggled
 	 */
-	public boolean toggleJoinableAllowsMobs(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public boolean toggleJoinableAllowsMobs(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		
 		boolean toggleVal = !sect.getBoolean("spawn-mobs");
 		sect.set("spawn-mobs", toggleVal);
 		
 		//update territory
-		Empires.m_boardHandler.updateTerritoryAllowsMobs(_id, toggleVal);
+		Empires.m_boardHandler.updateTerritoryAllowsMobs(_joinableName, toggleVal);
 		
 		return toggleVal;
 	}
@@ -558,23 +576,23 @@ public class JoinableHandler extends DataHandler {
 	 * @param _playerName - player name
 	 * @throws EmpiresJoinableDoesNotExistException _id does not exist in YML
 	 */
-	public void invokeJoinableRemovePlayer(String _id, String _playerName) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableRemovePlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't remove a player
-		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lowercase for proper lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
 		//tried to fetch a non-existent j
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _joinableName + "'");
 		
 		//gather the current joined players list
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		ArrayList<String> joinedPlayers = (ArrayList<String>)sect.getList("joined-players");
 		
 		//if the player is inside the joined player list remove him and set the new list
@@ -587,7 +605,7 @@ public class JoinableHandler extends DataHandler {
 			//cannot have empty civilizations
 			if(joinedPlayers.isEmpty()) {
 				IOUtility.log("invoking disband");
-				invokeJoinableDisband(_id);
+				invokeJoinableDisband(_joinableName);
 				return;
 			}
 			
@@ -601,30 +619,30 @@ public class JoinableHandler extends DataHandler {
 	 * @throws EmpiresJoinableDoesNotExistException 
 	 * @throws EmpiresPlayerExistsException 
 	 */
-	public void invokeJoinableFindNewLeader(String _id, boolean _announce) throws EmpiresJoinableDoesNotExistException, EmpiresPlayerExistsException {
-		if(getCheck(_id))
+	public void invokeJoinableFindNewLeader(String _joinableName, boolean _announce) throws EmpiresJoinableDoesNotExistException, EmpiresPlayerExistsException {
+		if(getCheck(_joinableName))
 			return;
 		
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		if(getJoinableLeader(_id) != null)
-			throw new EmpiresPlayerExistsException("A leader has already been appointed for '" + _id + "'");
+		if(getJoinableLeader(_joinableName) != null)
+			throw new EmpiresPlayerExistsException("A leader has already been appointed for '" + _joinableName + "'");
 		
-		String heir = getJoinableHeir(_id);
+		String heir = getJoinableHeir(_joinableName);
 		
 		//if there an heir
 		if(!heir.equals("")) {
 			//does the player exist?
 			if(Empires.m_playerHandler.playerExists(heir)) {
-				if(Empires.m_playerHandler.getPlayerJoinedCivilization(heir).equals(_id)) {
+				if(Empires.m_playerHandler.getPlayerJoinedCivilization(heir).equals(_joinableName)) {
 					Empires.m_playerHandler.setPlayerRole(heir, Role.LEADER);
 					
 					//remove the old heir value
-					Empires.m_joinableHandler.clearJoinableHeir(_id);
+					Empires.m_joinableHandler.clearJoinableHeir(_joinableName);
 					
 					//inform
 					if(_announce) {
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_id, ChatColor.YELLOW +  heir + " has become the new leader of " + _id + "!");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  heir + " has become the new leader of " + _joinableName + "!");
 					}
 					
 					//do not continue searching since we found an heir
@@ -640,7 +658,7 @@ public class JoinableHandler extends DataHandler {
 			
 			//iterate through the officers from level 3 -> 1
 			for(int i =3; i >= 1; i--) {
-				officers = getJoinableOfficers(_id, i);
+				officers = getJoinableOfficers(_joinableName, i);
 				
 				//are there officers?
 				if(officers.isEmpty())
@@ -651,7 +669,7 @@ public class JoinableHandler extends DataHandler {
 				
 				//inform
 				if(_announce) {
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_id, ChatColor.YELLOW +  officers.get(0) + " has become the new leader of " + _id + "!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  officers.get(0) + " has become the new leader of " + _joinableName + "!");
 				}
 				
 				//FIX without returning
@@ -666,19 +684,19 @@ public class JoinableHandler extends DataHandler {
 			//we didn't find an officer..
 			//gather the player list and find a new leader
 			//gather the "one" to set
-			String one = getJoinableJoinedPlayers(_id).get(0);
+			String one = getJoinableJoinedPlayers(_joinableName).get(0);
 			//set as leader
 			Empires.m_playerHandler.setPlayerRole(one, Role.LEADER);
 			
 			//inform
 			if(_announce) {
-				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_id, ChatColor.YELLOW + one + " has become the new leader of " + _id + "!");
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + one + " has become the new leader of " + _joinableName + "!");
 			}
 		}
 	}
 	
-	public ArrayList<String> getJoinableOfficers(String _id, int _rank) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public ArrayList<String> getJoinableOfficers(String _joinableName, int _rank) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return new ArrayList<String>();
 		
 		//rank restriction
@@ -708,7 +726,7 @@ public class JoinableHandler extends DataHandler {
 		}
 		
 		ArrayList<String> officers = new ArrayList<String>();
-		for(String player : getJoinableJoinedPlayers(_id)) {
+		for(String player : getJoinableJoinedPlayers(_joinableName)) {
 			//is this player part of the officer group?
 			if(Empires.m_playerHandler.getPlayerRole(player).equals(role)) {
 				//add them to the list
@@ -725,11 +743,11 @@ public class JoinableHandler extends DataHandler {
 	 * @return returns null if no leader is found
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public String getJoinableLeader(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public String getJoinableLeader(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return null;
 		
-		for(String player : getJoinableJoinedPlayers(_id)) {
+		for(String player : getJoinableJoinedPlayers(_joinableName)) {
 			if(Empires.m_playerHandler.getPlayerRole(player).equals(Role.LEADER)) {
 				return player;
 			}
@@ -738,26 +756,26 @@ public class JoinableHandler extends DataHandler {
 		return null;
 	}
 	
-	public void invokeJoinableAddPlayer(String _id, String _name) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableAddPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't add a player
-		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lowercase for proper lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
 		//tried to fetch a non-existent j
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _joinableName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		ArrayList<String> joinedPlayers = (ArrayList<String>)sect.getList("joined-players");
 		
-		if(!joinedPlayers.contains(_name)) {
-			joinedPlayers.add(_name);
+		if(!joinedPlayers.contains(_playerName)) {
+			joinedPlayers.add(_playerName);
 			sect.set("joined-players", joinedPlayers);
 		}
 	}
@@ -771,59 +789,59 @@ public class JoinableHandler extends DataHandler {
 	 * @return returns true if the _id is the default civilization
 	 * @throws EmpiresJoinableDoesNotExistException - joinable doesn't exist
 	 */
-	private boolean getCheck(String _id) throws EmpiresJoinableDoesNotExistException {
+	private boolean getCheck(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//default name is just the default name
-		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return true;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//proper lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _joinableName + "'");
 		
 		return false;
 	}
 	
-	public String getJoinableDisplayName(String _id) throws EmpiresJoinableDoesNotExistException {
+	public String getJoinableDisplayName(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//default display name is just the default id
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return PlayerHandler.m_defaultCiv;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getString("d-name");
 	}
 	
-	public String getJoinableDescription(String _id) throws EmpiresJoinableDoesNotExistException {
+	public String getJoinableDescription(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//return the default id if we are searching for default information
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return PlayerHandler.m_defaultCiv;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getString("desc");
 	}
 	
-	public void setJoinableName(String _id, String _name) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableInvalidCharacterException {
+	public void setJoinableName(String _joinableName, String _newName) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableInvalidCharacterException {
 		//do not allow wilderness shenanigans
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return;
-		if(_name.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_newName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
-		if(_name.contains(":") || _name.contains(".") || _name.contains("&"))
-			throw new EmpiresJoinableInvalidCharacterException("Attempted to create joinable with the name '" + _name + "'");
+		if(_newName.contains(":") || _newName.contains(".") || _newName.contains("&"))
+			throw new EmpiresJoinableInvalidCharacterException("Attempted to create joinable with the name '" + _newName + "'");
 		
 		
 		//lower case for proper lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		//_name lower case is done later so it can be saved as the display name
 		
 		//gather old section's data
@@ -831,7 +849,7 @@ public class JoinableHandler extends DataHandler {
 		//if the future programmer is reading this maybe spend a few hours
 		//trying to find a way to just rename the configuration section?
 		YamlConfiguration conf = getFileConfiguration();
-		ConfigurationSection oldSect = conf.getConfigurationSection(_id);
+		ConfigurationSection oldSect = conf.getConfigurationSection(_joinableName);
 		int power = oldSect.getInt("power");
 		ArrayList<String> joinedPlayers = (ArrayList<String>) oldSect.getList("joined-players");
 		ArrayList<String> requestedPlayers = (ArrayList<String>) oldSect.getList("requested-players");
@@ -849,7 +867,7 @@ public class JoinableHandler extends DataHandler {
 		boolean ignoreRelations = oldSect.getBoolean("ignore-relations");
 		
 		//create a new section with _name and set the values from the last section
-		ConfigurationSection newSect = conf.createSection(_name.toLowerCase());
+		ConfigurationSection newSect = conf.createSection(_newName.toLowerCase());
 		newSect.set("power", power);
 		newSect.set("joined-players", joinedPlayers.clone());
 		newSect.set("requested-players", requestedPlayers.clone());
@@ -858,7 +876,7 @@ public class JoinableHandler extends DataHandler {
 		newSect.set("claims", claims);
 		newSect.set("bank", bank);
 		newSect.set("empire", empire);
-		newSect.set("d-name", _name);//set to our new name
+		newSect.set("d-name", _newName);//set to our new name
 		newSect.set("is-empire", isEmpire);
 		newSect.set("kingdoms", new ArrayList<String>());
 		newSect.set("requested-kingdoms", requestedKingdoms.clone());
@@ -897,12 +915,12 @@ public class JoinableHandler extends DataHandler {
 		newSect.set("ignore-relations", ignoreRelations);
 		
 		//now set _name to lower case for proper lookup
-		_name = _name.toLowerCase();
+		_newName = _newName.toLowerCase();
 		
 		//change player pointers
 		for(String player : joinedPlayers) {
 			//overrides 'j' value to _name
-			Empires.m_playerHandler.overridePlayerJoinedCivilization(player, _name);
+			Empires.m_playerHandler.overridePlayerJoinedCivilization(player, _newName);
 		}
 		
 		//change empire (if any) name pointer
@@ -910,11 +928,11 @@ public class JoinableHandler extends DataHandler {
 			//since we are not an empire we need to change our empire's list name
 			
 			//leave the empire with the old name
-			Empires.m_joinableHandler.invokeKingdomSecedeEmpire(_id);
+			Empires.m_joinableHandler.invokeKingdomSecedeEmpire(_joinableName);
 			
 			//join it again under a different name
 			try {
-				Empires.m_joinableHandler.setJoinableEmpire(_name, empire);
+				Empires.m_joinableHandler.setKingdomEmpire(_newName, empire);
 			} catch (EmpiresJoinableIsNotEmpireException e) {
 				e.printStackTrace();
 			}
@@ -926,10 +944,10 @@ public class JoinableHandler extends DataHandler {
 			//to the new section
 			
 			//gather kingdoms from the old ID, current id has no kingdoms in it yet
-			ArrayList<String> empireKingdoms = Empires.m_joinableHandler.getEmpireKingdomList(_id);
+			ArrayList<String> empireKingdoms = Empires.m_joinableHandler.getEmpireKingdomList(_joinableName);
 			try {
 				for(String kingdom : empireKingdoms) {
-					Empires.m_joinableHandler.setJoinableEmpire(kingdom, _name);
+					Empires.m_joinableHandler.setKingdomEmpire(kingdom, _newName);
 				}
 			} catch(Exception e) {
 					e.printStackTrace();//TODO send a message (could not set empire)
@@ -940,51 +958,51 @@ public class JoinableHandler extends DataHandler {
 		Relation value;
 		for(String other : conf.getKeys(false)) {
 			//do not act on us or the old us
-			if(other.equals(_id))
+			if(other.equals(_joinableName))
 				continue;
-			if(other.equals(_name))
+			if(other.equals(_newName))
 				continue;
 			
 			//we have a relation set
-			value = getJoinableRelationWish(other, _id);
+			value = getJoinableRelationWish(other, _joinableName);
 			
 			if(!value.equals(Relation.NEUTRAL)) {
 				//set our new relation to us
-				setJoinableRelationWish(other, _name, value);
+				setJoinableRelationWish(other, _newName, value);
 				//remove the relation to our old self
-				setJoinableRelationWish(other, _id, Relation.NEUTRAL);
+				setJoinableRelationWish(other, _joinableName, Relation.NEUTRAL);
 			}
 		}
 		
 		//update old territory to our new name
-		Empires.m_boardHandler.renameAllTerritoryForJoinable(_id, _name);
+		Empires.m_boardHandler.renameAllTerritoryForJoinable(_joinableName, _newName);
 		
 		//remove old section
-		conf.set(_id.toLowerCase(), null);
+		conf.set(_joinableName.toLowerCase(), null);
 		
 		//done
 	}
 	
-	public void setJoinableDescription(String _id, String _desc) throws EmpiresJoinableDoesNotExistException {
+	public void setJoinableDescription(String _joinableName, String _desc) throws EmpiresJoinableDoesNotExistException {
 		//can't work with the defuault civ
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return;
 		
 		//gather section
 		YamlConfiguration conf = getFileConfiguration();
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		//set value
 		sect.set("desc", _desc);
 	}
 	
-	public void setJoinableHome(String _id, Location _loc) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void setJoinableHome(String _joinableName, Location _loc) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return;
 		
 		//gather section
 		YamlConfiguration conf = getFileConfiguration();
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		ConfigurationSection homeSect = sect.getConfigurationSection("home");
 		
 		homeSect.set("x", _loc.getX());
@@ -993,13 +1011,13 @@ public class JoinableHandler extends DataHandler {
 		homeSect.set("w", _loc.getWorld().getName());
 	}
 	
-	public Location getJoinableHome(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public Location getJoinableHome(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return null;
 		
 		//gather section
 		YamlConfiguration conf = getFileConfiguration();
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		ConfigurationSection homeSect = sect.getConfigurationSection("home");
 		
@@ -1021,54 +1039,54 @@ public class JoinableHandler extends DataHandler {
 		return new Location(world, x, y, z);
 	}
 	
-	public ArrayList<String> getJoinableJoinedPlayers(String _id) throws EmpiresJoinableDoesNotExistException {
+	public ArrayList<String> getJoinableJoinedPlayers(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//return an empty list if we are searching for default information
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return new ArrayList<String>();
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return (ArrayList<String>)sect.getList("joined-players");
 	}
 	
-	public boolean getJoinableEmpireStatus(String _id) throws EmpiresJoinableDoesNotExistException {
+	public boolean getJoinableEmpireStatus(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//return false if we are searching for default information
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getBoolean("is-empire");
 	}
 	
-	public double getJoinableBankBalance(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public double getJoinableBankBalance(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return 0.0;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getDouble("bank");
 	}
 	
-	public String getKingdomJoinedEmpire(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public String getKingdomJoinedEmpire(String _kingdomName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_kingdomName))
 			return "";
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_kingdomName.toLowerCase());
 		
 		return sect.getString("empire");
 	}
 	
-	public boolean getJoinableHasPermissionForRole(String _id, Role _role, GroupPermission _perm) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public boolean getJoinableHasPermissionForRole(String _joinableName, GroupPermission _permission, Role _role) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return false;
 		
 		//leaders have permission to do anything
@@ -1077,33 +1095,33 @@ public class JoinableHandler extends DataHandler {
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		ConfigurationSection permSect = sect.getConfigurationSection("permissions");
 		
-		return permSect.getList(_role.toString()).contains(_perm.toString());
+		return permSect.getList(_role.toString()).contains(_permission.toString());
 	}
 	
-	public Set<String> getJoinableRelationNameSet(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public Set<String> getJoinableRelationNameSet(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return new HashSet<String>();
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		ConfigurationSection wishSect = sect.getConfigurationSection("relation-wish");
 		
 		return wishSect.getKeys(false);
 	}
 	
-	public int getJoinableClaimSize(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public int getJoinableClaimSize(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return 0;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getInt("claims");
 	}
@@ -1115,14 +1133,14 @@ public class JoinableHandler extends DataHandler {
 	 * @param _relative when true _val will be added to the current claim value
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public void setJoinableClaimSize(String _id, int _val, boolean _relative) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void setJoinableClaimSize(String _joinableName, int _val, boolean _relative) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		//we are setting the value relative to the current value
 		if(_relative)
@@ -1137,30 +1155,30 @@ public class JoinableHandler extends DataHandler {
 	 * @param _val
 	 * @throws EmpiresJoinableDoesNotExistException 
 	 */
-	public void setJoinableClaimSize(String _id, int _val) throws EmpiresJoinableDoesNotExistException {
-		setJoinableClaimSize(_id, _val, false);
+	public void setJoinableClaimSize(String _joinableName, int _val) throws EmpiresJoinableDoesNotExistException {
+		setJoinableClaimSize(_joinableName, _val, false);
 	}
 	
-	public int getJoinablePowerValue(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public int getJoinablePowerValue(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return 0;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getInt("power");
 	}
 	
-	public void setJoinablePowerValue(String _id, int _val, boolean _relative) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void setJoinablePowerValue(String _joinableName, int _val, boolean _relative) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		if(_relative)//set the power relative to the old value
 			sect.set("power", sect.getInt("power") + _val);
@@ -1174,8 +1192,8 @@ public class JoinableHandler extends DataHandler {
 	 * @param _val
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public void setJoinablePowerValue(String _id, int _val) throws EmpiresJoinableDoesNotExistException {
-		setJoinablePowerValue(_id, _val, false);
+	public void setJoinablePowerValue(String _joinableName, int _val) throws EmpiresJoinableDoesNotExistException {
+		setJoinablePowerValue(_joinableName, _val, false);
 	}
 	
 	/**
@@ -1184,127 +1202,127 @@ public class JoinableHandler extends DataHandler {
 	 * @return Returns empty string if no heir
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public String getJoinableHeir(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public String getJoinableHeir(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return "";
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getString("heir");
 	}
 	
-	public void setJoinableHeir(String _id, String _heir) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void setJoinableHeir(String _joinableName, String _heirName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		//save as lower case just inCASE hah
-		sect.set("heir", _heir.toLowerCase());
+		sect.set("heir", _heirName.toLowerCase());
 	}
 	
-	public void clearJoinableHeir(String _id) throws EmpiresJoinableDoesNotExistException {
-		setJoinableHeir(_id, "");
+	public void clearJoinableHeir(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+		setJoinableHeir(_joinableName, "");
 	}
 	
-	public ArrayList<String> getEmpireKingdomList(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public ArrayList<String> getEmpireKingdomList(String _empireName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_empireName))
 			return new ArrayList<String>();
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_empireName.toLowerCase());
 		
 		return (ArrayList<String>) sect.getList("kingdoms");
 	}
 	
-	public void setJoinableAsEmpire(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void setKingdomAsEmpire(String _kingdomName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_kingdomName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_kingdomName.toLowerCase());
 		sect.set("is-empire", true);
 	}
 	
-	public void setJoinableRelationWish(String _id, String _other, Relation _wish) throws EmpiresJoinableDoesNotExistException {
+	public void setJoinableRelationWish(String _joinableName, String _otherName, Relation _wish) throws EmpiresJoinableDoesNotExistException {
 		//cannot set relations to non-existent or default civ
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return;
-		if(getCheck(_other))
+		if(getCheck(_otherName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		ConfigurationSection wishSect = sect.getConfigurationSection("relation-wish");
 		
 		//proper lookup
-		_other = _other.toLowerCase();
+		_otherName = _otherName.toLowerCase();
 		
 		//set section value
 		//since comparing relations will return neutral if no wish is given
 		if(_wish.equals(Relation.NEUTRAL)) {
-			if(wishSect.contains(_other)) {//if we have a wish towards them
-				wishSect.set(_other, null);//we remove it
+			if(wishSect.contains(_otherName)) {//if we have a wish towards them
+				wishSect.set(_otherName, null);//we remove it
 			}
 		} else {
 			//if it's not neutral we need to keep track of the wish
-			wishSect.set(_other, _wish.toString());
+			wishSect.set(_otherName, _wish.toString());
 		}
 	}
 	
-	public void setJoinableEmpire(String _id, String _empire) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsNotEmpireException {
+	public void setKingdomEmpire(String _kingdomName, String _empireName) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsNotEmpireException {
 		//cannot set relations to non-existent or default civ
-		if(getCheck(_id))
+		if(getCheck(_kingdomName))
 			return;
-		if(getCheck(_empire))
+		if(getCheck(_empireName))
 			return;
 		
-		if(!getJoinableEmpireStatus(_empire))
-			throw new EmpiresJoinableIsNotEmpireException(_empire + " is not an empire");
+		if(!getJoinableEmpireStatus(_empireName))
+			throw new EmpiresJoinableIsNotEmpireException(_empireName + " is not an empire");
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
+		_kingdomName = _kingdomName.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
-		sect.set("empire", _empire.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_kingdomName);
+		sect.set("empire", _empireName.toLowerCase());
 		
 		//set empire pointer to us as well
-		sect = conf.getConfigurationSection(_empire.toLowerCase());
+		sect = conf.getConfigurationSection(_empireName.toLowerCase());
 		{
 			ArrayList<String> kingdoms = (ArrayList<String>)sect.getList("kingdoms");
-			kingdoms.add(_id);
+			kingdoms.add(_kingdomName);
 			sect.set("kingdoms", kingdoms);
 		}
 		
 		//remove from requested
 		{
 			ArrayList<String> requested = (ArrayList<String>)sect.getList("requested-kingdoms");
-			requested.remove(_id);
+			requested.remove(_kingdomName);
 			sect.set("requested-kingdoms", requested);
 		}
 	}
 	
-	public void invokeKingdomSecedeEmpire(String _id) throws EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void invokeKingdomSecedeEmpire(String _kingdomName) throws EmpiresJoinableDoesNotExistException {
+		if(getCheck(_kingdomName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
+		_kingdomName = _kingdomName.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_kingdomName);
 		
 		//set our pointer to nothing
 		String empire = sect.getString("empire");
@@ -1314,38 +1332,38 @@ public class JoinableHandler extends DataHandler {
 		sect = conf.getConfigurationSection(empire);
 		{
 			ArrayList<String> kingdoms = (ArrayList<String>)sect.getList("kingdoms");
-			kingdoms.remove(_id);
+			kingdoms.remove(_kingdomName);
 			sect.set("kingdoms", kingdoms);
 		}
 	}
 	
-	public String getKingdomEmpire(String _id) throws EmpiresJoinableDoesNotExistException {
+	public String getKingdomEmpire(String _kingdomName) throws EmpiresJoinableDoesNotExistException {
 		//cannot set relations to non-existent or default civ
-		if(getCheck(_id))
+		if(getCheck(_kingdomName))
 			return "";
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_kingdomName.toLowerCase());
 		
 		return sect.getString("empire");
 	}
 	
-	public void invokeJoinableDisband(String _id) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableDisband(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//cannot disband the default civ (wilderness)
-		if(_id.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
+		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//proper lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
 		//doesn't exist?
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to disband non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to disband non-existent joinable '" + _joinableName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		//gather empire status
 		boolean isEmpire = sect.getBoolean("is-empire");
 		
@@ -1375,9 +1393,9 @@ public class JoinableHandler extends DataHandler {
 				relationSect = otherSect.getConfigurationSection("relation-wish");
 				
 				//if we exist in the section (there was a relation wish)
-				if(relationSect.contains(_id)) {
+				if(relationSect.contains(_joinableName)) {
 					//remove
-					relationSect.set(_id, null);
+					relationSect.set(_joinableName, null);
 				}
 			}
 		}
@@ -1405,7 +1423,7 @@ public class JoinableHandler extends DataHandler {
 				String empireName = sect.getString("empire");
 				//check to make sure the empire exists in YML
 				if(!conf.isConfigurationSection(empireName))
-					throw new EmpiresJoinableDoesNotExistException("Tried to remove a reference from a non-existent empire '" + empireName +"' from '" + _id + "'");
+					throw new EmpiresJoinableDoesNotExistException("Tried to remove a reference from a non-existent empire '" + empireName +"' from '" + _joinableName + "'");
 				
 				//gather section
 				ConfigurationSection empireSect = conf.getConfigurationSection(empireName);
@@ -1417,7 +1435,7 @@ public class JoinableHandler extends DataHandler {
 					ArrayList<String> joinedKingdomsList = (ArrayList<String>) empireSect.getList("kingdoms");
 					
 					//remove us
-					joinedKingdomsList.remove(_id);
+					joinedKingdomsList.remove(_joinableName);
 					
 					//reset the list
 					empireSect.set("kingdoms", joinedKingdomsList);
@@ -1426,10 +1444,10 @@ public class JoinableHandler extends DataHandler {
 		}
 		
 		//remove our territory
-		Empires.m_boardHandler.removeAllTerritoryForHost(_id);
+		Empires.m_boardHandler.removeAllTerritoryForHost(_joinableName);
 		
 		//remove us
-		conf.set(_id, null);
+		conf.set(_joinableName, null);
 		
 		String civType = "kingdom";
 		if(isEmpire) {
@@ -1451,166 +1469,166 @@ public class JoinableHandler extends DataHandler {
 		return nameList;
 	}
 	
-	public void invokeJoinableRequestPlayer(String _id, String _name) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableRequestPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _joinableName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		
 		//add name
 		ArrayList<String> requestList = (ArrayList<String>) sect.getList("requested-players");
-		requestList.add(_name.toLowerCase());
+		requestList.add(_playerName.toLowerCase());
 		
 		//save
 		sect.set("requested-players", requestList);
 	}
 	
-	public void invokeJoinableRemoveRequestedPlayer(String _id, String _name) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableRemoveRequestedPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _joinableName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		
 		//add name
 		ArrayList<String> requestList = (ArrayList<String>) sect.getList("requested-players");
-		requestList.remove(_name.toLowerCase());
+		requestList.remove(_playerName.toLowerCase());
 		
 		//save
 		sect.set("requested-players", requestList);
 	}
 	
-	public boolean getJoinableRequestedPlayer(String _id, String _name) throws EmpiresJoinableDoesNotExistException {
+	public boolean getJoinableRequestedPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		ArrayList<String> requestList = new ArrayList<String>();
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_id = _id.toLowerCase();
+		_joinableName = _joinableName.toLowerCase();
 		
 		//doesn't exist?
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_joinableName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _joinableName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		
 		requestList = (ArrayList<String>) sect.getList("requested-players");
 		
-		return requestList.contains(_name.toLowerCase());
+		return requestList.contains(_playerName.toLowerCase());
 	}
 	
-	public boolean getJoinableIgnoresRelations(String _id) throws EmpiresJoinableDoesNotExistException {
+	public boolean getJoinableIgnoresRelations(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//return false if we are searching for default information
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getBoolean("ignore-relations");
 	}
 	
-	public boolean getJoinableAllowsMobs(String _id) throws EmpiresJoinableDoesNotExistException {
+	public boolean getJoinableAllowsMobs(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//return false if we are searching for default information
-		if(getCheck(_id))
+		if(getCheck(_joinableName))
 			return false;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		return sect.getBoolean("spawn-mobs");
 	}
 	
-	public boolean getEmpireRequestedKingdom(String _id, String _kingdom) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {
+	public boolean getEmpireRequestedKingdom(String _empireName, String _kingdomName) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {
 		ArrayList<String> requestList = new ArrayList<String>();
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_kingdom = _kingdom.toLowerCase();
-		_id = _id.toLowerCase();
+		_kingdomName = _kingdomName.toLowerCase();
+		_empireName = _empireName.toLowerCase();
 		
 		//kingdom exists?
-		if(!getJoinableExists(_kingdom))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent kingdom '" + _kingdom + "'");
+		if(!getJoinableExists(_kingdomName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent kingdom '" + _kingdomName + "'");
 		
 		//kingdom is kingdom?
-		if(getJoinableEmpireStatus(_kingdom))
-			throw new EmpiresJoinableIsEmpireException("Tried to invite empire " + _kingdom + " to empire");
+		if(getJoinableEmpireStatus(_kingdomName))
+			throw new EmpiresJoinableIsEmpireException("Tried to invite empire " + _kingdomName + " to empire");
 		
 		//doesn't exist?
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_empireName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _empireName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_empireName);
 		
 		requestList = (ArrayList<String>) sect.getList("requested-kingdoms");
 		
-		return requestList.contains(_kingdom);
+		return requestList.contains(_kingdomName);
 	}
 	
-	public void invokeEmpireRequestKingdom(String _id, String _kingdom) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {
+	public void invokeEmpireRequestKingdom(String _empireName, String _kingdomName) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_kingdom = _kingdom.toLowerCase();
-		_id = _id.toLowerCase();
+		_kingdomName = _kingdomName.toLowerCase();
+		_empireName = _empireName.toLowerCase();
 		
 		//kingdom exists?
-		if(!getJoinableExists(_kingdom))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent kingdom '" + _kingdom + "'");
+		if(!getJoinableExists(_kingdomName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent kingdom '" + _kingdomName + "'");
 		
 		//kingdom is kingdom?
-		if(getJoinableEmpireStatus(_kingdom))
-			throw new EmpiresJoinableIsEmpireException("Tried to invite empire " + _kingdom + " to empire");
+		if(getJoinableEmpireStatus(_kingdomName))
+			throw new EmpiresJoinableIsEmpireException("Tried to invite empire " + _kingdomName + " to empire");
 		
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_empireName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _empireName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_empireName);
 		
 		//add name
 		ArrayList<String> requestList = (ArrayList<String>) sect.getList("requested-kingdoms");
-		requestList.add(_kingdom);
+		requestList.add(_kingdomName);
 		
 		//save
 		sect.set("requested-kingdoms", requestList);
 	}
 	
-	public void invokeEmpireRemoveRequestedKingdom(String _id, String _kingdom) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {
+	public void invokeEmpireRemoveRequestedKingdom(String _empireName, String _kingdomName) throws EmpiresJoinableDoesNotExistException, EmpiresJoinableIsEmpireException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
-		_id = _id.toLowerCase();
-		_kingdom = _kingdom.toLowerCase();
+		_empireName = _empireName.toLowerCase();
+		_kingdomName = _kingdomName.toLowerCase();
 		
 		//kingdom exists?
-		if(!getJoinableExists(_kingdom))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent kingdom '" + _kingdom + "'");
+		if(!getJoinableExists(_kingdomName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent kingdom '" + _kingdomName + "'");
 		
 		//kingdom is kingdom?
-		if(getJoinableEmpireStatus(_kingdom))
-			throw new EmpiresJoinableIsEmpireException("Tried to invite empire " + _kingdom + " to empire");
+		if(getJoinableEmpireStatus(_kingdomName))
+			throw new EmpiresJoinableIsEmpireException("Tried to invite empire " + _kingdomName + " to empire");
 		
-		if(!conf.isConfigurationSection(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _id + "'");
+		if(!conf.isConfigurationSection(_empireName))
+			throw new EmpiresJoinableDoesNotExistException("Tried to fetch non-existent joinable '" + _empireName + "'");
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_id);
+		ConfigurationSection sect = conf.getConfigurationSection(_empireName);
 		
 		//add name
 		ArrayList<String> requestList = (ArrayList<String>) sect.getList("requested-kingdoms");
-		requestList.remove(_kingdom);
+		requestList.remove(_kingdomName);
 		
 		//save
 		sect.set("requested-kingdoms", requestList);
@@ -1624,40 +1642,40 @@ public class JoinableHandler extends DataHandler {
 	 * @throws EmpiresNoFundsException _invokerName does not have enough funds
 	 * @throws EmpiresJoinableDoesNotExistException _id does not exist
 	 */
-	public void invokeJoinableDepositMoney(String _id, String _invokerName, double _val) throws EmpiresNoFundsException, EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void invokeJoinableDepositMoney(String _joinableName, String _depositerName, double _val) throws EmpiresNoFundsException, EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return;
 		
-		if(Empires.m_economy.getBalance(_invokerName) >= _val) {
-			Empires.m_economy.withdrawPlayer(_invokerName, _val);
+		if(Empires.m_economy.getBalance(_depositerName) >= _val) {
+			Empires.m_economy.withdrawPlayer(_depositerName, _val);
 			
 			YamlConfiguration conf = getFileConfiguration();
-			ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+			ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 			
 			sect.set("bank", sect.getDouble("bank") + _val);
 			
 			return;
 		}
 		
-		throw new EmpiresNoFundsException(_invokerName + " does not have the funds required to deposit " + _val);
+		throw new EmpiresNoFundsException(_depositerName + " does not have the funds required to deposit " + _val);
 	}
 	
-	public void invokeJoinableWithdrawMoney(String _id, String _invokerName, double _val) throws EmpiresNoFundsException, EmpiresJoinableDoesNotExistException {
-		if(getCheck(_id))
+	public void invokeJoinableWithdrawMoney(String _joinableName, String _withdrawerName, double _val) throws EmpiresNoFundsException, EmpiresJoinableDoesNotExistException {
+		if(getCheck(_joinableName))
 			return;
 		
 		YamlConfiguration conf = getFileConfiguration();
-		ConfigurationSection sect = conf.getConfigurationSection(_id.toLowerCase());
+		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		double bankVal = sect.getDouble("bank");
 		
 		if(bankVal >= _val) {
 			sect.set("bank", bankVal - _val);
-			Empires.m_economy.depositPlayer(_invokerName, _val);
+			Empires.m_economy.depositPlayer(_withdrawerName, _val);
 			
 			return;
 		}
 		
-		throw new EmpiresNoFundsException(_id + " does not have the funds required to deposit " + _val + " to " + _invokerName);
+		throw new EmpiresNoFundsException(_joinableName + " does not have the funds required to deposit " + _val + " to " + _withdrawerName);
 	}
 }

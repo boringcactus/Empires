@@ -1377,7 +1377,7 @@ public class JoinableHandler extends DataHandler {
 			
 			//for every player we remove their pointer and our reference
 			for(String joinedPlayer : joinedPlayerList) {
-				Empires.m_playerHandler.removePlayerFromJoinedCivilization(joinedPlayer);
+				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(joinedPlayer);
 			}
 		}
 		

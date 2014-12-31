@@ -265,7 +265,7 @@ public class PlayerHandler extends DataHandler {
 	 * @param _name
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public void removePlayerFromJoinedCivilization(String _name) throws EmpiresJoinableDoesNotExistException {
+	public void invokeRemovePlayerFromJoinedJoinable(String _name) throws EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lower case the name for proper lookup
@@ -535,7 +535,7 @@ public class PlayerHandler extends DataHandler {
 	
 	public void removeDormantPlayer(String _name) throws EmpiresJoinableDoesNotExistException {
 		//remove us from any joinable we were in
-		removePlayerFromJoinedCivilization(_name);
+		invokeRemovePlayerFromJoinedJoinable(_name);
 		
 		//remove our data
 		YamlConfiguration conf = getFileConfiguration();

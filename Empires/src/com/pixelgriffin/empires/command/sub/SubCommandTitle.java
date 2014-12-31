@@ -64,7 +64,7 @@ public class SubCommandTitle extends SubCommand {
 				String selectedJoinedName;
 				
 				//the invoker could have typed gibberish, make sure the player exists so we don't create a new one by mistake
-				if(Empires.m_playerHandler.playerExists(_args[0])) {
+				if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
 					selectedJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
 				} else {
 					setError("Couldn't find the player '" + _args[0] + "'");

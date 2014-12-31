@@ -26,7 +26,7 @@ public class SubCommandInherit extends SubCommand {
 				String heir = _args[0];
 				
 				//does the player exist?
-				if(!Empires.m_playerHandler.playerExists(heir)) {
+				if(!Empires.m_playerHandler.getPlayerExists(heir)) {
 					setError("Could not find the player '" + heir +"'");
 					return false;
 				}

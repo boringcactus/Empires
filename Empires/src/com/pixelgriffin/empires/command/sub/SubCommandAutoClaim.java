@@ -45,7 +45,7 @@ public class SubCommandAutoClaim extends SubCommand {
 				return false;
 			}
 			
-			boolean val = !Empires.m_playerHandler.isPlayerAutoClaiming(invokerName);
+			boolean val = !Empires.m_playerHandler.getPlayerAutoClaiming(invokerName);
 			
 			Empires.m_playerHandler.setPlayerAutoClaiming(invokerName, val);
 			

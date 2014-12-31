@@ -34,7 +34,7 @@ public class SubCommandAccess extends SubCommand {
 					return false;
 				}
 				
-				if(!Empires.m_playerHandler.playerExists(_args[0])) {
+				if(!Empires.m_playerHandler.getPlayerExists(_args[0])) {
 					setError("Could not find player '" + _args[0] + "'");
 					return false;
 				}

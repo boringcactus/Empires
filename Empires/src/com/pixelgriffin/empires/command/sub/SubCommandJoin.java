@@ -34,7 +34,7 @@ public class SubCommandJoin extends SubCommand {
 				//this determines what they're refering to
 				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					newJoinedName = _args[0];
-				} else if(Empires.m_playerHandler.playerExists(_args[0])) {
+				} else if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
 					newJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
 					
 					//if the user belongs to the wilderness we cannot print anything

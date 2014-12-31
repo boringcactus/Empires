@@ -56,7 +56,7 @@ public class SubCommandDemote extends SubCommand {
 				}
 				
 				//does the player exist? (don't want to create a blank player)
-				if(Empires.m_playerHandler.playerExists(_args[0])) {
+				if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
 					//are they in our joinable?
 					if(Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]).equalsIgnoreCase(joinedName)) {
 						//gather role values

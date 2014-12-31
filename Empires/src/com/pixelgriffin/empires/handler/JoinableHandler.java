@@ -633,7 +633,7 @@ public class JoinableHandler extends DataHandler {
 		//if there an heir
 		if(!heir.equals("")) {
 			//does the player exist?
-			if(Empires.m_playerHandler.playerExists(heir)) {
+			if(Empires.m_playerHandler.getPlayerExists(heir)) {
 				if(Empires.m_playerHandler.getPlayerJoinedCivilization(heir).equals(_joinableName)) {
 					Empires.m_playerHandler.setPlayerRole(heir, Role.LEADER);
 					

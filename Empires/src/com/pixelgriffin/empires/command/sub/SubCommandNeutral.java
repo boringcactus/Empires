@@ -115,7 +115,7 @@ public class SubCommandNeutral extends SubCommand {
 		//does the joinable exist?
 		if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
 			joinedName = _reference;//then we're talking about _reference
-		} else if(Empires.m_playerHandler.playerExists(_reference)) {//does a player with this name exist?
+		} else if(Empires.m_playerHandler.getPlayerExists(_reference)) {//does a player with this name exist?
 			joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_reference);//then we were walking about a player's joinable
 		}
 		

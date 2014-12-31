@@ -91,7 +91,7 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		}
 		
 		//handle autoclaiming
-		if(Empires.m_playerHandler.isPlayerAutoClaiming(invokerName)) {
+		if(Empires.m_playerHandler.getPlayerAutoClaiming(invokerName)) {
 			//run the claim command for us
 			Bukkit.getServer().dispatchCommand(invoker, "e claim");
 		}

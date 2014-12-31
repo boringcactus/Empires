@@ -75,7 +75,7 @@ public class PlayerHandler extends DataHandler {
 	
 	//methods already create a player if he is found to be non-existent
 	//however when you don't want to create a player on accident use this
-	public boolean playerExists(String _name) {
+	public boolean getPlayerExists(String _name) {
 		return getFileConfiguration().isConfigurationSection(_name.toLowerCase());
 	}
 	
@@ -176,7 +176,7 @@ public class PlayerHandler extends DataHandler {
 		}
 	}
 	
-	public boolean isPlayerAutoClaiming(String _name) {
+	public boolean getPlayerAutoClaiming(String _name) {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		_name = _name.toLowerCase();

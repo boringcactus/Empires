@@ -33,19 +33,19 @@ public class SubCommandSecede extends SubCommand {
 			
 			try {
 				//empire exists
-				String empireName = Empires.m_joinableHandler.getJoinableEmpire(joinedName);
+				String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
 				if(!empireName.equals("")) {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
 					
 					//player has permission
-					if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SECEDE)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SECEDE)) {
 						//secede
-						Empires.m_joinableHandler.joinableSecedeEmpire(joinedName);
+						Empires.m_joinableHandler.invokeKingdomSecedeEmpire(joinedName);
 						
 						//inform everyone
 						String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
-						Empires.m_joinableHandler.broadcastToEmpireNetwork(empireName, ChatColor.YELLOW + displayName + " has seceded from the empire.");
-						Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + "We have seceded from our empire.");
+						Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(empireName, ChatColor.YELLOW + displayName + " has seceded from the empire.");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + "We have seceded from our empire.");
 						
 						return true;
 					}

@@ -450,9 +450,9 @@ public class AllyChat implements Channel {
 				
 				for(String relation : relations) {
 					//if the relation is one of the recipient types
-					if(includedRelations.contains(Empires.m_joinableHandler.getRelationTo(joinedName, relation))) {
+					if(includedRelations.contains(Empires.m_joinableHandler.getJoinableRelationTo(joinedName, relation))) {
 						//gather players from relation
-						players.addAll(Empires.m_joinableHandler.getJoinedPlayersForCivilization(relation));
+						players.addAll(Empires.m_joinableHandler.getJoinableJoinedPlayers(relation));
 						
 						Player p;
 						for(String player : players) {
@@ -468,7 +468,7 @@ public class AllyChat implements Channel {
 				
 				//add us
 				players.clear();
-				players.addAll(Empires.m_joinableHandler.getJoinedPlayersForCivilization(joinedName));
+				players.addAll(Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName));
 				
 				Player p;
 				for(String player : players) {

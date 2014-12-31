@@ -37,13 +37,13 @@ public class SubCommandUnclaimAll extends SubCommand {
 				
 				try {
 					//if the player has permission to unclaim
-					if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, playerRole, GroupPermission.UNCLAIM)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, playerRole, GroupPermission.UNCLAIM)) {
 						
 						//remove all territory
 						Empires.m_boardHandler.unclaimAllTerritoryForJoinable(joinedName);
 						
 						//let them know what we did!
-						Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + playerName + " unclaimed all land for you civilization!");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + playerName + " unclaimed all land for you civilization!");
 						return true;
 					}
 				} catch (EmpiresJoinableDoesNotExistException e) {

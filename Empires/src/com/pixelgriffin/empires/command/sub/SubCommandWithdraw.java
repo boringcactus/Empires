@@ -35,7 +35,7 @@ public class SubCommandWithdraw extends SubCommand {
 				try {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
 					
-					if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.WITHDRAW)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.WITHDRAW)) {
 						setError("You do not have permission to withdraw money!");
 						return false;
 					}
@@ -56,10 +56,10 @@ public class SubCommandWithdraw extends SubCommand {
 				}
 				
 				try {
-					Empires.m_joinableHandler.joinableWithdrawMoney(joinedName, invokerName, amount);
+					Empires.m_joinableHandler.invokeJoinableWithdrawMoney(joinedName, invokerName, amount);
 					
 					//inform of a successful deposit!
-					Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
 					
 					return true;//success
 				} catch (EmpiresNoFundsException e) {

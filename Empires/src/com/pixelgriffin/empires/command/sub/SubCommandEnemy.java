@@ -51,7 +51,7 @@ public class SubCommandEnemy extends SubCommand {
 				
 				try {
 					//does the player have permission?
-					if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.RELATION)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.RELATION)) {
 						Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.ENEMY);
 						
 						//build messages
@@ -82,10 +82,10 @@ public class SubCommandEnemy extends SubCommand {
 						}
 						
 						//inform the other civilization of our intentions
-						Empires.m_joinableHandler.broadcastToJoined(otherJoinable,messageA);
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable,messageA);
 						
 						//inform us of our actions!
-						Empires.m_joinableHandler.broadcastToJoined(joinedName, messageB);
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, messageB);
 						
 						return true;//yay
 					}
@@ -112,8 +112,8 @@ public class SubCommandEnemy extends SubCommand {
 	}
 	
 	/**
-	 * Gets the refered joinable from a string
-	 * @param _reference the refernce string
+	 * Gets the referenced joinable from a string
+	 * @param _reference - The refernce string
 	 * @return will return default civ if it cannot find a reference
 	 */
 	private String getReferencedJoinable(String _reference) {
@@ -123,7 +123,7 @@ public class SubCommandEnemy extends SubCommand {
 		String joinedName = PlayerHandler.m_defaultCiv;
 		
 		//does the joinable exist?
-		if(Empires.m_joinableHandler.joinableExists(_reference)) {
+		if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
 			joinedName = _reference;//then we're talking about _reference
 		} else if(Empires.m_playerHandler.playerExists(_reference)) {//does a player with this name exist?
 			joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_reference);//then we were walking about a player's joinable

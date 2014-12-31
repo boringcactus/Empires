@@ -296,7 +296,7 @@ public class PlayerHandler extends DataHandler {
 		sect.set("j", m_defaultCiv);
 		
 		//and remove ourselves from the previously joined player list
-		Empires.m_joinableHandler.removeJoinedPlayerForCivilization(joined, _name);
+		Empires.m_joinableHandler.invokeJoinableRemovePlayer(joined, _name);
 		
 		//gather the old role
 		Role oldRole = Role.valueOf(sect.getString("r").toUpperCase());
@@ -307,7 +307,7 @@ public class PlayerHandler extends DataHandler {
 		sect.set("t", m_defaultTitle);
 		
 		//if we haven't disbanded then do some extra stuff
-		if(!Empires.m_joinableHandler.joinableExists(joined))
+		if(!Empires.m_joinableHandler.getJoinableExists(joined))
 			return;
 		
 		//now that we're out of the previously joined civilization
@@ -322,7 +322,7 @@ public class PlayerHandler extends DataHandler {
 		if(oldRole.equals(Role.LEADER)) {
 			//find a new leader.
 			try {
-				Empires.m_joinableHandler.joinableFindNewLeader(joined, true);
+				Empires.m_joinableHandler.invokeJoinableFindNewLeader(joined, true);
 			} catch (EmpiresPlayerExistsException e) {
 				e.printStackTrace();//shouldn't happen.. but you never know!
 			}
@@ -359,7 +359,7 @@ public class PlayerHandler extends DataHandler {
 		//we set our pointer to the joinable in question
 		sect.set("j", _id);
 		//and add ourselves to the newly joined player list
-		Empires.m_joinableHandler.addPlayerToCivilization(_id, _name);
+		Empires.m_joinableHandler.invokeJoinableAddPlayer(_id, _name);
 		
 		//now that we've added the player, change the power value yo
 		//gather power value
@@ -485,7 +485,7 @@ public class PlayerHandler extends DataHandler {
 			}
 		}
 		
-		if(!Empires.m_joinableHandler.joinableExists(_name))
+		if(!Empires.m_joinableHandler.getJoinableExists(_name))
 			throw new EmpiresJoinableDoesNotExistException("Tried to override player civilization to a non-existent joinable '" + _name + "'");
 		
 		ConfigurationSection sect = conf.getConfigurationSection(_player);

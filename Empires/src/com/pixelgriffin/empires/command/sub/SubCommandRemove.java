@@ -39,16 +39,16 @@ public class SubCommandRemove extends SubCommand {
 						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
 						
 						//are we the leader?
-						if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.REMOVE)) {
+						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.REMOVE)) {
 							//do we have that kingdom in our empire?
-							if(Empires.m_joinableHandler.getJoinableKingdomList(joinedName).contains(otherName)) {
+							if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(otherName)) {
 								//remove them
-								Empires.m_joinableHandler.joinableSecedeEmpire(otherName);
+								Empires.m_joinableHandler.invokeKingdomSecedeEmpire(otherName);
 								
 								//inform everyone
 								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherName);
-								Empires.m_joinableHandler.broadcastToEmpireNetwork(joinedName, ChatColor.YELLOW + displayName + " has been removed from the empire.");
-								Empires.m_joinableHandler.broadcastToJoined(otherName, ChatColor.YELLOW + "We have seceded from our empire.");
+								Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + displayName + " has been removed from the empire.");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherName, ChatColor.YELLOW + "We have seceded from our empire.");
 								
 								return true;
 							}

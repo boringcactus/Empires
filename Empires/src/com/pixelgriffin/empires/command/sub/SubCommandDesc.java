@@ -35,7 +35,7 @@ public class SubCommandDesc extends SubCommand {
 				try {
 					//do we have permission?
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-					if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SET_DESC)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SET_DESC)) {
 						//build description
 						String desc = "";
 						for(int i = 0; i < _args.length; i++) {
@@ -48,7 +48,7 @@ public class SubCommandDesc extends SubCommand {
 						Empires.m_joinableHandler.setJoinableDescription(joinedName, desc);
 						
 						//inform everyone
-						Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " updated the civilization description!");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " updated the civilization description!");
 						
 						return true;//success!
 					}

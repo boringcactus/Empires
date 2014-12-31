@@ -42,7 +42,7 @@ public class SubCommandWho extends SubCommand {
 				//gather the joinedName
 				//the user could be talking about a player OR a joinable
 				//this determines what they're refering to
-				if(Empires.m_joinableHandler.joinableExists(_args[0])) {
+				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					joinedName = _args[0];
 				} else if(Empires.m_playerHandler.playerExists(_args[0])) {
 					joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
@@ -78,7 +78,7 @@ public class SubCommandWho extends SubCommand {
 				
 				{
 					//separate joined players into online/offline status
-					ArrayList<String> joinedPlayers = Empires.m_joinableHandler.getJoinedPlayersForCivilization(joinedName);
+					ArrayList<String> joinedPlayers = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
 					
 					String role, title, realName;
 					for(String playerName : joinedPlayers) {
@@ -115,7 +115,7 @@ public class SubCommandWho extends SubCommand {
 					
 					Relation rel;
 					for(String name : relationNames) {
-						rel = Empires.m_joinableHandler.getRelationTo(joinedName, name);
+						rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, name);
 						
 						if(rel.equals(Relation.ALLY)) {
 							alliedJoinables.add(name);
@@ -133,13 +133,13 @@ public class SubCommandWho extends SubCommand {
 				boolean isEmpire = Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName);
 				if(isEmpire) {
 					//load empire specific data
-					kingdomList = Empires.m_joinableHandler.getJoinableKingdomList(joinedName);
+					kingdomList = Empires.m_joinableHandler.getEmpireKingdomList(joinedName);
 					
 					//set type color
 					typeColor = ChatColor.GOLD;
 				} else {
 					//load kingdom specific data
-					empireName = Empires.m_joinableHandler.getJoinableJoinedEmpire(joinedName);
+					empireName = Empires.m_joinableHandler.getKingdomJoinedEmpire(joinedName);
 				}
 				
 				//print message

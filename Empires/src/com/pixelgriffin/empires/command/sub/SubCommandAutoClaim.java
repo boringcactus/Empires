@@ -34,7 +34,7 @@ public class SubCommandAutoClaim extends SubCommand {
 			
 			//do we have permission to claim land?
 			try {
-				if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.CLAIM)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.CLAIM)) {
 					setError("You do not have permission to claim land!");
 					return false;
 				}

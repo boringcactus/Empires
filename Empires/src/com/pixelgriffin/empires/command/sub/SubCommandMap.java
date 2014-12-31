@@ -74,7 +74,7 @@ public class SubCommandMap extends SubCommand {
 						
 						if(!joinedName.equals(PlayerHandler.m_defaultCiv)) {
 							try {
-								col = Empires.m_joinableHandler.getRelationTo(joinedName, terHost).getColor();
+								col = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, terHost).getColor();
 							} catch (EmpiresJoinableDoesNotExistException e) {
 								e.printStackTrace();
 								
@@ -95,7 +95,7 @@ public class SubCommandMap extends SubCommand {
 				
 				if(!joinedName.equals(PlayerHandler.m_defaultCiv)) {
 					try {
-						col = Empires.m_joinableHandler.getRelationTo(joinedName, jit).getColor();
+						col = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, jit).getColor();
 					} catch (EmpiresJoinableDoesNotExistException e) {
 						e.printStackTrace();
 						

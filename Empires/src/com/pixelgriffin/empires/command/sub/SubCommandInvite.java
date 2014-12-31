@@ -37,14 +37,14 @@ public class SubCommandInvite extends SubCommand {
 				
 				try {
 					//do we have permission?
-					if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.INVITE)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.INVITE)) {
 						//is the arg0 a player?
 						if(Empires.m_playerHandler.playerExists(_args[0])) {
 							//handle player
 							//did we request them?
 							if(Empires.m_joinableHandler.getJoinableRequestedPlayer(joinedName, _args[0])) {
 								//remove them from the request list
-								Empires.m_joinableHandler.joinableRemoveRequestedPlayer(joinedName, _args[0]);
+								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(joinedName, _args[0]);
 								
 								//gather display name..
 								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
@@ -52,11 +52,11 @@ public class SubCommandInvite extends SubCommand {
 								Player invited = Bukkit.getPlayer(_args[0]);
 								invited.sendMessage(ChatColor.YELLOW + "You are no longer invited to " + displayName);
 								
-								Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " uninvited " + invited.getName() + " to the civilization");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " uninvited " + invited.getName() + " to the civilization");
 								return true;
 							} else {
 								//add them to request list
-								Empires.m_joinableHandler.joinableRequestPlayer(joinedName, _args[0]);
+								Empires.m_joinableHandler.invokeJoinableRequestPlayer(joinedName, _args[0]);
 								
 								//gather display name..
 								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
@@ -64,10 +64,10 @@ public class SubCommandInvite extends SubCommand {
 								Player invited = Bukkit.getPlayer(_args[0]);
 								invited.sendMessage(ChatColor.YELLOW + "You have been invited to join " + displayName);
 								
-								Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " invted " + invited.getName() + " to the civilization");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " invted " + invited.getName() + " to the civilization");
 								return true;
 							}
-						} else if(Empires.m_joinableHandler.joinableExists(_args[0])) {//we're talking a joinable here
+						} else if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {//we're talking a joinable here
 							//handle inviting a joinable
 							//are we an empire?
 							if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
@@ -78,28 +78,28 @@ public class SubCommandInvite extends SubCommand {
 										//did we request them yet?
 										if(!Empires.m_joinableHandler.getEmpireRequestedKingdom(joinedName, _args[0])) {
 											//request
-											Empires.m_joinableHandler.empireRequestKingdom(joinedName, _args[0]);
+											Empires.m_joinableHandler.invokeEmpireRequestKingdom(joinedName, _args[0]);
 											
 											String displayName = Empires.m_joinableHandler.getJoinableDisplayName(_args[0]);
 											
 											//inform
 											//us
-											Empires.m_joinableHandler.broadcastToEmpireNetwork(joinedName, ChatColor.YELLOW + displayName + " was invited to join the empire");
+											Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + displayName + " was invited to join the empire");
 											//them
-											Empires.m_joinableHandler.broadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " was invited to join the " + joinedName + " empire");
+											Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " was invited to join the " + joinedName + " empire");
 											
 											return true;
 										} else {//guess we did
 											//un-request
-											Empires.m_joinableHandler.empireRemoveRequestedKingdom(joinedName, _args[0]);
+											Empires.m_joinableHandler.invokeEmpireRemoveRequestedKingdom(joinedName, _args[0]);
 											
 											String displayName = Empires.m_joinableHandler.getJoinableDisplayName(_args[0]);
 											
 											//inform
 											//us
-											Empires.m_joinableHandler.broadcastToEmpireNetwork(joinedName, ChatColor.YELLOW + displayName + " is no longer invited to the empire");
+											Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + displayName + " is no longer invited to the empire");
 											//them
-											Empires.m_joinableHandler.broadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + "empire");
+											Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + "empire");
 											
 											return true;
 										}

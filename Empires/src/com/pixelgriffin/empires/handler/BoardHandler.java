@@ -100,7 +100,7 @@ public class BoardHandler extends DataHandler {
 		//proper lookup
 		_id = _id.toLowerCase();
 		
-		if(!Empires.m_joinableHandler.joinableExists(_id))
+		if(!Empires.m_joinableHandler.getJoinableExists(_id))
 			throw new EmpiresJoinableDoesNotExistException("Tried to set territory host to a non-existent joinable '" + _id + "'");
 		
 		YamlConfiguration conf = getFileConfiguration();
@@ -126,7 +126,7 @@ public class BoardHandler extends DataHandler {
 		for(TerritoryGroup grouping : TerritoryGroup.values()) {
 			try {
 				//gather flags for this group
-				flags = Empires.m_joinableHandler.getFlagsForGroup(_id, grouping);
+				flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(_id, grouping);
 				
 				//set flags for this group
 				sect.set("f." + grouping.toString(), flags.clone());
@@ -150,7 +150,7 @@ public class BoardHandler extends DataHandler {
 		//proper lookup, requires lowercase
 		_id = _id.toLowerCase();
 		
-		if(!Empires.m_joinableHandler.joinableExists(_id))
+		if(!Empires.m_joinableHandler.getJoinableExists(_id))
 			throw new EmpiresJoinableDoesNotExistException("Tried to remove territory from a non-existent joinable '" + _id + "'");
 		
 		YamlConfiguration conf = getFileConfiguration();
@@ -520,7 +520,6 @@ public class BoardHandler extends DataHandler {
 		String path;
 		
 		path = _loc.getWorld().getName() + "." + _loc.getChunk().getX() + "." + _loc.getChunk().getZ();
-		System.out.println("path: " + path);
 		
 		if(getFileConfiguration().isConfigurationSection(path)) {
 			sect = getFileConfiguration().getConfigurationSection(path);

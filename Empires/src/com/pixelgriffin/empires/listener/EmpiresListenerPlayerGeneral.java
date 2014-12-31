@@ -111,7 +111,7 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		//gather relationship
 		try {
 			//gather relation
-			Relation rel = Empires.m_joinableHandler.getRelationTo(joinedName, toHost);
+			Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, toHost);
 			
 			//gather toHost display name
 			String displayName = Empires.m_joinableHandler.getJoinableDisplayName(toHost);

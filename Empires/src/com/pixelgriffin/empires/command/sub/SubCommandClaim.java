@@ -73,7 +73,7 @@ public class SubCommandClaim extends SubCommand {
 			//do we have permission to claim land?
 			try {
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(playerName);
-				if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.CLAIM)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.CLAIM)) {
 					setError("You do not have permission to claim land!");
 					return false;
 				}
@@ -134,7 +134,7 @@ public class SubCommandClaim extends SubCommand {
 			//successfully claimed
 			//let them know
 			try {
-				Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + player.getName() + " claimed land for your civilization!");
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + player.getName() + " claimed land for your civilization!");
 			} catch (EmpiresJoinableDoesNotExistException e) {//shouldn't happen.. but hey
 				//joined name doesn't exist?
 				e.printStackTrace();

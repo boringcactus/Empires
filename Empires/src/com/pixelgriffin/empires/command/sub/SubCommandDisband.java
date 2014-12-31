@@ -34,11 +34,11 @@ public class SubCommandDisband extends SubCommand {
 				}
 				
 				//does the joinable exist?
-				if(Empires.m_joinableHandler.joinableExists(joinedName)) {
+				if(Empires.m_joinableHandler.getJoinableExists(joinedName)) {
 					try {
 						//player has permission to disband
-						if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, Empires.m_playerHandler.getPlayerRole(playerName), GroupPermission.DISBAND)) {
-							Empires.m_joinableHandler.disbandJoinable(joinedName);//run disband
+						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, Empires.m_playerHandler.getPlayerRole(playerName), GroupPermission.DISBAND)) {
+							Empires.m_joinableHandler.invokeJoinableDisband(joinedName);//run disband
 							
 							//we disbanded successfully
 							return true;
@@ -68,9 +68,9 @@ public class SubCommandDisband extends SubCommand {
 					return false;
 				}
 				
-				if(Empires.m_joinableHandler.joinableExists(_args[0])) {
+				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					try {
-						Empires.m_joinableHandler.disbandJoinable(_args[0]);
+						Empires.m_joinableHandler.invokeJoinableDisband(_args[0]);
 						//successfully disbanded
 						return true;
 					} catch (EmpiresJoinableDoesNotExistException e) {

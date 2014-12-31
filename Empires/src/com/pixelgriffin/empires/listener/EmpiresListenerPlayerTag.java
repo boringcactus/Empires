@@ -35,7 +35,7 @@ public class EmpiresListenerPlayerTag implements Listener {
 		//(not in wilderness)
 		if(joinedName != PlayerHandler.m_defaultCiv && otherJoinedName != PlayerHandler.m_defaultCiv) {
 			try {
-				relationColor = Empires.m_joinableHandler.getRelationTo(joinedName, otherJoinedName).getColor();
+				relationColor = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, otherJoinedName).getColor();
 			} catch (EmpiresJoinableDoesNotExistException e) {
 				e.printStackTrace();//keep for debug purposes
 			}

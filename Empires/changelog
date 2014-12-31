@@ -132,3 +132,6 @@ Fixed renaming not updating references in related empires/kingdoms
 Fixed the chunk command not affecting single chunks
 Added SPAWN_MOBS flag
 Added /e remove [who] command
+
+12/30/2014:
+Refactored code to make for a cleaner API

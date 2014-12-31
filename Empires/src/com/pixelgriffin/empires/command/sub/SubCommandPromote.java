@@ -43,7 +43,7 @@ public class SubCommandPromote extends SubCommand {
 				
 				try {
 					//check for the promote permission
-					if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.PROMOTE)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.PROMOTE)) {
 						//no permission, terminate
 						setError("You do not have permission to promote players!");
 						return false;
@@ -73,7 +73,7 @@ public class SubCommandPromote extends SubCommand {
 									Empires.m_playerHandler.setPlayerRole(_args[0], role);
 									
 									//inform everyone we set the role
-									Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " promoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
+									Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " promoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
 									
 								} catch (EmpiresJoinableDoesNotExistException e) {
 									e.printStackTrace();

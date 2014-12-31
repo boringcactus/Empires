@@ -40,7 +40,7 @@ public class SubCommandUnclaim extends SubCommand {
 				
 				try {
 					//if the player has permission to unclaim
-					if(Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, playerRole, GroupPermission.UNCLAIM)) {
+					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, playerRole, GroupPermission.UNCLAIM)) {
 						
 						//is this OUR territory?
 						String host = Empires.m_boardHandler.getTerritoryHost(loc);
@@ -54,7 +54,7 @@ public class SubCommandUnclaim extends SubCommand {
 						
 						
 						//let them know what we did!
-						Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + playerName + " unclaimed land for you civilization at (...)");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + playerName + " unclaimed land for you civilization at (...)");
 						return true;
 					}
 				} catch (EmpiresJoinableDoesNotExistException e) {

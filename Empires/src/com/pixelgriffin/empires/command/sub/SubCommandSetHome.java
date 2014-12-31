@@ -34,7 +34,7 @@ public class SubCommandSetHome extends SubCommand {
 			
 			try {
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-				if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SET_HOME)) {
+				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.SET_HOME)) {
 					setError("You do not have permission to set the home of your civilization!");
 					return false;
 				}
@@ -53,7 +53,7 @@ public class SubCommandSetHome extends SubCommand {
 			try {
 				Empires.m_joinableHandler.setJoinableHome(joinedName, invokerLoc);
 				
-				Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " has set a new home for the civilization!");
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " has set a new home for the civilization!");
 				
 				return true;
 			} catch (EmpiresJoinableDoesNotExistException e) {

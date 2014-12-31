@@ -32,7 +32,7 @@ public class SubCommandJoin extends SubCommand {
 				//gather the joinedName
 				//the user could be talking about a player OR a joinable
 				//this determines what they're refering to
-				if(Empires.m_joinableHandler.joinableExists(_args[0])) {
+				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					newJoinedName = _args[0];
 				} else if(Empires.m_playerHandler.playerExists(_args[0])) {
 					newJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
@@ -61,7 +61,7 @@ public class SubCommandJoin extends SubCommand {
 						//we are a kingdom
 						try {
 							//doesn't have an empire
-							if(Empires.m_joinableHandler.getJoinableEmpire(joinedName).equals("")) {
+							if(Empires.m_joinableHandler.getKingdomEmpire(joinedName).equals("")) {
 								//we've been requested
 								if(Empires.m_joinableHandler.getEmpireRequestedKingdom(newJoinedName, joinedName)) {
 									//set our empire
@@ -70,8 +70,8 @@ public class SubCommandJoin extends SubCommand {
 										
 										//inform
 										String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
-										Empires.m_joinableHandler.broadcastToEmpireNetwork(newJoinedName, ChatColor.YELLOW + displayName + " has joined the empire!");
-										Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
+										Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(newJoinedName, ChatColor.YELLOW + displayName + " has joined the empire!");
+										Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
 										
 										return true;
 									} catch (EmpiresJoinableIsNotEmpireException e) {
@@ -108,7 +108,7 @@ public class SubCommandJoin extends SubCommand {
 								Empires.m_playerHandler.setPlayerJoinedCivlization(invokerName, newJoinedName);
 								
 								//remove from the request list
-								Empires.m_joinableHandler.joinableRemoveRequestedPlayer(newJoinedName, invokerName);
+								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerName);
 							} catch (EmpiresJoinableExistsException e) {
 								setError("You must leave your current civilization first!");
 								return false;
@@ -119,7 +119,7 @@ public class SubCommandJoin extends SubCommand {
 							
 							//inform everyone we joined
 							try {
-								Empires.m_joinableHandler.broadcastToJoined(newJoinedName, ChatColor.YELLOW + invokerName + " has joined the civilization!");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(newJoinedName, ChatColor.YELLOW + invokerName + " has joined the civilization!");
 							} catch (EmpiresJoinableDoesNotExistException e) {
 								e.printStackTrace();
 								

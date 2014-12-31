@@ -50,7 +50,7 @@ public class SubCommandTitle extends SubCommand {
 				
 				//does the invoker have permission to set titles?
 				try {
-					if(!Empires.m_joinableHandler.joinableHasPermissionForRole(invokerJoinedName, invokerRole, GroupPermission.SET_TITLE)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(invokerJoinedName, invokerRole, GroupPermission.SET_TITLE)) {
 						setError("You do not have permission to set titles!");
 						return false;
 					}
@@ -96,7 +96,7 @@ public class SubCommandTitle extends SubCommand {
 				//set the title successfully
 				//let everyone know about the new title
 				try {
-					Empires.m_joinableHandler.broadcastToJoined(invokerJoinedName, ChatColor.YELLOW + _args[0] + "'s title has been set to '" + _args[1] + "'");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(invokerJoinedName, ChatColor.YELLOW + _args[0] + "'s title has been set to '" + _args[1] + "'");
 				} catch (EmpiresJoinableDoesNotExistException e) {
 					e.printStackTrace();
 				}

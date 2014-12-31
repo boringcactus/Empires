@@ -40,10 +40,10 @@ public class SubCommandDeposit extends SubCommand {
 				}
 				
 				try {
-					Empires.m_joinableHandler.joinableDepositMoney(joinedName, invokerName, amount);
+					Empires.m_joinableHandler.invokeJoinableDepositMoney(joinedName, invokerName, amount);
 					
 					//inform of a successful deposit!
-					Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " deposited " + Empires.m_economy.format(amount) + " to the civilization bank!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " deposited " + Empires.m_economy.format(amount) + " to the civilization bank!");
 					
 					return true;//success
 				} catch (EmpiresNoFundsException e) {

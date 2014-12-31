@@ -37,7 +37,7 @@ public class SubCommandHome extends SubCommand {
 					return false;
 				} else if(_args.length == 1) {//we are attempting to teleport elsewhere
 					//does the joinable exist?
-					if(Empires.m_joinableHandler.joinableExists(_args[0])) {
+					if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 						
 						if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
 							//we are an empire
@@ -46,7 +46,7 @@ public class SubCommandHome extends SubCommand {
 						} else {
 							//we are NOT an empire
 							//is this joinable our empire?
-							if(Empires.m_joinableHandler.getJoinableEmpire(joinedName).equalsIgnoreCase(_args[0])) {
+							if(Empires.m_joinableHandler.getKingdomEmpire(joinedName).equalsIgnoreCase(_args[0])) {
 								//allow teleportation
 								//gather location
 								Location homeLoc = Empires.m_joinableHandler.getJoinableHome(_args[0]);

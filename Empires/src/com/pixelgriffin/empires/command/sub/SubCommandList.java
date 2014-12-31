@@ -31,7 +31,7 @@ public class SubCommandList extends SubCommand {
 		{
 			try {
 				//get display name list of all joinables
-				ArrayList<String> nameList = Empires.m_joinableHandler.getJoinableNameList();
+				ArrayList<String> nameList = Empires.m_joinableHandler.getJoinableList();
 				
 				boolean isEmpire;
 				int powerValue;

@@ -34,7 +34,7 @@ public class SubCommandName extends SubCommand {
 				
 				try {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-					if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.RENAME)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.RENAME)) {
 						setError("You do not have permission to rename your civilization!");
 						return false;
 					}
@@ -45,7 +45,7 @@ public class SubCommandName extends SubCommand {
 					return false;
 				}
 				
-				if(Empires.m_joinableHandler.joinableExists(_args[0])) {
+				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					setError("A civilization with the name '" + _args[0] + "' already exists!");
 					return false;
 				}
@@ -55,7 +55,7 @@ public class SubCommandName extends SubCommand {
 					Empires.m_joinableHandler.setJoinableName(joinedName, _args[0]);
 					
 					//inform
-					Empires.m_joinableHandler.broadcastToJoined(_args[0], ChatColor.YELLOW + invokerName + " renamed the civilization to '" + _args[0] + "!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invokerName + " renamed the civilization to '" + _args[0] + "!");
 					
 					return true;
 				} catch (EmpiresJoinableDoesNotExistException e) {

@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.pixelgriffin.empires.Empires;
+import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
@@ -95,18 +96,20 @@ public class SubCommandChunk extends SubCommand {
 				invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
 				
 				//SPAWN_MOBS
-				try {
-				outString = ChatColor.GRAY + "SPAWN_MOBS: ";
-					val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
-					
-					accessCol = ChatColor.RED;
-					if(val)
-					accessCol = ChatColor.GREEN;
-					
-					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
-				} catch(EmpiresJoinableDoesNotExistException e) {
-					setError("Something went wrong");
-					return false;
+				if(EmpiresConfig.m_mobSpawnManaging) {
+					try {
+					outString = ChatColor.GRAY + "SPAWN_MOBS: ";
+						val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+						
+						accessCol = ChatColor.RED;
+						if(val)
+						accessCol = ChatColor.GREEN;
+						
+						invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
+					} catch(EmpiresJoinableDoesNotExistException e) {
+						setError("Something went wrong");
+						return false;
+					}
 				}
 				
 				return true;
@@ -126,7 +129,7 @@ public class SubCommandChunk extends SubCommand {
 						setError("You cannot toggle IGNORE_RELATIONS on empty territory!");
 						return false;
 					}
-				} else if(_args[0].equalsIgnoreCase("SPAWN_MOBS")) {
+				} else if(EmpiresConfig.m_mobSpawnManaging && _args[0].equalsIgnoreCase("SPAWN_MOBS")) {
 					try {
 						if(Empires.m_boardHandler.toggleTerritoryAllowsMobs(invokerLoc)) {
 							invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS:" + ChatColor.GREEN + " TRUE");

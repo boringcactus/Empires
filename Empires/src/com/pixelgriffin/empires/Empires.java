@@ -45,6 +45,7 @@ public class Empires extends JavaPlugin {
 	public static Empires m_instance;
 	
 	private EmpiresCommands m_commandExecutor;
+	private EmpiresAPI m_api;
 	
 	@Override
 	public void onEnable() {
@@ -138,6 +139,13 @@ public class Empires extends JavaPlugin {
 		
 		//set our instance
 		m_instance = this;
+		
+		//create API
+		m_api = new EmpiresAPI();
+	}
+	
+	public EmpiresAPI getAPI() {
+		return m_api;
 	}
 	
 	@Override

@@ -436,7 +436,7 @@ public class CityChat implements Channel {
 		if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
 			try {
 				//gather our players
-				ArrayList<String> players = Empires.m_joinableHandler.getJoinedPlayersForCivilization(joinedName);
+				ArrayList<String> players = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
 				
 				Player p;
 				for(String player : players) {

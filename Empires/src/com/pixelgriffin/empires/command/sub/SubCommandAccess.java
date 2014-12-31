@@ -41,7 +41,7 @@ public class SubCommandAccess extends SubCommand {
 				
 				try {
 					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-					if(!Empires.m_joinableHandler.joinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.ACCESS)) {
+					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, invokerRole, GroupPermission.ACCESS)) {
 						setError("You do not have permission to give access to chunks!");
 						return false;
 					}

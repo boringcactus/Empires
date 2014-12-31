@@ -45,9 +45,9 @@ public class SubCommandInherit extends SubCommand {
 					//inform everyone of the new heir
 					//if we're an empire inform EVERYONE
 					if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-						Empires.m_joinableHandler.broadcastToEmpireNetwork(joinedName, ChatColor.YELLOW + invokerName + " has declared " + heir + " as the heir of the empire!");
+						Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + invokerName + " has declared " + heir + " as the heir of the empire!");
 					} else {//not an empire, just inform us
-						Empires.m_joinableHandler.broadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " has declared " + heir + " as the heir of the kingdom!");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " has declared " + heir + " as the heir of the kingdom!");
 					}
 				} catch(EmpiresJoinableDoesNotExistException e) {
 					e.printStackTrace();

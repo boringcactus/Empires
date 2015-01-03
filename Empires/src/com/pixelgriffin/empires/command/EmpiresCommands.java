@@ -84,8 +84,10 @@ public class EmpiresCommands implements CommandExecutor {
 					String[] changedArgs = Arrays.copyOfRange(_args, 1, _args.length);
 					
 					//run the command and send any errors
-					if(!command.run(_sender, changedArgs))
-						_sender.sendMessage(ChatColor.RED + command.getError());
+					if(!command.run(_sender, changedArgs)) {
+						if(command.getError() != null)
+							_sender.sendMessage(ChatColor.RED + command.getError());
+					}
 					
 					return true;
 				}

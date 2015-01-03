@@ -8,10 +8,10 @@ import org.bukkit.command.CommandSender;
  *
  */
 public abstract class SubCommand {
-	private String m_error;//error to be printed later if the sub command returns flase (fails)
+	private String m_error;//error to be printed later if the sub command returns false (fails)
 	
 	public SubCommand() {
-		this.m_error = "void";
+		this.m_error = null;
 	}
 	
 	public String getError() {

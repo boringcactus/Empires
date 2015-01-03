@@ -46,7 +46,7 @@ public class BoardHandler extends DataHandler {
 	 */
 	
 	/**
-	 * Claims territory for _id. Copys flags, data & changes claim size
+	 * Claims territory for _id. Copies flags, data & changes claim size
 	 * @param _loc
 	 * @param _id
 	 * @throws EmpiresJoinableDoesNotExistException

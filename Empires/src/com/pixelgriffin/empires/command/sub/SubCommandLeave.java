@@ -33,7 +33,7 @@ public class SubCommandLeave extends SubCommand {
 				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " left the civilization!");
 				
 				//actually remove us and remove our pointer to the old civ
-				Empires.m_playerHandler.removePlayerFromJoinedCivilization(invokerName);
+				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerName);
 				
 				return true;
 			} catch (EmpiresJoinableDoesNotExistException e) {

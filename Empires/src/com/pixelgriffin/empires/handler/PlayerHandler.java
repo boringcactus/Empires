@@ -265,6 +265,7 @@ public class PlayerHandler extends DataHandler {
 	 * @param _name
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
+	@SuppressWarnings("deprecation")
 	public void invokeRemovePlayerFromJoinedJoinable(String _name) throws EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		

@@ -57,7 +57,7 @@ public class SubCommandCreate extends SubCommand {
 						//once the joinable was successfully created
 						try {
 							//attempt to set the player to this new civilization
-							Empires.m_playerHandler.removePlayerFromJoinedCivilization(player.getName());//shouldn't happen but as a precaution remove them from any pre-existing joinable
+							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(player.getName());//shouldn't happen but as a precaution remove them from any pre-existing joinable
 							Empires.m_playerHandler.setPlayerJoinedCivlization(player.getName(), _args[0]);
 							Empires.m_playerHandler.setPlayerRole(player.getName(), Role.LEADER);
 							

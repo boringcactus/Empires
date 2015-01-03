@@ -55,7 +55,7 @@ public class SubCommandKick extends SubCommand {
 							Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " kicked " + other + " from the civilization!");
 							
 							//remove them
-							Empires.m_playerHandler.removePlayerFromJoinedCivilization(other);
+							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(other);
 							
 							return true;//success
 						}

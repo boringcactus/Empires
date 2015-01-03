@@ -9,6 +9,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.Role;
+import com.pixelgriffin.empires.event.EmpiresPlayerCreateJoinable;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableInvalidCharacterException;
@@ -40,6 +41,12 @@ public class SubCommandCreate extends SubCommand {
 								return false;
 							}
 						}
+						
+						//fire event
+						EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, _args[0], false);
+						Bukkit.getPluginManager().callEvent(event);
+						if(event.isCancelled())//stop creating a kingdom since someone told us to stop
+							return false;
 						
 						//create kingdom
 						try {
@@ -116,6 +123,12 @@ public class SubCommandCreate extends SubCommand {
 									return false;
 								}
 							}
+							
+							//fire event
+							EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, joinedName, true);
+							Bukkit.getPluginManager().callEvent(event);
+							if(event.isCancelled())//stop creating an empire since someone told us to stop
+								return false;
 							
 							//empire creation
 							try {

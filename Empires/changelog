@@ -135,3 +135,7 @@ Added /e remove [who] command
 
 12/30/2014:
 Refactored code to make for a cleaner API
+
+1/2/2014:
+More Javadocs added to JoinableHandler
+Events system added to claiming and creating for joinables

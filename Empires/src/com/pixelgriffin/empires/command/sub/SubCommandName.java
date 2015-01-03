@@ -50,6 +50,14 @@ public class SubCommandName extends SubCommand {
 					return false;
 				}
 				
+				//check for colors and permission
+				if(!invoker.hasPermission("Empires.colors.joinable")) {
+					if(_args[0].contains("&")) {
+						setError("You do not have permission to put colors in civilization names!");
+						return false;
+					}
+				}
+				
 				try {
 					//update name
 					Empires.m_joinableHandler.setJoinableName(joinedName, _args[0]);

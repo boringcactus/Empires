@@ -26,3 +26,9 @@ permissions:
   Empires.power.extra:
     description: Overrides the 15 power to allow configurable power.
     default: false
+  Empires.colors.joinable
+    description: Allows a player to put colors in their joinable names
+    default: false
+  Empires.colors.title
+    description: Allows a player to put colors in their title names
+    default: false

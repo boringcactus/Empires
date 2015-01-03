@@ -104,14 +104,14 @@ public class JoinableHandler extends DataHandler {
 	 * 
 	 * @param _joinableName - The {@link String} of the joinable name
 	 * @throws EmpiresJoinableExistsException <p>Thrown when a joinable by the name of <b>_joinableName</b> already exists</p>
-	 * @throws EmpiresJoinableInvalidCharacterException <p>Thrown when the name <b>_joinableName</b> contains a ':', '.', or '&' character</p>
+	 * @throws EmpiresJoinableInvalidCharacterException <p>Thrown when the name <b>_joinableName</b> contains a ':', '.'</p>
 	 */
 	public void invokeCreateBlankJoinable(String _joinableName) throws EmpiresJoinableExistsException, EmpiresJoinableInvalidCharacterException {
 		//we cannot create a blank joinable with the same name as the default
 		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			throw new EmpiresJoinableExistsException("Attempted to create blank joinable with default name '" + _joinableName + "'");
 		
-		if(_joinableName.contains(":") || _joinableName.contains(".") || _joinableName.contains("&"))
+		if(_joinableName.contains(":") || _joinableName.contains("."))
 			throw new EmpiresJoinableInvalidCharacterException("Attempted to create joinable with the name '" + _joinableName + "'");
 		
 		YamlConfiguration conf = getFileConfiguration();
@@ -887,7 +887,7 @@ public class JoinableHandler extends DataHandler {
 		if(_newName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
 			return;
 		
-		if(_newName.contains(":") || _newName.contains(".") || _newName.contains("&"))
+		if(_newName.contains(":") || _newName.contains("."))
 			throw new EmpiresJoinableInvalidCharacterException("Attempted to create joinable with the name '" + _newName + "'");
 		
 		

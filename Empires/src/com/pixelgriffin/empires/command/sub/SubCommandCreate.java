@@ -42,6 +42,13 @@ public class SubCommandCreate extends SubCommand {
 							}
 						}
 						
+						if(!player.hasPermission("Empires.colors.joinable")) {
+							if(_args[0].contains("&")) {
+								setError("You do not have permission to put colors in civilization names!");
+								return false;
+							}
+						}
+						
 						//fire event
 						EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, _args[0], false);
 						Bukkit.getPluginManager().callEvent(event);

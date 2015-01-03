@@ -59,6 +59,14 @@ public class SubCommandTitle extends SubCommand {
 					e.printStackTrace();
 					return false;
 				}
+				
+				//check for colors and permission
+				if(!invoker.hasPermission("Empires.colors.title")) {
+					if(_args[0].contains("&")) {
+						setError("You do not have permission to put colors in title names!");
+						return false;
+					}
+				}
 			
 				//is the player in our joinable?
 				String selectedJoinedName;

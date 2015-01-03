@@ -498,7 +498,7 @@ public class JoinableHandler extends DataHandler {
 	 * @param _permission - The {@link GroupPermission} to change
 	 * @param _role - The {@link Role} that is affected by the permission change
 	 * @return Returns true if the permission was turned on by the method
-	 * @throws EmpiresJoinableDoesNotExistException <p><Thrown when the joinable <b>_joinableName</b> does not exist/p>
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
 	 */
 	public boolean toggleJoinablePermission(String _joinableName, GroupPermission _permission, Role _role) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
@@ -527,7 +527,16 @@ public class JoinableHandler extends DataHandler {
 	}
 	
 	/**
-	 * Updates all territory when the flag is toggled
+	 * <br />
+	 * <p>
+	 * Toggles the IGNORE_RELATIONS flag for the joinable named '<b>_joinableName</b>.' <br />
+	 * It then updates all territory to reflect this change
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName - The {@link String} name of the joinable to change the flag for
+	 * @return Returns true if the IGNORE_RELATIONS flag was changed to true by this method
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
 	 */
 	public boolean toggleJoinableIgnoresRelations(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
@@ -549,7 +558,16 @@ public class JoinableHandler extends DataHandler {
 	}
 	
 	/**
-	 * Updates all territory when the flag is toggled
+	 * <br />
+	 * <p>
+	 * Toggles the SPAWN_MOBS flag for the joinable named '<b>_joinableName</b>.' <br />
+	 * It then updates all territory to reflect this change
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName - The {@link String} name of the joinable to change the flag for
+	 * @return Returns true if the SPAWN_MOBS flag was changed to true by this method
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
 	 */
 	public boolean toggleJoinableAllowsMobs(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
@@ -575,6 +593,20 @@ public class JoinableHandler extends DataHandler {
 	 * @param _id - civ id
 	 * @param _playerName - player name
 	 * @throws EmpiresJoinableDoesNotExistException _id does not exist in YML
+	 */
+	/**
+	 * @deprecated
+	 * <br />
+	 * <p>
+	 * Removes a player from a joinable's list of joined players. <br />
+	 * <b>Do not use this if you are trying to remove a player completely from a joinable</b> <br />
+	 * Use the {@link PlayerHandler} method invokeRemovePlayerFromJoinedJoinable({@link String} _name)
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName
+	 * @param _playerName
+	 * @throws EmpiresJoinableDoesNotExistException
 	 */
 	public void invokeJoinableRemovePlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
@@ -614,10 +646,17 @@ public class JoinableHandler extends DataHandler {
 	}
 	
 	/**
-	 * Finds a new leader. Careful to remove the old leader first or exceptions will be thrown
-	 * @param _id
-	 * @throws EmpiresJoinableDoesNotExistException 
-	 * @throws EmpiresPlayerExistsException 
+	 * <br />
+	 * <p>
+	 * Finds a new leader for the joinable <b>_joinableName</b> starting from the highest ranked player {@link Role} going down <br />
+	 * If a leader already exists an exception will be thrown. Remove the leader first.
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName - The {@link String} name of the joinable to find a new leader for
+	 * @param _announce - If true the method will announce the appointment of the new leader
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
+	 * @throws EmpiresPlayerExistsException <p>Thrown when the joinable already has a leader appointed to it</p>
 	 */
 	public void invokeJoinableFindNewLeader(String _joinableName, boolean _announce) throws EmpiresJoinableDoesNotExistException, EmpiresPlayerExistsException {
 		if(getCheck(_joinableName))
@@ -658,7 +697,7 @@ public class JoinableHandler extends DataHandler {
 			
 			//iterate through the officers from level 3 -> 1
 			for(int i =3; i >= 1; i--) {
-				officers = getJoinableOfficers(_joinableName, i);
+				officers = getJoinableOfficersList(_joinableName, i);
 				
 				//are there officers?
 				if(officers.isEmpty())
@@ -695,13 +734,25 @@ public class JoinableHandler extends DataHandler {
 		}
 	}
 	
-	public ArrayList<String> getJoinableOfficers(String _joinableName, int _rank) throws EmpiresJoinableDoesNotExistException {
+	/**
+	 * <br />
+	 * <p>
+	 * Gathers a {@link String} {@link ArrayList} of the names of all officers currently in the joinable <b>_joinableName</b>
+	 * </p>
+	 * <br />
+	 * 
+	 * @param _joinableName - The {@link String} name of the joinable to gather officers from
+	 * @param _rank - An integer value of the officer suffix rank (OFFICER_1 = 1, OFFICER_2 = 2...)
+	 * @return Returns an {@link ArrayList} of the naes of all officers in the joinable. Will return an empty list if the <b>_rank</b> defined does not exist
+	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
+	 */
+	public ArrayList<String> getJoinableOfficersList(String _joinableName, int _rank) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
 			return new ArrayList<String>();
 		
 		//rank restriction
 		if(_rank > 3 || _rank < 1) {
-			return null;
+			return new ArrayList<String>();
 		}
 		
 		//gather what role we're talking about

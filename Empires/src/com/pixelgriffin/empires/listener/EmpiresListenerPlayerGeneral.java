@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.listener;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,7 +29,7 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent _evt) {
 		//set their last played time to right now
-		Empires.m_playerHandler.setPlayerLastPlayedTime(_evt.getPlayer().getName(), System.currentTimeMillis());
+		Empires.m_playerHandler.setPlayerLastPlayedTime(_evt.getPlayer().getUniqueId(), System.currentTimeMillis());
 	}
 	
 	//when a player moves from one block to another
@@ -41,12 +43,12 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 			return;
 		
 		//gather our TPID
-		int tpid = Empires.m_playerHandler.getPlayerTPID(_evt.getPlayer().getName());
+		int tpid = Empires.m_playerHandler.getPlayerTPID(_evt.getPlayer().getUniqueId());
 		
 		//if our TPID is not null (-1) then stop the teleport
 		if(tpid != -1) {
 			Bukkit.getScheduler().cancelTask(tpid);//cancel the task in bukkit
-			Empires.m_playerHandler.setPlayerTPID(_evt.getPlayer().getName(), -1);//remove our old TPID
+			Empires.m_playerHandler.setPlayerTPID(_evt.getPlayer().getUniqueId(), -1);//remove our old TPID
 			
 			//inform
 			_evt.getPlayer().sendMessage(ChatColor.RED + "Teleport cancelled");
@@ -70,8 +72,8 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 			return;
 		
 		//gather player info
-		String invokerName = invoker.getName();
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+		UUID invokerID = invoker.getUniqueId();
+		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 		
 		//host names
 		String toHost, fromHost;
@@ -91,7 +93,7 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		}
 		
 		//handle autoclaiming
-		if(Empires.m_playerHandler.getPlayerAutoClaiming(invokerName)) {
+		if(Empires.m_playerHandler.getPlayerAutoClaiming(invokerID)) {
 			//run the claim command for us
 			Bukkit.getServer().dispatchCommand(invoker, "e claim");
 		}
@@ -154,12 +156,12 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		
 		//gather player
 		Player invoker = evt.getEntity();
-		String invokerName = invoker.getName();
+		UUID invokerID = invoker.getUniqueId();
 		
 		//does the player get to keep their power?
 		if(!invoker.hasPermission("Empires.power.keep")) {
 			//set
-			Empires.m_playerHandler.setPlayerPower(invokerName, 0);
+			Empires.m_playerHandler.setPlayerPower(invokerID, 0);
 			
 			//inform player
 			invoker.sendMessage(ChatColor.RED + "Your power has been reduced to 0");

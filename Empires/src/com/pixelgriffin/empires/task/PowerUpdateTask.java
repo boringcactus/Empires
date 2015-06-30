@@ -21,7 +21,7 @@ public class PowerUpdateTask implements Runnable {
 		int powerVal;
 		for(Player online : Bukkit.getOnlinePlayers()) {
 			//gather the power
-			powerVal = Empires.m_playerHandler.getPlayerPower(online.getName());
+			powerVal = Empires.m_playerHandler.getPlayerPower(online.getUniqueId());
 			
 			int totalPower = EmpiresConfig.m_powerMax;
 			if(online.hasPermission("Empires.power.extra")) {
@@ -30,7 +30,7 @@ public class PowerUpdateTask implements Runnable {
 			
 			if(powerVal < totalPower) {//should we increase their power?
 				//change the value
-				Empires.m_playerHandler.setPlayerPower(online.getName(), powerVal + m_increment);//for us
+				Empires.m_playerHandler.setPlayerPower(online.getUniqueId(), powerVal + m_increment);//for us
 			}
 		}
 	}

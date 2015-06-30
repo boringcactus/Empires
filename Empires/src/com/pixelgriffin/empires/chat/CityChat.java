@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -430,16 +431,16 @@ public class CityChat implements Channel {
 		Set<Player> ret = new HashSet<Player>();
 		
 		//gather joined name
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(sen.getName());
+		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(sen.getUniqueId());
 		
 		//is it wilderness?
 		if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
 			try {
 				//gather our players
-				ArrayList<String> players = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
+				ArrayList<UUID> players = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
 				
 				Player p;
-				for(String player : players) {
+				for(UUID player : players) {
 					//if they are online
 					p = Bukkit.getPlayer(player);
 					

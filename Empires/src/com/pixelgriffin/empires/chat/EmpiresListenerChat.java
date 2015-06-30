@@ -77,8 +77,8 @@ public class EmpiresListenerChat implements Listener {
 		private void parseVanilla(AsyncPlayerChatEvent evt) {
 			Player p = evt.getPlayer();
 			
-			String title = Empires.m_playerHandler.getPlayerTitle(p.getName());
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(p.getName());
+			String title = Empires.m_playerHandler.getPlayerTitle(p.getUniqueId());
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(p.getUniqueId());
 			
 			String joinedDisplayName = "";
 			try {
@@ -86,7 +86,7 @@ public class EmpiresListenerChat implements Listener {
 			} catch (EmpiresJoinableDoesNotExistException e) {
 			}
 			
-			Role role = Empires.m_playerHandler.getPlayerRole(p.getName());
+			Role role = Empires.m_playerHandler.getPlayerRole(p.getUniqueId());
 			
 			if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
 				//{relation_color}
@@ -97,8 +97,8 @@ public class EmpiresListenerChat implements Listener {
 		private void parseHerochat(ChannelChatEvent evt) {
 			Player p = evt.getSender().getPlayer();
 			
-			String title = Empires.m_playerHandler.getPlayerTitle(p.getName());
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(p.getName());
+			String title = Empires.m_playerHandler.getPlayerTitle(p.getUniqueId());
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(p.getUniqueId());
 			
 			String joinedDisplayName = "";
 			try {
@@ -106,7 +106,7 @@ public class EmpiresListenerChat implements Listener {
 			} catch (EmpiresJoinableDoesNotExistException e) {
 			}
 			
-			Role role = Empires.m_playerHandler.getPlayerRole(p.getName());
+			Role role = Empires.m_playerHandler.getPlayerRole(p.getUniqueId());
 			
 			if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
 				evt.setFormat("<§l"+role.getPrefix()+"§r"+joinedDisplayName+" "+title+" {relation_color}§f%1$s§f> %2$s");

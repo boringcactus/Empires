@@ -25,8 +25,8 @@ public class EmpiresListenerPlayerTag implements Listener {
 		Player otherPlayer = _evt.getNamedPlayer();
 		
 		//gather joined names of involved players
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(player.getName());
-		String otherJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherPlayer.getName());
+		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(player.getUniqueId());
+		String otherJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherPlayer.getUniqueId());
 		
 		//the default color is the neutral value
 		ChatColor relationColor = Relation.NEUTRAL.getColor();

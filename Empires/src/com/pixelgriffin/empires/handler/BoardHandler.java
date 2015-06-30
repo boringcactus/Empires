@@ -1,6 +1,7 @@
 package com.pixelgriffin.empires.handler;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -208,25 +209,25 @@ public class BoardHandler extends DataHandler {
 		return sect.getString("h");
 	}
 	
-	public boolean toggleTerritoryAccessFor(Location _loc, String _name) throws EmpiresEmptyTerritoryException {
+	public boolean toggleTerritoryAccessFor(Location _loc, UUID _id) throws EmpiresEmptyTerritoryException {
 		ConfigurationSection sect = getTerritorySection(_loc);
 		
 		//if the path doesn't exist
 		if(sect == null)
-			throw new EmpiresEmptyTerritoryException("Tried to change access for player " + _name + " at a null territory");//we can't set access
+			throw new EmpiresEmptyTerritoryException("Tried to change access for player " + _id.toString() + " at a null territory");//we can't set access
 		
 		ArrayList<String> accessList = (ArrayList<String>)sect.getList("a");
 		
-		_name = _name.toLowerCase();
+		String idString = _id.toString();
 		
-		if(accessList.contains(_name)) {
-			accessList.remove(_name);
+		if(accessList.contains(idString)) {
+			accessList.remove(idString);
 			
 			sect.set("a", accessList);
 			
 			return false;
 		} else {
-			accessList.add(_name);
+			accessList.add(idString);
 			
 			sect.set("a", accessList);
 			
@@ -234,7 +235,7 @@ public class BoardHandler extends DataHandler {
 		}
 	}
 	
-	public boolean territoryHasAccessFor(Location _loc, String _name) {
+	public boolean territoryHasAccessFor(Location _loc, UUID _id) {
 		ConfigurationSection sect = getTerritorySection(_loc);
 		
 		if(sect == null)
@@ -242,9 +243,9 @@ public class BoardHandler extends DataHandler {
 		
 		ArrayList<String> accessList = (ArrayList<String>)sect.getList("a");
 		
-		_name = _name.toLowerCase();
+		String idString = _id.toString();
 		
-		return accessList.contains(_name);
+		return accessList.contains(idString);
 	}
 	
 	public void renameAllTerritoryForJoinable(String _id, String _name) {

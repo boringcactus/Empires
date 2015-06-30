@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
@@ -261,12 +262,12 @@ public class JoinableHandler extends DataHandler {
 		ConfigurationSection sect = conf.getConfigurationSection(_empireName);
 		
 		//iterate through joined kingdoms
-		ArrayList<String> players;
+		ArrayList<UUID> players;
 		Player sendTo;
 		for(String kingdom : (ArrayList<String>)sect.getList("kingdoms")) {
 			players = getJoinableJoinedPlayers(kingdom);
 			
-			for(String player : players) {
+			for(UUID player : players) {
 				sendTo = Bukkit.getPlayer(player);
 				
 				if(sendTo != null) {
@@ -609,7 +610,7 @@ public class JoinableHandler extends DataHandler {
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
 	@Deprecated
-	public void invokeJoinableRemovePlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableRemovePlayer(String _joinableName, UUID _playerID) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't remove a player
 		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
@@ -628,11 +629,14 @@ public class JoinableHandler extends DataHandler {
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		ArrayList<String> joinedPlayers = (ArrayList<String>)sect.getList("joined-players");
 		
+		//id to string for lookup
+		String idString = _playerID.toString();
+		
 		//if the player is inside the joined player list remove him and set the new list
-		if(joinedPlayers.contains(_playerName)) {
-			joinedPlayers.remove(_playerName);//remove
+		if(joinedPlayers.contains(idString)) {
+			joinedPlayers.remove(idString);//remove
 			
-			IOUtility.log("removed " + _playerName);
+			IOUtility.log("removed " + idString);
 			
 			//disband if this player was the last in the civilization
 			//cannot have empty civilizations
@@ -668,10 +672,10 @@ public class JoinableHandler extends DataHandler {
 		if(getJoinableLeader(_joinableName) != null)
 			throw new EmpiresPlayerExistsException("A leader has already been appointed for '" + _joinableName + "'");
 		
-		String heir = getJoinableHeir(_joinableName);
+		UUID heir = getJoinableHeir(_joinableName);
 		
 		//if there an heir
-		if(!heir.equals("")) {
+		if(heir != null) {
 			//does the player exist?
 			if(Empires.m_playerHandler.getPlayerExists(heir)) {
 				if(Empires.m_playerHandler.getPlayerJoinedCivilization(heir).equals(_joinableName)) {
@@ -682,7 +686,7 @@ public class JoinableHandler extends DataHandler {
 					
 					//inform
 					if(_announce) {
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  heir + " has become the new leader of " + _joinableName + "!");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  Bukkit.getPlayer(heir).getDisplayName() + " has become the new leader of " + _joinableName + "!");
 					}
 					
 					//do not continue searching since we found an heir
@@ -694,7 +698,7 @@ public class JoinableHandler extends DataHandler {
 		//we must pick from the existing players
 		//starting from the highest rank down
 		{
-			ArrayList<String> officers;
+			ArrayList<UUID> officers;
 			
 			//iterate through the officers from level 3 -> 1
 			for(int i =3; i >= 1; i--) {
@@ -709,7 +713,7 @@ public class JoinableHandler extends DataHandler {
 				
 				//inform
 				if(_announce) {
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  officers.get(0) + " has become the new leader of " + _joinableName + "!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  Bukkit.getPlayer(officers.get(0)).getDisplayName() + " has become the new leader of " + _joinableName + "!");
 				}
 				
 				//FIX without returning
@@ -724,13 +728,13 @@ public class JoinableHandler extends DataHandler {
 			//we didn't find an officer..
 			//gather the player list and find a new leader
 			//gather the "one" to set
-			String one = getJoinableJoinedPlayers(_joinableName).get(0);
+			UUID one = getJoinableJoinedPlayers(_joinableName).get(0);
 			//set as leader
 			Empires.m_playerHandler.setPlayerRole(one, Role.LEADER);
 			
 			//inform
 			if(_announce) {
-				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + one + " has become the new leader of " + _joinableName + "!");
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + Bukkit.getPlayer(one).getDisplayName() + " has become the new leader of " + _joinableName + "!");
 			}
 		}
 	}
@@ -747,13 +751,13 @@ public class JoinableHandler extends DataHandler {
 	 * @return Returns an {@link ArrayList} of the naes of all officers in the joinable. Will return an empty list if the <b>_rank</b> defined does not exist
 	 * @throws EmpiresJoinableDoesNotExistException <p>Thrown when the joinable <b>_joinableName</b> does not exist</p>
 	 */
-	public ArrayList<String> getJoinableOfficersList(String _joinableName, int _rank) throws EmpiresJoinableDoesNotExistException {
+	public ArrayList<UUID> getJoinableOfficersList(String _joinableName, int _rank) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
-			return new ArrayList<String>();
+			return new ArrayList<UUID>();
 		
 		//rank restriction
 		if(_rank > 3 || _rank < 1) {
-			return new ArrayList<String>();
+			return new ArrayList<UUID>();
 		}
 		
 		//gather what role we're talking about
@@ -777,8 +781,8 @@ public class JoinableHandler extends DataHandler {
 			break;
 		}
 		
-		ArrayList<String> officers = new ArrayList<String>();
-		for(String player : getJoinableJoinedPlayers(_joinableName)) {
+		ArrayList<UUID> officers = new ArrayList<UUID>();
+		for(UUID player : getJoinableJoinedPlayers(_joinableName)) {
 			//is this player part of the officer group?
 			if(Empires.m_playerHandler.getPlayerRole(player).equals(role)) {
 				//add them to the list
@@ -795,11 +799,11 @@ public class JoinableHandler extends DataHandler {
 	 * @return returns null if no leader is found
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public String getJoinableLeader(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+	public UUID getJoinableLeader(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
 			return null;
 		
-		for(String player : getJoinableJoinedPlayers(_joinableName)) {
+		for(UUID player : getJoinableJoinedPlayers(_joinableName)) {
 			if(Empires.m_playerHandler.getPlayerRole(player).equals(Role.LEADER)) {
 				return player;
 			}
@@ -808,7 +812,7 @@ public class JoinableHandler extends DataHandler {
 		return null;
 	}
 	
-	public void invokeJoinableAddPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableAddPlayer(String _joinableName, UUID _playerID) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't add a player
 		if(_joinableName.equalsIgnoreCase(PlayerHandler.m_defaultCiv))
@@ -819,6 +823,9 @@ public class JoinableHandler extends DataHandler {
 		//lowercase for proper lookup
 		_joinableName = _joinableName.toLowerCase();
 		
+		//id to string for lookup
+		String idString = _playerID.toString();
+		
 		//tried to fetch a non-existent j
 		if(!conf.isConfigurationSection(_joinableName))
 			throw new EmpiresJoinableDoesNotExistException("Tried to fetch a non-existent joinable '" + _joinableName + "'");
@@ -826,8 +833,8 @@ public class JoinableHandler extends DataHandler {
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName);
 		ArrayList<String> joinedPlayers = (ArrayList<String>)sect.getList("joined-players");
 		
-		if(!joinedPlayers.contains(_playerName)) {
-			joinedPlayers.add(_playerName);
+		if(!joinedPlayers.contains(idString)) {
+			joinedPlayers.add(idString);
 			sect.set("joined-players", joinedPlayers);
 		}
 	}
@@ -972,7 +979,7 @@ public class JoinableHandler extends DataHandler {
 		//change player pointers
 		for(String player : joinedPlayers) {
 			//overrides 'j' value to _name
-			Empires.m_playerHandler.overridePlayerJoinedCivilization(player, _newName);
+			Empires.m_playerHandler.overridePlayerJoinedCivilization(UUID.fromString(player), _newName);
 		}
 		
 		//change empire (if any) name pointer
@@ -1091,16 +1098,23 @@ public class JoinableHandler extends DataHandler {
 		return new Location(world, x, y, z);
 	}
 	
-	public ArrayList<String> getJoinableJoinedPlayers(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+	public ArrayList<UUID> getJoinableJoinedPlayers(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		//return an empty list if we are searching for default information
 		if(getCheck(_joinableName))
-			return new ArrayList<String>();
+			return new ArrayList<UUID>();
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
-		return (ArrayList<String>)sect.getList("joined-players");
+		ArrayList<String> pref =  (ArrayList<String>)sect.getList("joined-players");
+		ArrayList<UUID> players = new ArrayList<UUID>();
+		
+		for(String id : pref) {
+			players.add(UUID.fromString(id));
+		}
+		
+		return players;
 	}
 	
 	public boolean getJoinableEmpireStatus(String _joinableName) throws EmpiresJoinableDoesNotExistException {
@@ -1251,19 +1265,19 @@ public class JoinableHandler extends DataHandler {
 	/**
 	 * 
 	 * @param _id
-	 * @return Returns empty string if no heir
+	 * @return Returns null if no heir
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public String getJoinableHeir(String _joinableName) throws EmpiresJoinableDoesNotExistException {
+	public UUID getJoinableHeir(String _joinableName) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
-			return "";
+			return null;
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//grab section
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
-		return sect.getString("heir");
+		return UUID.fromString(sect.getString("heir"));
 	}
 	
 	public void setJoinableHeir(String _joinableName, String _heirName) throws EmpiresJoinableDoesNotExistException {
@@ -1429,7 +1443,7 @@ public class JoinableHandler extends DataHandler {
 			
 			//for every player we remove their pointer and our reference
 			for(String joinedPlayer : joinedPlayerList) {
-				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(joinedPlayer);
+				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(UUID.fromString(joinedPlayer));
 			}
 		}
 		

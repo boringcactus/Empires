@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.listener;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -58,7 +60,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		
 		//if we can't build here
 		//check for territory flags
-		TerritoryGroup tg = getInvokerGroup(_evt.getPlayer().getName(), host, loc);
+		TerritoryGroup tg = getInvokerGroup(_evt.getPlayer().getUniqueId(), host, loc);
 		if(!Empires.m_boardHandler.territoryHasFlag(loc, tg, TerritoryFlag.ALLOW_BUILD)) {
 			//cancel building
 			_evt.setCancelled(true);
@@ -84,7 +86,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		
 		//if we can't build here
 		//check for territory flags
-		TerritoryGroup tg = getInvokerGroup(invoker.getName(), host, placeLoc);
+		TerritoryGroup tg = getInvokerGroup(invoker.getUniqueId(), host, placeLoc);
 		if(!Empires.m_boardHandler.territoryHasFlag(placeLoc, tg, TerritoryFlag.ALLOW_BUILD)) {
 			//cancel building
 			_evt.setCancelled(true);
@@ -104,7 +106,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			return;
 		
 		//if we can't build here
-		TerritoryGroup tg = getInvokerGroup(_evt.getPlayer().getName(), host, loc);
+		TerritoryGroup tg = getInvokerGroup(_evt.getPlayer().getUniqueId(), host, loc);
 		if(!Empires.m_boardHandler.territoryHasFlag(loc, tg, TerritoryFlag.ALLOW_BUILD)) {
 			_evt.setCancelled(true);
 			sendError(_evt.getPlayer(), "You are not allowed to build here");
@@ -131,7 +133,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		//if the territory we're throwing FROM is not default
 		if(!hostFrom.equals(PlayerHandler.m_defaultCiv)) {
 			//gather our group in regards to the FROM host
-			invokerGroup = getInvokerGroup(_evt.getPlayer().getName(), hostFrom, _evt.getFrom());
+			invokerGroup = getInvokerGroup(_evt.getPlayer().getUniqueId(), hostFrom, _evt.getFrom());
 			
 			//if the territory doesn't allow pearls
 			if(!Empires.m_boardHandler.territoryHasFlag(_evt.getFrom(), invokerGroup, TerritoryFlag.ALLOW_PEARLS)) {
@@ -146,7 +148,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		
 		if(!hostTo.equals(PlayerHandler.m_defaultCiv)) {
 			//gather invoker group in regards to the TO host
-			invokerGroup = getInvokerGroup(_evt.getPlayer().getName(), hostTo, _evt.getTo());
+			invokerGroup = getInvokerGroup(_evt.getPlayer().getUniqueId(), hostTo, _evt.getTo());
 			
 			//if the territory doesn't allow pearls
 			if(!Empires.m_boardHandler.territoryHasFlag(_evt.getTo(), invokerGroup, TerritoryFlag.ALLOW_PEARLS)) {
@@ -172,7 +174,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 				String host = Empires.m_boardHandler.getTerritoryHost(invokerLoc);
 				
 				if(!host.equals(PlayerHandler.m_defaultCiv)) {
-					TerritoryGroup invokerGroup = getInvokerGroup(invoker.getName(), host, invokerLoc);
+					TerritoryGroup invokerGroup = getInvokerGroup(invoker.getUniqueId(), host, invokerLoc);
 					
 					if(!Empires.m_boardHandler.territoryHasFlag(invokerLoc, invokerGroup, TerritoryFlag.ALLOW_TRIPWIRE)) {
 						sendError(invoker, host + " does not allow you to use tripwires!");
@@ -196,7 +198,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			String host = Empires.m_boardHandler.getTerritoryHost(invokerLoc);
 			
 			if(!host.equals(PlayerHandler.m_defaultCiv)) {
-				TerritoryGroup invokerGroup = getInvokerGroup(invoker.getName(), host, invokerLoc);
+				TerritoryGroup invokerGroup = getInvokerGroup(invoker.getUniqueId(), host, invokerLoc);
 				
 				//handle buckets of lava/water
 				if(_evt.getItem() != null) {
@@ -349,8 +351,8 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			try {
 				//gather relationship information
 				String defHost, atkHost;
-				defHost = Empires.m_playerHandler.getPlayerJoinedCivilization(defender.getName());
-				atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getName());
+				defHost = Empires.m_playerHandler.getPlayerJoinedCivilization(defender.getUniqueId());
+				atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getUniqueId());
 				
 				Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(defHost, atkHost);
 				
@@ -399,7 +401,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			String host = Empires.m_boardHandler.getTerritoryHost(damaged.getLocation());
 			
 			if(!host.equals(PlayerHandler.m_defaultCiv)) {
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(damaged.getName());
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(damaged.getUniqueId());
 				
 				//this is our territory
 				if(joinedName.equalsIgnoreCase(host)) {
@@ -478,17 +480,17 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 	 * @param _host
 	 * @return
 	 */
-	private TerritoryGroup getInvokerGroup(String _name, String _host, Location _loc) {
+	private TerritoryGroup getInvokerGroup(UUID _id, String _host, Location _loc) {
 		//if the default civ then return a neutral value
 		if(_host.equals(PlayerHandler.m_defaultCiv))
 			return TerritoryGroup.NEUTRAL;
 			
 		//gather player info
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_name);
+		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_id);
 		TerritoryGroup group = TerritoryGroup.NEUTRAL;
 		
 		//if someone has access to this chunk they are treated as a member
-		if(Empires.m_boardHandler.territoryHasAccessFor(_loc, _name)) {
+		if(Empires.m_boardHandler.territoryHasAccessFor(_loc, _id)) {
 			return TerritoryGroup.MEMBER;
 		}
 		
@@ -508,7 +510,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			} else if(rel.equals(Relation.NEUTRAL)) {
 				group = TerritoryGroup.NEUTRAL;
 			} else if(rel.equals(Relation.US)) {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(_name);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(_id);
 				group = TerritoryGroup.fromRole(invokerRole);
 			}
 		} else {

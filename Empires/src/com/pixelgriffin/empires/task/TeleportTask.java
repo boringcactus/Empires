@@ -25,7 +25,7 @@ public class TeleportTask implements Runnable {
 		m_who.teleport(m_where);
 		
 		//clear tpid
-		Empires.m_playerHandler.setPlayerTPID(m_who.getName(), -1);
+		Empires.m_playerHandler.setPlayerTPID(m_who.getUniqueId(), -1);
 	}
 
 }

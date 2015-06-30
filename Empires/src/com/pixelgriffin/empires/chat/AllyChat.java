@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -439,14 +440,14 @@ public class AllyChat implements Channel {
 		Set<Player> ret = new HashSet<Player>();
 		
 		//gather joined name
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(sen.getName());
+		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(sen.getUniqueId());
 		
 		//is it wilderness?
 		if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
 			try {
 				//gather our relations
 				Set<String> relations = Empires.m_joinableHandler.getJoinableRelationNameSet(joinedName);
-				ArrayList<String> players = new ArrayList<String>();
+				ArrayList<UUID> players = new ArrayList<UUID>();
 				
 				for(String relation : relations) {
 					//if the relation is one of the recipient types
@@ -455,7 +456,7 @@ public class AllyChat implements Channel {
 						players.addAll(Empires.m_joinableHandler.getJoinableJoinedPlayers(relation));
 						
 						Player p;
-						for(String player : players) {
+						for(UUID player : players) {
 							//are they online?
 							p = Bukkit.getPlayer(player);
 							
@@ -471,7 +472,7 @@ public class AllyChat implements Channel {
 				players.addAll(Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName));
 				
 				Player p;
-				for(String player : players) {
+				for(UUID player : players) {
 					p = Bukkit.getPlayer(player);
 					
 					if(p != null) {

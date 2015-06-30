@@ -231,7 +231,7 @@ public class CityChat implements Channel {
 
 	@Override
 	public String getFormat() {
-		return "{color}[&l{nick} {color}{sender}{color}] &f{msg}";
+		return "{color}[&l&f{nick} {color}{sender}{color}] &f{msg}";
 		//return "{color}[&l{nick}&r{color} &l{civ_role}&r{civ_rel}{civ_name}{sender}{color}] &f{msg}";
 	}
 

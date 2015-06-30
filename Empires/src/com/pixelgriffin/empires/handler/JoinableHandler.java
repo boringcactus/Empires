@@ -608,6 +608,7 @@ public class JoinableHandler extends DataHandler {
 	 * @param _playerName
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
+	@Deprecated
 	public void invokeJoinableRemovePlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
 		//if the id we're looking up happens to be the default civilization (wilderness)
 		//then we can't remove a player

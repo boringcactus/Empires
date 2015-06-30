@@ -11,7 +11,6 @@ import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
-import com.pixelgriffin.empires.event.EmpiresPlayerClaimEvent;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -124,10 +123,11 @@ public class SubCommandClaim extends SubCommand {
 			}
 			
 			//fire event
-			EmpiresPlayerClaimEvent event = new EmpiresPlayerClaimEvent(player, joinedName);
+			/*EmpiresPlayerClaimEvent event = new EmpiresPlayerClaimEvent(player, joinedName);
 			Bukkit.getPluginManager().callEvent(event);
 			if(event.isCancelled())
 				return false;//stop executing since something told us not to
+			*/
 			
 			//set this as our claim
 			try {

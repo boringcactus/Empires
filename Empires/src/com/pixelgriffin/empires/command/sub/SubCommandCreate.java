@@ -50,10 +50,10 @@ public class SubCommandCreate extends SubCommand {
 						}
 						
 						//fire event
-						EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, _args[0], false);
-						Bukkit.getPluginManager().callEvent(event);
-						if(event.isCancelled())//stop creating a kingdom since someone told us to stop
-							return false;
+						//EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, _args[0], false);
+						//Bukkit.getPluginManager().callEvent(event);
+						//if(event.isCancelled())//stop creating a kingdom since someone told us to stop
+						//	return false;
 						
 						//create kingdom
 						try {

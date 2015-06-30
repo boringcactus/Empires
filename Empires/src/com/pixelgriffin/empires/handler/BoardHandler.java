@@ -179,7 +179,7 @@ public class BoardHandler extends DataHandler {
 	public String getTerritoryHost(Location _loc) {
 		ConfigurationSection sect = getTerritorySection(_loc);
 		
-		System.out.println("ter host");
+		//System.out.println("ter host");
 		
 		//if the path exists
 		//meaning somewhere along the lines that shit was set
@@ -349,7 +349,7 @@ public class BoardHandler extends DataHandler {
 		sect = getTerritorySection(_loc);
 		
 		if(sect != null) {
-			ArrayList<String> tempList = (ArrayList<String>)sect.getConfigurationSection("f").getList(_group.toString());
+			ArrayList<String> tempList = (ArrayList<String>)sect.getConfigurationSection("f").getList(_group.toString());//NPEing
 			if(tempList == null)
 				return false;
 			

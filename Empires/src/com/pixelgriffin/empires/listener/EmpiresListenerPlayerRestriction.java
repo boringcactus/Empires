@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -26,6 +27,7 @@ import com.pixelgriffin.empires.enums.TerritoryFlag;
 import com.pixelgriffin.empires.enums.TerritoryGroup;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 
@@ -39,6 +41,9 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 	@EventHandler
 	//when a player builds
 	public void onPlayerBuild(BlockPlaceEvent _evt) {
+		if(_evt.isCancelled())
+			return;
+		
 		Location loc = _evt.getBlock().getLocation();
 		String host = Empires.m_boardHandler.getTerritoryHost(loc);
 		
@@ -46,10 +51,41 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		if(host.equals(PlayerHandler.m_defaultCiv))
 			return;
 		
+		if(_evt.getPlayer() == null) {
+			IOUtility.log("Detected null player during BlockPlaceEvent.. cancelling", ChatColor.RED);
+			return;
+		}
+		
 		//if we can't build here
 		//check for territory flags
 		TerritoryGroup tg = getInvokerGroup(_evt.getPlayer().getName(), host, loc);
 		if(!Empires.m_boardHandler.territoryHasFlag(loc, tg, TerritoryFlag.ALLOW_BUILD)) {
+			//cancel building
+			_evt.setCancelled(true);
+			//inform
+			sendError(_evt.getPlayer(), "You are not allowed to build here");
+		}
+	}
+	
+	@EventHandler
+	//when a player tries to place a liquid somewhere
+	public void onPlayerPlaceLiquid(PlayerBucketEmptyEvent _evt) {
+		Location placeLoc = _evt.getBlockClicked().getLocation();
+		Player invoker = _evt.getPlayer();
+		String host = Empires.m_boardHandler.getTerritoryHost(placeLoc);
+		
+		if(host.equals(PlayerHandler.m_defaultCiv))
+			return;
+		
+		if(_evt.getPlayer() == null) {
+			IOUtility.log("Detected null player during PlayerBucketEmptyEvent.. cancelling", ChatColor.RED);
+			return;
+		}
+		
+		//if we can't build here
+		//check for territory flags
+		TerritoryGroup tg = getInvokerGroup(invoker.getName(), host, placeLoc);
+		if(!Empires.m_boardHandler.territoryHasFlag(placeLoc, tg, TerritoryFlag.ALLOW_BUILD)) {
 			//cancel building
 			_evt.setCancelled(true);
 			//inform
@@ -205,7 +241,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 							_evt.setCancelled(true);
 						}
 					} else if(blockType.equals(Material.WOODEN_DOOR) || blockType.equals(Material.IRON_DOOR)) {
-						if(!Empires.m_boardHandler.territoryHasFlag(invokerLoc, invokerGroup, TerritoryFlag.ALLOW_DOOR)) {
+						if(!Empires.m_boardHandler.territoryHasFlag(invokerLoc, invokerGroup, TerritoryFlag.ALLOW_DOOR)) {//error occurring? causing NPE later on
 							sendError(invoker, host + " does not allow you to use doors!");
 							_evt.setCancelled(true);
 						}
@@ -418,8 +454,10 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 	public void onMobSpawnsInTerritory(CreatureSpawnEvent _evt) {
 		if(EmpiresConfig.m_mobSpawnManaging) {
 			if(_evt.getEntity() instanceof Monster) {
-				if(!Empires.m_boardHandler.territoryAllowsMobs(_evt.getLocation())) {
-					_evt.setCancelled(true);
+				if(Empires.m_boardHandler.getTerritoryHost(_evt.getLocation()) != PlayerHandler.m_defaultCiv) {
+					if(!Empires.m_boardHandler.territoryAllowsMobs(_evt.getLocation())) {
+						_evt.setCancelled(true);
+					}
 				}
 			}
 		}

@@ -30,6 +30,7 @@ import com.pixelgriffin.empires.util.IOUtility;
  */
 public class Empires extends JavaPlugin {
 	
+	public static final int VERSION = 1;
 	public static boolean SAVE_FILE = true;
 	
 	public static final JoinableHandler m_joinableHandler = new JoinableHandler();
@@ -118,7 +119,14 @@ public class Empires extends JavaPlugin {
 			m_joinableHandler.loadFile(this);
 			m_playerHandler.loadFile(this);
 			m_boardHandler.loadFile(this);
+			
+			EmpiresDataUpdater updater = new EmpiresDataUpdater();
+			updater.checkDataForUpdate();
 		} catch(Exception e) {
+			e.printStackTrace();
+			
+			IOUtility.log("A fatal error occurred initializing Empires");
+			IOUtility.log("Empires is shutting down...");
 			
 			return;
 		}

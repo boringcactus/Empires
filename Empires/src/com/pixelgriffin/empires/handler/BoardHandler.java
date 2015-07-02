@@ -159,6 +159,9 @@ public class BoardHandler extends DataHandler {
 		//iterate through all sections of the board YML
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
+			if(path.equals("data-version"))
+				continue;
+			
 			//is this a configuration sect?
 			if(conf.isConfigurationSection(path)) {
 				//set to allocated object
@@ -256,6 +259,9 @@ public class BoardHandler extends DataHandler {
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
+			if(path.equals("data-version"))
+				continue;
+			
 			if(conf.isConfigurationSection(path)) {
 				workingSect = conf.getConfigurationSection(path);
 				
@@ -276,6 +282,9 @@ public class BoardHandler extends DataHandler {
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
+			if(path.equals("data-version"))
+				continue;
+			
 			//could hold territory
 			if(conf.isConfigurationSection(path)) {
 				//set to allocated object
@@ -445,6 +454,9 @@ public class BoardHandler extends DataHandler {
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
+			if(path.equals("data-version"))
+				continue;
+			
 			//could hold territory
 			if(conf.isConfigurationSection(path)) {
 				//set to allocated object
@@ -469,6 +481,9 @@ public class BoardHandler extends DataHandler {
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
+			if(path.equals("data-version"))
+				continue;
+			
 			//could hold territory
 			if(conf.isConfigurationSection(path)) {
 				//set to allocated object
@@ -495,6 +510,9 @@ public class BoardHandler extends DataHandler {
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
+			if(path.equals("data-version"))
+				continue;
+			
 			//could hold territory
 			if(conf.isConfigurationSection(path)) {
 				//set to allocated object

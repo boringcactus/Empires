@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.handler;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -14,6 +16,7 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresPlayerExistsException;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -46,6 +49,46 @@ public class PlayerHandler extends DataHandler {
 	
 	public void saveFile() {
 		saveConfigSafe(m_file);
+	}
+	
+	public void updateToUUIDs() {
+		YamlConfiguration conf = getFileConfiguration();
+		
+		HashSet<String> players = (HashSet<String>)conf.getKeys(false);
+		
+		for(String name : players) {
+			if(name.equals("data-version"))
+				continue;
+			
+			//convert name to UUID
+			UUID id = IDUtility.getUUIDForPlayer(name);
+			
+			if(id != null) {
+				ConfigurationSection sect = conf.getConfigurationSection(name);
+				
+				//save data old data
+				String j = sect.getString("j");
+				int p = sect.getInt("p");
+				String t = sect.getString("t");
+				String r = sect.getString("r");
+				int pt = sect.getInt("pt");
+				boolean ac = sect.getBoolean("ac");
+				int tpid = sect.getInt("tp-id");
+				
+				//clear old data
+				conf.set(name, null);
+				
+				//create new data
+				sect = conf.createSection(id.toString());
+				sect.set("j", j);
+				sect.set("p", p);
+				sect.set("t", t);
+				sect.set("r", r);
+				sect.set("pt", pt);
+				sect.set("ac", ac);
+				sect.set("tp-id", tpid);
+			}
+		}
 	}
 	
 	/*
@@ -566,6 +609,9 @@ public class PlayerHandler extends DataHandler {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		for(String player : conf.getKeys(false)) {
+			if(player.equals("data-version"))
+				continue;
+			
 			if(conf.isConfigurationSection(player)) {
 				long playTime = getPlayerLastPlayedTime(UUID.fromString(player));
 				long timeDiff = (System.currentTimeMillis() - playTime)/(86400000);

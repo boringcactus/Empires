@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,6 +31,7 @@ import com.pixelgriffin.empires.exception.EmpiresJoinableIsEmpireException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsNotEmpireException;
 import com.pixelgriffin.empires.exception.EmpiresNoFundsException;
 import com.pixelgriffin.empires.exception.EmpiresPlayerExistsException;
+import com.pixelgriffin.empires.util.IDUtility;
 import com.pixelgriffin.empires.util.IOUtility;
 
 /**
@@ -76,6 +78,85 @@ public class JoinableHandler extends DataHandler {
 	
 	public void saveFile() {
 		saveConfigSafe(m_file);
+	}
+	
+	public void updateToUUIDs() {
+		YamlConfiguration conf = getFileConfiguration();
+		
+		HashSet<String> joinables = (HashSet<String>)conf.getKeys(false);
+		
+		for(String joinable : joinables) {
+			if(joinable.equals("data-version"))
+				continue;
+			
+			ConfigurationSection sect = conf.getConfigurationSection(joinable);
+			
+			/*
+			 * joined-players data conversion
+			 */
+			{
+				ArrayList<UUID> ids = new ArrayList<UUID>();
+				ArrayList<String> serialized = new ArrayList<String>();
+				
+				//get names
+				ArrayList<String> requested = (ArrayList<String>) sect.getList("joined-players");
+				
+				//convert names to UUIDs
+				for(String name : requested) {
+					UUID id = IDUtility.getUUIDForPlayer(name);
+					
+					if(id != null)
+						ids.add(id);
+				}
+				
+				//convert UUIDs to strings
+				for(UUID id : ids) {
+					serialized.add(id.toString());
+				}
+				
+				//save UUID data
+				sect.set("joined-players", serialized);
+			}
+			
+			/*
+			 * requested-players data conversion
+			 */
+			{
+				ArrayList<UUID> ids = new ArrayList<UUID>();
+				ArrayList<String> serialized = new ArrayList<String>();
+				
+				//get names
+				ArrayList<String> requested = (ArrayList<String>) sect.getList("requested-players");
+				
+				//convert names to UUIDs
+				for(String name : requested) {
+					UUID id = IDUtility.getUUIDForPlayer(name);
+					
+					if(id != null)
+						ids.add(id);
+				}
+				
+				//convert UUIDs to strings
+				for(UUID id : ids) {
+					serialized.add(id.toString());
+				}
+				
+				//save UUID data
+				sect.set("requested-players", serialized);
+			}
+			
+			/*
+			 * heir data conversion
+			 */
+			{
+				String name = sect.getString("heir");
+				if(name.equals(""))
+					continue;
+				
+				UUID id = IDUtility.getUUIDForPlayer(name);
+				sect.set("heir", id.toString());
+			}
+		}
 	}
 	
 	/*
@@ -688,7 +769,11 @@ public class JoinableHandler extends DataHandler {
 					
 					//inform
 					if(_announce) {
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  Bukkit.getPlayer(heir).getDisplayName() + " has become the new leader of " + _joinableName + "!");
+						OfflinePlayer officer = Bukkit.getPlayer(heir);
+						if(officer == null)
+							officer = Bukkit.getOfflinePlayer(heir);
+						
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + officer.getName()  + " has become the new leader of " + _joinableName + "!");
 					}
 					
 					//do not continue searching since we found an heir
@@ -703,7 +788,7 @@ public class JoinableHandler extends DataHandler {
 			ArrayList<UUID> officers;
 			
 			//iterate through the officers from level 3 -> 1
-			for(int i =3; i >= 1; i--) {
+			for(int i = 3; i >= 1; i--) {
 				officers = getJoinableOfficersList(_joinableName, i);
 				
 				//are there officers?
@@ -715,7 +800,11 @@ public class JoinableHandler extends DataHandler {
 				
 				//inform
 				if(_announce) {
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW +  Bukkit.getPlayer(officers.get(0)).getDisplayName() + " has become the new leader of " + _joinableName + "!");
+					OfflinePlayer officer = Bukkit.getPlayer(officers.get(0));
+					if(officer == null)
+						officer = Bukkit.getOfflinePlayer(officers.get(0));
+					
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + officer.getName() + " has become the new leader of " + _joinableName + "!");
 				}
 				
 				//FIX without returning
@@ -736,7 +825,11 @@ public class JoinableHandler extends DataHandler {
 			
 			//inform
 			if(_announce) {
-				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + Bukkit.getPlayer(one).getDisplayName() + " has become the new leader of " + _joinableName + "!");
+				OfflinePlayer officer = Bukkit.getPlayer(one);
+				if(officer == null)
+					officer = Bukkit.getOfflinePlayer(one);
+				
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_joinableName, ChatColor.YELLOW + officer.getName() + " has become the new leader of " + _joinableName + "!");
 			}
 		}
 	}
@@ -1278,6 +1371,8 @@ public class JoinableHandler extends DataHandler {
 		
 		//grab section
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
+		if(sect.getString("heir").equals(""))
+			return null;
 		
 		return UUID.fromString(sect.getString("heir"));
 	}
@@ -1292,7 +1387,7 @@ public class JoinableHandler extends DataHandler {
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		//save as lower case just inCASE hah
-		if(_heirID == null)
+		if(_heirID != null)
 			sect.set("heir", _heirID.toString());
 		else
 			sect.set("heir", "");
@@ -1461,6 +1556,9 @@ public class JoinableHandler extends DataHandler {
 			for(String otherId : idSet) {
 				//gather section
 				otherSect = conf.getConfigurationSection(otherId);
+				if(otherSect == null)
+					continue;
+				
 				relationSect = otherSect.getConfigurationSection("relation-wish");
 				
 				//if we exist in the section (there was a relation wish)
@@ -1534,6 +1632,9 @@ public class JoinableHandler extends DataHandler {
 		
 		//iterate through ids
 		for(String id : conf.getKeys(false)) {
+			if(id.equals("data-version"))
+				continue;
+			
 			nameList.add(getJoinableDisplayName(id));
 		}
 		

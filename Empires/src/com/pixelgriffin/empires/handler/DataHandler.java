@@ -24,6 +24,25 @@ public abstract class DataHandler {
 		m_fileConfiguration = new YamlConfiguration();
 	}
 	
+	/*
+	 * Data updates / versions
+	 */
+	
+	public int getDataVersion() {
+		if(getFileConfiguration().contains("data-version"))
+			return 0;
+		
+		return getFileConfiguration().getInt("data-version");
+	}
+	
+	public void updateToVersioning() {
+		getFileConfiguration().set("data-version", 1);
+	}
+	
+	/*
+	 * Data IO
+	 */
+	
 	protected YamlConfiguration getFileConfiguration() {
 		return m_fileConfiguration;
 	}

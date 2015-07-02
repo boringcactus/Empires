@@ -2,9 +2,11 @@ package com.pixelgriffin.empires.command.sub;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,6 +15,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -26,12 +29,13 @@ public class SubCommandWho extends SubCommand {
 		if(_sender instanceof Player) {
 			Player player = (Player)_sender;
 			
-			String joinedName;
+			String joinedName = "noname";
+			UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
 			
 			//here we determine whether or not we're talking about our own joined status or someone/something else
 			if(_args.length == 0) {
 				//gather the player's joined name
-				joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(player.getName());
+				joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(player.getUniqueId());
 				
 				//no data avilable for default civilization
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -44,17 +48,19 @@ public class SubCommandWho extends SubCommand {
 				//this determines what they're refering to
 				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					joinedName = _args[0];
-				} else if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
-					joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
-					
-					//if the user belongs to the wilderness we cannot print anything
-					if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
-						setError("That person belongs to the wilderness");
-						return false;
+				} else if(otherID != null) {
+						if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+						joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+						
+						//if the user belongs to the wilderness we cannot print anything
+						if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+							setError("That person belongs to the wilderness");
+							return false;
+						}
 					}
 				} else {
 					//if there was no player or joinable, tell them we couldn't find anything
-					setError("Could not find a civilization associated with " + _args[0]);
+					setError("Could not find a civilization or person associated with " + _args[0]);
 					return false;
 				}
 			} else {
@@ -78,16 +84,23 @@ public class SubCommandWho extends SubCommand {
 				
 				{
 					//separate joined players into online/offline status
-					ArrayList<String> joinedPlayers = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
+					ArrayList<UUID> joinedPlayers = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
 					
 					String role, title, realName;
-					for(String playerName : joinedPlayers) {
+					for(UUID playerID : joinedPlayers) {
 						//store real name
+						OfflinePlayer jp = Bukkit.getPlayer(playerID);
+						if(jp == null)
+							jp = Bukkit.getOfflinePlayer(playerID);
+						if(jp == null)
+							continue;
+						
+						String playerName = jp.getName();
 						realName = playerName;
 						
 						//gather role & title data
-						role = Empires.m_playerHandler.getPlayerRole(playerName).getPrefix();
-						title = Empires.m_playerHandler.getPlayerTitle(playerName);
+						role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();
+						title = Empires.m_playerHandler.getPlayerTitle(playerID);
 						
 						//add space
 						if(!title.equals("")) {

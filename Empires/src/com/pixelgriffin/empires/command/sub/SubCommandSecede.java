@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,8 +24,8 @@ public class SubCommandSecede extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String invokerName = invoker.getName();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+			UUID invokerID = invoker.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			//no default civ actions
 			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -35,7 +37,7 @@ public class SubCommandSecede extends SubCommand {
 				//empire exists
 				String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
 				if(!empireName.equals("")) {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 					
 					//player has permission
 					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SECEDE, invokerRole)) {

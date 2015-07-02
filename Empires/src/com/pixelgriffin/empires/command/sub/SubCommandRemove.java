@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,9 +25,9 @@ public class SubCommandRemove extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
+				UUID invokerID = invoker.getUniqueId();
 				String otherName = _args[0].toLowerCase();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//no default civ actions
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -36,7 +38,7 @@ public class SubCommandRemove extends SubCommand {
 				try {
 					//are we an empire?
 					if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 						
 						//are we the leader?
 						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.REMOVE, invokerRole)) {

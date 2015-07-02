@@ -21,7 +21,7 @@ public class SubCommandLeader extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getName());
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getUniqueId());
 			
 			if(!invoker.hasPermission("Empires.force.leader")) {
 				setError("You don not have permission to force leader!");
@@ -39,7 +39,7 @@ public class SubCommandLeader extends SubCommand {
 						Empires.m_joinableHandler.getJoinableLeader(joinedName), Role.MEMBER);
 				
 				//set us as the new leader
-				Empires.m_playerHandler.setPlayerRole(invoker.getName(), Role.LEADER);
+				Empires.m_playerHandler.setPlayerRole(invoker.getUniqueId(), Role.LEADER);
 				
 				invoker.sendMessage(ChatColor.YELLOW + "You are now the leader!");
 				

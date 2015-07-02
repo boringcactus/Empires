@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -26,8 +28,8 @@ public class SubCommandUnclaim extends SubCommand {
 			if(_args.length == 0) {
 				Player player = (Player)_sender;
 				Location loc = player.getLocation();
-				String playerName = player.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(playerName);
+				UUID invokerID = player.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//are they part of the default civ?
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -36,7 +38,7 @@ public class SubCommandUnclaim extends SubCommand {
 					return false;
 				}
 				
-				Role playerRole = Empires.m_playerHandler.getPlayerRole(playerName);
+				Role playerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				try {
 					//if the player has permission to unclaim
@@ -54,7 +56,7 @@ public class SubCommandUnclaim extends SubCommand {
 						
 						
 						//let them know what we did!
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + playerName + " unclaimed land for you civilization at (...)");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + player.getDisplayName() + " unclaimed land for you civilization at (...)");
 						return true;
 					}
 				} catch (EmpiresJoinableDoesNotExistException e) {

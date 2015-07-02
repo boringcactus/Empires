@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -23,9 +25,9 @@ public class SubCommandSetHome extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String invokerName = invoker.getName();
+			UUID invokerID = invoker.getUniqueId();
 			Location invokerLoc = invoker.getLocation();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 				setError("You cannot set the home of " + PlayerHandler.m_defaultCiv + "!");
@@ -33,7 +35,7 @@ public class SubCommandSetHome extends SubCommand {
 			}
 			
 			try {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_HOME, invokerRole)) {
 					setError("You do not have permission to set the home of your civilization!");
 					return false;
@@ -53,7 +55,7 @@ public class SubCommandSetHome extends SubCommand {
 			try {
 				Empires.m_joinableHandler.setJoinableHome(joinedName, invokerLoc);
 				
-				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " has set a new home for the civilization!");
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has set a new home for the civilization!");
 				
 				return true;
 			} catch (EmpiresJoinableDoesNotExistException e) {

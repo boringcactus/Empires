@@ -1,5 +1,8 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,6 +13,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -23,8 +27,14 @@ public class SubCommandDemote extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
+				if(otherID == null) {
+					setError(ChatColor.RED + "Could not find the player '" + _args[0] + "'");
+					return false;
+				}
+				String invokerName =  invoker.getName();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//can't work with default civ
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -39,7 +49,7 @@ public class SubCommandDemote extends SubCommand {
 				}
 				
 				//gather invoker's role for later
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				try {
 					//check for the promote permission
@@ -56,11 +66,11 @@ public class SubCommandDemote extends SubCommand {
 				}
 				
 				//does the player exist? (don't want to create a blank player)
-				if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
+				if(Empires.m_playerHandler.getPlayerExists(otherID)) {
 					//are they in our joinable?
-					if(Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]).equalsIgnoreCase(joinedName)) {
+					if(Empires.m_playerHandler.getPlayerJoinedCivilization(otherID).equalsIgnoreCase(joinedName)) {
 						//gather role values
-						Role otherRole = Empires.m_playerHandler.getPlayerRole(_args[0]);
+						Role otherRole = Empires.m_playerHandler.getPlayerRole(otherID);
 						
 						if(otherRole.equals(Role.MEMBER)) {
 							setError("You can't demote " + _args[0] + " any further!");
@@ -78,7 +88,7 @@ public class SubCommandDemote extends SubCommand {
 							if(role != null) {
 								try {
 									//set the role
-									Empires.m_playerHandler.setPlayerRole(_args[0], role);
+									Empires.m_playerHandler.setPlayerRole(otherID, role);
 									
 									//inform everyone we set the role
 									Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");

@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -27,8 +29,8 @@ public class SubCommandChunk extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String invokerName = invoker.getName();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+			UUID invokerID = invoker.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			Location invokerLoc = invoker.getLocation();
 			
 			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -42,7 +44,7 @@ public class SubCommandChunk extends SubCommand {
 			}
 			
 			try {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invoker.getName());
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
 					setError("You do not have permission to edit chunk flags!");
 					return false;

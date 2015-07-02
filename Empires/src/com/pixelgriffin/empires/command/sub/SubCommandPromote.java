@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -23,8 +26,8 @@ public class SubCommandPromote extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//can't work with default civ
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -33,13 +36,13 @@ public class SubCommandPromote extends SubCommand {
 				}
 				
 				//do not allow them to promote themselves
-				if(invokerName.equalsIgnoreCase(_args[0])) {
+				if(invoker.getDisplayName().equalsIgnoreCase(_args[0])) {
 					setError("You can't promote yourself!");
 					return false;
 				}
 				
 				//gather invoker's role for later
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				try {
 					//check for the promote permission
@@ -55,12 +58,18 @@ public class SubCommandPromote extends SubCommand {
 					return false;
 				}
 				
+				UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
+				if(otherID == null) {
+					setError(ChatColor.RED + "Could not find the player '" + _args[0] + "'");
+					return false;
+				}
+				
 				//does the player exist? (don't want to create a blank player)
-				if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
+				if(Empires.m_playerHandler.getPlayerExists(otherID)) {
 					//are they in our joinable?
-					if(Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]).equalsIgnoreCase(joinedName)) {
+					if(Empires.m_playerHandler.getPlayerJoinedCivilization(otherID).equalsIgnoreCase(joinedName)) {
 						//gather role values
-						int newRoleValue = Empires.m_playerHandler.getPlayerRole(_args[0]).getIntValue() + 1;
+						int newRoleValue = Empires.m_playerHandler.getPlayerRole(otherID).getIntValue() + 1;
 						int invokerRoleValue = invokerRole.getIntValue();
 						
 						//are we ranked high enough to promote them?
@@ -70,10 +79,10 @@ public class SubCommandPromote extends SubCommand {
 							if(role != null) {
 								try {
 									//set the role
-									Empires.m_playerHandler.setPlayerRole(_args[0], role);
+									Empires.m_playerHandler.setPlayerRole(otherID, role);
 									
 									//inform everyone we set the role
-									Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " promoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
+									Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " promoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
 									
 								} catch (EmpiresJoinableDoesNotExistException e) {
 									e.printStackTrace();

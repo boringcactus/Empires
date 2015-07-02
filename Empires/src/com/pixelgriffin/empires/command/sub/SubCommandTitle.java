@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -38,9 +41,9 @@ public class SubCommandTitle extends SubCommand {
 				Player invoker = (Player)_sender;
 				
 				//gather invoker joined name
-				String invokerJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getName());
+				String invokerJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getUniqueId());
 				//gather invoker role
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invoker.getName());
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invoker.getUniqueId());
 				
 				//does the invoker actually have a civilization?
 				if(invokerJoinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -68,12 +71,18 @@ public class SubCommandTitle extends SubCommand {
 					}
 				}
 			
+				UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
+				if(otherID == null) {
+					setError(ChatColor.RED + "Could not find the player '" + _args[0] + "'");
+					return false;
+				}
+				
 				//is the player in our joinable?
 				String selectedJoinedName;
 				
 				//the invoker could have typed gibberish, make sure the player exists so we don't create a new one by mistake
-				if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
-					selectedJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
+				if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+					selectedJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
 				} else {
 					setError("Couldn't find the player '" + _args[0] + "'");
 					return false;
@@ -95,7 +104,7 @@ public class SubCommandTitle extends SubCommand {
 				//we also know the other player exists
 				//we set the title value
 				try {
-					Empires.m_playerHandler.setPlayerTitle(_args[0], _args[1]);
+					Empires.m_playerHandler.setPlayerTitle(otherID, _args[1]);
 				} catch (EmpiresJoinableDoesNotExistException e) {
 					setError("The player " + _args[0] + " is not in a civilization!");
 					return false;

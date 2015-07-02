@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,8 +29,8 @@ public class SubCommandClaim extends SubCommand {
 			//gather player information
 			Player player = (Player)_sender;
 			Location loc = player.getLocation();
-			String playerName = player.getName();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(playerName);
+			UUID playerID = player.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(playerID);
 			
 			//no default civ!
 			if(joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
@@ -73,7 +75,7 @@ public class SubCommandClaim extends SubCommand {
 			
 			//do we have permission to claim land?
 			try {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(playerName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(playerID);
 				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.CLAIM, invokerRole)) {
 					setError("You do not have permission to claim land!");
 					return false;

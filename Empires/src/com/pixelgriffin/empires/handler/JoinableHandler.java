@@ -1280,7 +1280,7 @@ public class JoinableHandler extends DataHandler {
 		return UUID.fromString(sect.getString("heir"));
 	}
 	
-	public void setJoinableHeir(String _joinableName, String _heirName) throws EmpiresJoinableDoesNotExistException {
+	public void setJoinableHeir(String _joinableName, UUID _heirID) throws EmpiresJoinableDoesNotExistException {
 		if(getCheck(_joinableName))
 			return;
 		
@@ -1290,11 +1290,14 @@ public class JoinableHandler extends DataHandler {
 		ConfigurationSection sect = conf.getConfigurationSection(_joinableName.toLowerCase());
 		
 		//save as lower case just inCASE hah
-		sect.set("heir", _heirName.toLowerCase());
+		if(_heirID == null)
+			sect.set("heir", _heirID.toString());
+		else
+			sect.set("heir", "");
 	}
 	
 	public void clearJoinableHeir(String _joinableName) throws EmpiresJoinableDoesNotExistException {
-		setJoinableHeir(_joinableName, "");
+		setJoinableHeir(_joinableName, null);
 	}
 	
 	public ArrayList<String> getEmpireKingdomList(String _empireName) throws EmpiresJoinableDoesNotExistException {
@@ -1535,7 +1538,7 @@ public class JoinableHandler extends DataHandler {
 		return nameList;
 	}
 	
-	public void invokeJoinableRequestPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableRequestPlayer(String _joinableName, UUID _playerID) throws EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
@@ -1548,13 +1551,13 @@ public class JoinableHandler extends DataHandler {
 		
 		//add name
 		ArrayList<String> requestList = (ArrayList<String>) sect.getList("requested-players");
-		requestList.add(_playerName.toLowerCase());
+		requestList.add(_playerID.toString());
 		
 		//save
 		sect.set("requested-players", requestList);
 	}
 	
-	public void invokeJoinableRemoveRequestedPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
+	public void invokeJoinableRemoveRequestedPlayer(String _joinableName, UUID _playerID) throws EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//lookup
@@ -1567,13 +1570,13 @@ public class JoinableHandler extends DataHandler {
 		
 		//add name
 		ArrayList<String> requestList = (ArrayList<String>) sect.getList("requested-players");
-		requestList.remove(_playerName.toLowerCase());
+		requestList.remove(_playerID.toString());
 		
 		//save
 		sect.set("requested-players", requestList);
 	}
 	
-	public boolean getJoinableRequestedPlayer(String _joinableName, String _playerName) throws EmpiresJoinableDoesNotExistException {
+	public boolean getJoinableRequestedPlayer(String _joinableName, UUID _playerID) throws EmpiresJoinableDoesNotExistException {
 		ArrayList<String> requestList = new ArrayList<String>();
 		
 		YamlConfiguration conf = getFileConfiguration();
@@ -1589,7 +1592,7 @@ public class JoinableHandler extends DataHandler {
 		
 		requestList = (ArrayList<String>) sect.getList("requested-players");
 		
-		return requestList.contains(_playerName.toLowerCase());
+		return requestList.contains(_playerID.toString());
 	}
 	
 	public boolean getJoinableIgnoresRelations(String _joinableName) throws EmpiresJoinableDoesNotExistException {

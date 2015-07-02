@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,7 +24,8 @@ public class SubCommandHome extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getName());
+			UUID invokerID = invoker.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			try {
 				if(_args.length == 0) {//we are teleporting to our home
@@ -82,7 +85,7 @@ public class SubCommandHome extends SubCommand {
 	private void teleport(Player _who, Location _where) {
 		_who.sendMessage(ChatColor.GOLD + "Teleport will commence in " + ChatColor.RED + "10 seconds " + ChatColor.GOLD + "don't move!");
 		
-		Empires.m_playerHandler.setPlayerTPID(_who.getName(), 
+		Empires.m_playerHandler.setPlayerTPID(_who.getUniqueId(), 
 				Bukkit.getScheduler().runTaskLater(Empires.m_instance, new TeleportTask(_who, _where), 20 * 10L).getTaskId());
 	}
 }

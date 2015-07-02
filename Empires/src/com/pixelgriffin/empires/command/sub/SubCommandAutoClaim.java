@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,15 +24,15 @@ public class SubCommandAutoClaim extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String invokerName = invoker.getName();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+			UUID invokerID = invoker.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 				setError("You cannot claim for wilderness!");
 				return false;
 			}
 			
-			Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+			Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 			
 			//do we have permission to claim land?
 			try {
@@ -45,9 +47,9 @@ public class SubCommandAutoClaim extends SubCommand {
 				return false;
 			}
 			
-			boolean val = !Empires.m_playerHandler.getPlayerAutoClaiming(invokerName);
+			boolean val = !Empires.m_playerHandler.getPlayerAutoClaiming(invokerID);
 			
-			Empires.m_playerHandler.setPlayerAutoClaiming(invokerName, val);
+			Empires.m_playerHandler.setPlayerAutoClaiming(invokerID, val);
 			
 			invoker.sendMessage(ChatColor.YELLOW + "Auto-claiming: " + val);
 			

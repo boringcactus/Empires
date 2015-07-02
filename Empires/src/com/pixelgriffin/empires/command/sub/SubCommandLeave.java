@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,8 +22,8 @@ public class SubCommandLeave extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String invokerName = invoker.getName();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+			UUID invokerID = invoker.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 				setError("You can't leave " + PlayerHandler.m_defaultCiv + "!");
@@ -30,10 +32,10 @@ public class SubCommandLeave extends SubCommand {
 			
 			try {
 				//inform the others we left
-				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " left the civilization!");
+				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " left the civilization!");
 				
 				//actually remove us and remove our pointer to the old civ
-				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerName);
+				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerID);
 				
 				return true;
 			} catch (EmpiresJoinableDoesNotExistException e) {

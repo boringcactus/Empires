@@ -1,5 +1,8 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,22 +28,27 @@ public class SubCommandJoin extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
+				UUID invokerID = invoker.getUniqueId();
+				String newJoinedName = "noname";
 				
-				String newJoinedName;
+				Player other = Bukkit.getPlayer(_args[0]);
 				
 				//gather the joinedName
 				//the user could be talking about a player OR a joinable
 				//this determines what they're refering to
 				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 					newJoinedName = _args[0];
-				} else if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
-					newJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_args[0]);
+				} else if(other != null) {
+					UUID otherID = other.getUniqueId();
 					
-					//if the user belongs to the wilderness we cannot print anything
-					if(newJoinedName.equals(PlayerHandler.m_defaultCiv)) {
-						setError("You cannot join the wilderness");
-						return false;
+					if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+						newJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+						
+						//if the user belongs to the wilderness we cannot print anything
+						if(newJoinedName.equals(PlayerHandler.m_defaultCiv)) {
+							setError("You cannot join the wilderness");
+							return false;
+						}
 					}
 				} else {
 					//if there was no player or joinable, tell them we couldn't find anything
@@ -51,8 +59,8 @@ public class SubCommandJoin extends SubCommand {
 				/*
 				 * Empire jazz
 				 */
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//we're a leader
 				if(invokerRole.equals(Role.LEADER)) {
@@ -102,13 +110,13 @@ public class SubCommandJoin extends SubCommand {
 				} else {//not the leader of a kingdom!
 					//player is trying to join a kingdom & has override perms
 					try {
-						if(invoker.hasPermission("Empires.force.join") || Empires.m_joinableHandler.getJoinableRequestedPlayer(newJoinedName, invokerName)) {//force join
+						if(invoker.hasPermission("Empires.force.join") || Empires.m_joinableHandler.getJoinableRequestedPlayer(newJoinedName, invokerID)) {//force join
 							try {
 								//set the civilization
-								Empires.m_playerHandler.setPlayerJoinedCivlization(invokerName, newJoinedName);
+								Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, newJoinedName);
 								
 								//remove from the request list
-								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerName);
+								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerID);
 							} catch (EmpiresJoinableExistsException e) {
 								setError("You must leave your current civilization first!");
 								return false;
@@ -119,7 +127,7 @@ public class SubCommandJoin extends SubCommand {
 							
 							//inform everyone we joined
 							try {
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(newJoinedName, ChatColor.YELLOW + invokerName + " has joined the civilization!");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(newJoinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has joined the civilization!");
 							} catch (EmpiresJoinableDoesNotExistException e) {
 								e.printStackTrace();
 								

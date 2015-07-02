@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +25,8 @@ public class SubCommandDeposit extends SubCommand {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
 				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 					setError("You cannot deposit money to " + PlayerHandler.m_defaultCiv);

@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +29,9 @@ public class SubCommandCreate extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {//only a player could possibly create a civilization
 			Player player = (Player)_sender;//gather player
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(player.getName());//gather joined
+			UUID invokerID = player.getUniqueId();
+			
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);//gather joined
 			
 			//if the player is NOT in a real civilization (is in wilderness) then he is creating a kingdom
 			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {//KINGDOM
@@ -71,9 +75,9 @@ public class SubCommandCreate extends SubCommand {
 						//once the joinable was successfully created
 						try {
 							//attempt to set the player to this new civilization
-							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(player.getName());//shouldn't happen but as a precaution remove them from any pre-existing joinable
-							Empires.m_playerHandler.setPlayerJoinedCivlization(player.getName(), _args[0]);
-							Empires.m_playerHandler.setPlayerRole(player.getName(), Role.LEADER);
+							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerID);//shouldn't happen but as a precaution remove them from any pre-existing joinable
+							Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, _args[0]);
+							Empires.m_playerHandler.setPlayerRole(invokerID, Role.LEADER);
 							
 							player.sendMessage(ChatColor.GRAY + "Welcome to leadership! Helpful tips:");
 							player.sendMessage(ChatColor.GRAY + "/e perm to view permission settings");
@@ -117,7 +121,7 @@ public class SubCommandCreate extends SubCommand {
 				if(_args.length == 0) {
 					if(EmpiresConfig.m_empireCreation) {
 						//gather invoker role
-						Role invokerRole = Empires.m_playerHandler.getPlayerRole(player.getName());
+						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 						IOUtility.log(invokerRole.toString());
 						
 						//invoker must be a leader

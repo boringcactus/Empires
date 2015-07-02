@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,8 +25,8 @@ public class SubCommandDesc extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length > 0) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//default does not have a desc!
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -34,7 +36,7 @@ public class SubCommandDesc extends SubCommand {
 				
 				try {
 					//do we have permission?
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_DESC, invokerRole)) {
 						//build description
 						String desc = "";
@@ -48,7 +50,7 @@ public class SubCommandDesc extends SubCommand {
 						Empires.m_joinableHandler.setJoinableDescription(joinedName, desc);
 						
 						//inform everyone
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " updated the civilization description!");
+						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " updated the civilization description!");
 						
 						return true;//success!
 					}

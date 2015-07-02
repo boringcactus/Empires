@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,8 +26,8 @@ public class SubCommandWithdraw extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 					setError("You cannot withdraw money from " + PlayerHandler.m_defaultCiv);
@@ -33,7 +35,7 @@ public class SubCommandWithdraw extends SubCommand {
 				}
 				
 				try {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 					
 					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.WITHDRAW, invokerRole)) {
 						setError("You do not have permission to withdraw money!");
@@ -56,10 +58,10 @@ public class SubCommandWithdraw extends SubCommand {
 				}
 				
 				try {
-					Empires.m_joinableHandler.invokeJoinableWithdrawMoney(joinedName, invokerName, amount);
+					Empires.m_joinableHandler.invokeJoinableWithdrawMoney(joinedName, invoker.getName(), amount);
 					
 					//inform of a successful deposit!
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
 					
 					return true;//success
 				} catch (EmpiresNoFundsException e) {

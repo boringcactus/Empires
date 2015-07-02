@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,7 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsEmpireException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -26,9 +29,9 @@ public class SubCommandInvite extends SubCommand {
 			if(_args.length == 1) {
 				//gather info
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 					setError("You cannot invite people to " + PlayerHandler.m_defaultCiv);
@@ -38,13 +41,19 @@ public class SubCommandInvite extends SubCommand {
 				try {
 					//do we have permission?
 					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.INVITE, invokerRole)) {
+						UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
+						if(otherID == null) {
+							setError(ChatColor.RED + "Could not find the player '" + _args[0] + "'");
+							return false;
+						}
+						
 						//is the arg0 a player?
-						if(Empires.m_playerHandler.getPlayerExists(_args[0])) {
+						if(Empires.m_playerHandler.getPlayerExists(otherID)) {
 							//handle player
 							//did we request them?
-							if(Empires.m_joinableHandler.getJoinableRequestedPlayer(joinedName, _args[0])) {
+							if(Empires.m_joinableHandler.getJoinableRequestedPlayer(joinedName, otherID)) {
 								//remove them from the request list
-								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(joinedName, _args[0]);
+								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(joinedName, otherID);
 								
 								//gather display name..
 								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
@@ -52,11 +61,11 @@ public class SubCommandInvite extends SubCommand {
 								Player invited = Bukkit.getPlayer(_args[0]);
 								invited.sendMessage(ChatColor.YELLOW + "You are no longer invited to " + displayName);
 								
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " uninvited " + invited.getName() + " to the civilization");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " uninvited " + invited.getName() + " to the civilization");
 								return true;
 							} else {
 								//add them to request list
-								Empires.m_joinableHandler.invokeJoinableRequestPlayer(joinedName, _args[0]);
+								Empires.m_joinableHandler.invokeJoinableRequestPlayer(joinedName, otherID);
 								
 								//gather display name..
 								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
@@ -64,7 +73,7 @@ public class SubCommandInvite extends SubCommand {
 								Player invited = Bukkit.getPlayer(_args[0]);
 								invited.sendMessage(ChatColor.YELLOW + "You have been invited to join " + displayName);
 								
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " invted " + invited.getName() + " to the civilization");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " invted " + invited.getName() + " to the civilization");
 								return true;
 							}
 						} else if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {//we're talking a joinable here

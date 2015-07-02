@@ -1,5 +1,8 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,8 +26,8 @@ public class SubCommandAlly extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//is default civ? (wilderness)
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -47,7 +50,7 @@ public class SubCommandAlly extends SubCommand {
 				}
 					
 				//gather player role
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				try {
 					//does the player have permission?
@@ -61,7 +64,7 @@ public class SubCommandAlly extends SubCommand {
 						String displayNameA = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
 						String displayMessageA = Relation.ALLY.getColor() + displayNameA + " wishes to be allies";
 						String displayNameB = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
-						String displayMessageB = Relation.ALLY.getColor() + invokerName + " has asked " + displayNameB + " to be allies";
+						String displayMessageB = Relation.ALLY.getColor() + invoker.getDisplayName() + " has asked " + displayNameB + " to be allies";
 						
 						//if we are now allies
 						if(currentRelation.equals(Relation.ALLY)) {
@@ -114,8 +117,16 @@ public class SubCommandAlly extends SubCommand {
 		//does the joinable exist?
 		if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
 			joinedName = _reference;//then we're talking about _reference
-		} else if(Empires.m_playerHandler.getPlayerExists(_reference)) {//does a player with this name exist?
-			joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_reference);//then we were walking about a player's joinable
+		} else {
+			Player p = Bukkit.getPlayer(_reference);
+			
+			if(p != null) {
+				UUID id = p.getUniqueId();
+				
+				if(Empires.m_playerHandler.getPlayerExists(id)) {//does a player with this name exist?
+					joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(id);//then we were walking about a player's joinable
+				}
+			}
 		}
 		
 		return joinedName;

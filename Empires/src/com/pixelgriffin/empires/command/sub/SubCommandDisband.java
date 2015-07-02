@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,8 +25,8 @@ public class SubCommandDisband extends SubCommand {
 			if(_sender instanceof Player) {
 				//gather player information
 				Player player = (Player)_sender;
-				String playerName = player.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(playerName);
+				UUID invokerID = player.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				//m_joinableHandler methods don't allow default to be targeted
 				//but we should let the player know
@@ -37,7 +39,7 @@ public class SubCommandDisband extends SubCommand {
 				if(Empires.m_joinableHandler.getJoinableExists(joinedName)) {
 					try {
 						//player has permission to disband
-						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DISBAND, Empires.m_playerHandler.getPlayerRole(playerName))) {
+						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DISBAND, Empires.m_playerHandler.getPlayerRole(invokerID))) {
 							Empires.m_joinableHandler.invokeJoinableDisband(joinedName);//run disband
 							
 							//we disbanded successfully

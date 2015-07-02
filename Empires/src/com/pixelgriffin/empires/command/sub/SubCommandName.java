@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,8 +26,8 @@ public class SubCommandName extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
-				String invokerName = invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerName);
+				UUID invokerID = invoker.getUniqueId();
+				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 					setError("You cannot rename " + PlayerHandler.m_defaultCiv + "!");
@@ -33,7 +35,7 @@ public class SubCommandName extends SubCommand {
 				}
 				
 				try {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerName);
+					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RENAME, invokerRole)) {
 						setError("You do not have permission to rename your civilization!");
 						return false;
@@ -63,7 +65,7 @@ public class SubCommandName extends SubCommand {
 					Empires.m_joinableHandler.setJoinableName(joinedName, _args[0]);
 					
 					//inform
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invokerName + " renamed the civilization to '" + _args[0] + "!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invoker.getCustomName() + " renamed the civilization to '" + _args[0] + "!");
 					
 					return true;
 				} catch (EmpiresJoinableDoesNotExistException e) {

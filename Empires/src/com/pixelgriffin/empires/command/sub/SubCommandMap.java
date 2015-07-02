@@ -27,7 +27,7 @@ public class SubCommandMap extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getName());
+			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invoker.getUniqueId());
 			
 			int cX = invoker.getLocation().getChunk().getX();
 			int cZ = invoker.getLocation().getChunk().getZ();

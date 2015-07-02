@@ -224,8 +224,10 @@ public class JoinableHandler extends DataHandler {
 		
 		//iterate through players
 		Player player;
-		for(String playerName : joinedPlayers) {
-			player = Bukkit.getPlayer(playerName);//gather player
+		UUID id;
+		for(String playerID : joinedPlayers) {
+			id = UUID.fromString(playerID);
+			player = Bukkit.getPlayer(id);//gather player
 			
 			//is the player online?
 			if(player != null) {

@@ -30,7 +30,6 @@ public class SubCommandWho extends SubCommand {
 			Player player = (Player)_sender;
 			
 			String joinedName = "noname";
-			UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
 			
 			//here we determine whether or not we're talking about our own joined status or someone/something else
 			if(_args.length == 0) {
@@ -43,6 +42,8 @@ public class SubCommandWho extends SubCommand {
 					return false;
 				}
 			} else if(_args.length == 1) {
+				UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
+				
 				//gather the joinedName
 				//the user could be talking about a player OR a joinable
 				//this determines what they're refering to
@@ -157,7 +158,8 @@ public class SubCommandWho extends SubCommand {
 				
 				//print message
 				player.sendMessage(typeColor + "__________["+ChatColor.GREEN+displayName+typeColor+"]__________");
-				player.sendMessage(ChatColor.GRAY + "Bank: " + Empires.m_economy.format(bankValue));
+				if(Empires.m_vaultActive)
+					player.sendMessage(ChatColor.GRAY + "Bank: " + Empires.m_economy.format(bankValue));
 				if(!isEmpire) {//is a kingdom
 					//we have an empire
 					if(!empireName.equals(""))

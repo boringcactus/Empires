@@ -71,7 +71,7 @@ public class PlayerHandler extends DataHandler {
 				int p = sect.getInt("p");
 				String t = sect.getString("t");
 				String r = sect.getString("r");
-				int pt = sect.getInt("pt");
+				long pt = sect.getLong("pt");
 				boolean ac = sect.getBoolean("ac");
 				int tpid = sect.getInt("tp-id");
 				

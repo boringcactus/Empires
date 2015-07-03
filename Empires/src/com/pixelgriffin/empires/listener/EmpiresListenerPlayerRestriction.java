@@ -242,12 +242,12 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 							sendError(invoker, host + " does not allow you to use levers!");
 							_evt.setCancelled(true);
 						}
-					} else if(blockType.equals(Material.WOODEN_DOOR) || blockType.equals(Material.IRON_DOOR)) {
+					} else if(blockType.equals(Material.WOODEN_DOOR) || blockType.equals(Material.IRON_DOOR) || blockType.equals(Material.ACACIA_DOOR) || blockType.equals(Material.BIRCH_DOOR) || blockType.equals(Material.DARK_OAK_DOOR) || blockType.equals(Material.JUNGLE_DOOR) || blockType.equals(Material.SPRUCE_DOOR)) {
 						if(!Empires.m_boardHandler.territoryHasFlag(invokerLoc, invokerGroup, TerritoryFlag.ALLOW_DOOR)) {//error occurring? causing NPE later on
 							sendError(invoker, host + " does not allow you to use doors!");
 							_evt.setCancelled(true);
 						}
-					} else if(blockType.equals(Material.FENCE_GATE)) {
+					} else if(blockType.equals(Material.FENCE_GATE) || blockType.equals(Material.ACACIA_FENCE_GATE) || blockType.equals(Material.DARK_OAK_FENCE_GATE) || blockType.equals(Material.JUNGLE_FENCE_GATE) || blockType.equals(Material.BIRCH_FENCE_GATE) || blockType.equals(Material.SPRUCE_FENCE_GATE)) {
 						if(!Empires.m_boardHandler.territoryHasFlag(invokerLoc, invokerGroup, TerritoryFlag.ALLOW_FENCEGATE)) {
 							sendError(invoker, host + " does not allow you to use fence gates!");
 							_evt.setCancelled(true);

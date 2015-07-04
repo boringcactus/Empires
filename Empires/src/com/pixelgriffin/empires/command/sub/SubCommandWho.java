@@ -16,6 +16,7 @@ import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.util.IDUtility;
+import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 
@@ -42,6 +43,7 @@ public class SubCommandWho extends SubCommand {
 					return false;
 				}
 			} else if(_args.length == 1) {
+				joinedName = _args[0];
 				UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
 				
 				//gather the joinedName
@@ -87,17 +89,20 @@ public class SubCommandWho extends SubCommand {
 					//separate joined players into online/offline status
 					ArrayList<UUID> joinedPlayers = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
 					
-					String role, title, realName;
+					String role, title;
 					for(UUID playerID : joinedPlayers) {
 						//store real name
-						OfflinePlayer jp = Bukkit.getPlayer(playerID);
+						OfflinePlayer jp = null;
+						jp = Bukkit.getPlayer(playerID);
+						
 						if(jp == null)
 							jp = Bukkit.getOfflinePlayer(playerID);
 						if(jp == null)
 							continue;
 						
 						String playerName = jp.getName();
-						realName = playerName;
+						if(playerName == null)
+							continue;
 						
 						//gather role & title data
 						role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();
@@ -112,7 +117,7 @@ public class SubCommandWho extends SubCommand {
 						playerName = role + title + playerName;
 						
 						//if bukkit finds the player in the server
-						if(Bukkit.getPlayer(realName) != null) {
+						if(Bukkit.getPlayer(jp.getName()) != null) {
 							onlinePlayers.add(playerName);//they're online
 						} else {//otherwise
 							offlinePlayers.add(playerName);//they're offline

@@ -5,10 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pixelgriffin.empires.Empires;
+import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 
@@ -29,8 +31,10 @@ public abstract class DataHandler {
 	 */
 	
 	public int getDataVersion() {
-		if(getFileConfiguration().contains("data-version"))
-			return 0;
+		//if(getFileConfiguration().isSet("data-version"))
+		//	return 0;
+		
+		IOUtility.log("Data-version: " + getFileConfiguration().getInt("data-version"), ChatColor.AQUA);
 		
 		return getFileConfiguration().getInt("data-version");
 	}

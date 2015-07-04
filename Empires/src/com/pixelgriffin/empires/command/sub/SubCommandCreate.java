@@ -11,7 +11,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.Role;
-import com.pixelgriffin.empires.event.EmpiresPlayerCreateJoinable;
+//import com.pixelgriffin.empires.event.EmpiresPlayerCreateJoinable;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableInvalidCharacterException;
@@ -136,10 +136,10 @@ public class SubCommandCreate extends SubCommand {
 							}
 							
 							//fire event
-							EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, joinedName, true);
-							Bukkit.getPluginManager().callEvent(event);
-							if(event.isCancelled())//stop creating an empire since someone told us to stop
-								return false;
+							//EmpiresPlayerCreateJoinable event = new EmpiresPlayerCreateJoinable(player, joinedName, true);
+							//Bukkit.getPluginManager().callEvent(event);
+							//if(event.isCancelled())//stop creating an empire since someone told us to stop
+								//return false;
 							
 							//empire creation
 							try {

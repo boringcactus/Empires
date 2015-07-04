@@ -73,7 +73,7 @@ public class SubCommandInvite extends SubCommand {
 								Player invited = Bukkit.getPlayer(_args[0]);
 								invited.sendMessage(ChatColor.YELLOW + "You have been invited to join " + displayName);
 								
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " invted " + invited.getName() + " to the civilization");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " invited " + invited.getName() + " to the civilization");
 								return true;
 							}
 						} else if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {//we're talking a joinable here

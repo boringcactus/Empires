@@ -17,6 +17,7 @@ import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresPlayerExistsException;
 import com.pixelgriffin.empires.util.IDUtility;
+import com.pixelgriffin.empires.util.IOUtility;
 
 /**
  * 
@@ -87,6 +88,8 @@ public class PlayerHandler extends DataHandler {
 				sect.set("pt", pt);
 				sect.set("ac", ac);
 				sect.set("tp-id", tpid);
+			} else {
+				IOUtility.log("CRITICAL ERROR WHEN CONVERTING player.dat: null UUID for '" + name + "'");
 			}
 		}
 	}

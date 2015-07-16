@@ -101,8 +101,10 @@ public class SubCommandWho extends SubCommand {
 							continue;
 						
 						String playerName = jp.getName();
-						if(playerName == null)
+						if(playerName == null) {
+							IOUtility.log("Trimmed unkown player from /e who '" + playerID + "'");
 							continue;
+						}
 						
 						//gather role & title data
 						role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();

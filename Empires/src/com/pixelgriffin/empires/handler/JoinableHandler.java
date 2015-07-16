@@ -107,6 +107,8 @@ public class JoinableHandler extends DataHandler {
 					
 					if(id != null)
 						ids.add(id);
+					else
+						IOUtility.log("CRITICAL ERROR WHEN CONVERTING joinable.dat: null UUID for '" + name + "'");
 				}
 				
 				//convert UUIDs to strings
@@ -134,6 +136,8 @@ public class JoinableHandler extends DataHandler {
 					
 					if(id != null)
 						ids.add(id);
+					else
+						IOUtility.log("CRITICAL ERROR WHEN CONVERTING joinable.dat: null UUID for '" + name + "'");
 				}
 				
 				//convert UUIDs to strings

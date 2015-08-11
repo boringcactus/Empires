@@ -3,6 +3,7 @@ package com.pixelgriffin.empires;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -18,6 +19,8 @@ public class EmpiresConfig {
 	
 	public static ArrayList<String> m_blacklist = new ArrayList<String>();//done
 	public static ArrayList<String> m_teleportOkayList = new ArrayList<String>();
+	public static ArrayList<String> m_whitelistBlocks = new ArrayList<String>();
+	
 	public static int m_powerMax;//done
 	public static int m_power2Max;//done
 	public static boolean m_interworldClaim;//done
@@ -48,6 +51,13 @@ public class EmpiresConfig {
 			m_config.set("blacklist", m_blacklist);
 		} else {
 			m_blacklist = (ArrayList<String>) m_config.getList("blacklist");
+		}
+		
+		if(!m_config.contains("whitelistBlocks")) {
+			m_whitelistBlocks.add(Material.TNT.toString());
+			m_config.set("whitelistBlocks", m_whitelistBlocks);
+		} else {
+			m_whitelistBlocks = (ArrayList<String>) m_config.getList("whitelistBlocks");
 		}
 		
 		if(!m_config.contains("teleportOkayList")) {

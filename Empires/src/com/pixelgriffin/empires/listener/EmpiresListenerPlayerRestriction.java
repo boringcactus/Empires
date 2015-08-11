@@ -49,6 +49,10 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		Location loc = _evt.getBlock().getLocation();
 		String host = Empires.m_boardHandler.getTerritoryHost(loc);
 		
+		if(EmpiresConfig.m_whitelistBlocks.contains(_evt.getBlock().getType().toString())) {
+			return;
+		}
+		
 		//do not block building in default civ
 		if(host.equals(PlayerHandler.m_defaultCiv))
 			return;

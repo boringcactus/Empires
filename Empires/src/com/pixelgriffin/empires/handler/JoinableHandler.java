@@ -1120,6 +1120,8 @@ public class JoinableHandler extends DataHandler {
 				continue;
 			if(other.equals(_newName))
 				continue;
+			if(other.equals("data-version"))
+				continue;
 			
 			//we have a relation set
 			value = getJoinableRelationWish(other, _joinableName);
@@ -1561,6 +1563,8 @@ public class JoinableHandler extends DataHandler {
 				//gather section
 				otherSect = conf.getConfigurationSection(otherId);
 				if(otherSect == null)
+					continue;
+				if(otherSect.equals("data-version"))
 					continue;
 				
 				relationSect = otherSect.getConfigurationSection("relation-wish");

@@ -65,7 +65,7 @@ public class SubCommandName extends SubCommand {
 					Empires.m_joinableHandler.setJoinableName(joinedName, _args[0]);
 					
 					//inform
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invoker.getCustomName() + " renamed the civilization to '" + _args[0] + "!");
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invoker.getDisplayName() + " renamed the civilization to '" + _args[0] + "!'");
 					
 					return true;
 				} catch (EmpiresJoinableDoesNotExistException e) {

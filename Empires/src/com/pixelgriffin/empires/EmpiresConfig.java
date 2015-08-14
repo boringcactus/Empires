@@ -19,7 +19,8 @@ public class EmpiresConfig {
 	
 	public static ArrayList<String> m_blacklist = new ArrayList<String>();//done
 	public static ArrayList<String> m_teleportOkayList = new ArrayList<String>();
-	public static ArrayList<String> m_whitelistBlocks = new ArrayList<String>();
+	public static ArrayList<String> m_whitelistPlaceableBlocks = new ArrayList<String>();
+	public static ArrayList<String> m_whitelistBreakableBlocks = new ArrayList<String>();
 	
 	public static int m_powerMax;//done
 	public static int m_power2Max;//done
@@ -53,11 +54,18 @@ public class EmpiresConfig {
 			m_blacklist = (ArrayList<String>) m_config.getList("blacklist");
 		}
 		
-		if(!m_config.contains("whitelistBlocks")) {
-			m_whitelistBlocks.add(Material.TNT.toString());
-			m_config.set("whitelistBlocks", m_whitelistBlocks);
+		if(!m_config.contains("whitelistPlaceableBlocks")) {
+			m_whitelistPlaceableBlocks.add(Material.TNT.toString());
+			m_config.set("whitelistPlaceableBlocks", m_whitelistPlaceableBlocks);
 		} else {
-			m_whitelistBlocks = (ArrayList<String>) m_config.getList("whitelistBlocks");
+			m_whitelistPlaceableBlocks = (ArrayList<String>) m_config.getList("whitelistPlaceableBlocks");
+		}
+		
+		if(!m_config.contains("whitelistBreakableBlocks")) {
+			m_whitelistBreakableBlocks.add(Material.TNT.toString());
+			m_config.set("whitelistBreakableBlocks", m_whitelistBreakableBlocks);
+		} else {
+			m_whitelistBreakableBlocks = (ArrayList<String>) m_config.getList("whitelistBreakableBlocks");
 		}
 		
 		if(!m_config.contains("teleportOkayList")) {

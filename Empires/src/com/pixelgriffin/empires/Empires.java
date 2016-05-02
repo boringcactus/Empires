@@ -3,13 +3,15 @@ package com.pixelgriffin.empires;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.dthielke.herochat.Herochat;
+import com.dthielke.Herochat;
+import com.dthielke.api.event.ChannelChatEvent;
 import com.pixelgriffin.empires.chat.AllyChat;
-import com.pixelgriffin.empires.chat.CityChat;
+import com.pixelgriffin.empires.chat.KingdomChat;
 import com.pixelgriffin.empires.chat.EmpiresListenerChat;
 import com.pixelgriffin.empires.command.EmpiresCommands;
 import com.pixelgriffin.empires.handler.BoardHandler;
@@ -17,7 +19,6 @@ import com.pixelgriffin.empires.handler.JoinableHandler;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.listener.EmpiresListenerPlayerGeneral;
 import com.pixelgriffin.empires.listener.EmpiresListenerPlayerRestriction;
-import com.pixelgriffin.empires.listener.EmpiresListenerPlayerTag;
 import com.pixelgriffin.empires.task.InactivityTask;
 import com.pixelgriffin.empires.task.PowerUpdateTask;
 import com.pixelgriffin.empires.task.SaveTask;
@@ -87,10 +88,16 @@ public class Empires extends JavaPlugin {
 			if(pManager.getPlugin("Herochat") != null) {
 				m_herochatActive = true;
 				
-				Herochat.getChannelManager().addChannel(new CityChat());
+				//create channels for usage
+				//Herochat.getChannelManager().addChannel(new CityChatOld());
 				Herochat.getChannelManager().addChannel(new AllyChat());
+				Herochat.getChannelManager().addChannel(new KingdomChat());
+				//Herochat.getChannelManager().addChannel(new VoidChat());
 				
-				new EmpiresListenerChat(this);//registers self
+				//new EmpiresListenerChatOld(this);//registers self
+				//register listener to format chatting
+				pManager.registerEvents(new EmpiresListenerChat(), this);
+				
 				
 				//inform users we have hooked
 				IOUtility.log("Herochat recognized!");
@@ -99,7 +106,7 @@ public class Empires extends JavaPlugin {
 		
 		//TagAPI
 		if(EmpiresConfig.m_useTagAPI) {
-			if(pManager.getPlugin("TagAPI") != null) {
+			/*if(pManager.getPlugin("TagAPI") != null) {
 				m_tagAPIActive = true;
 				
 				//register event to tag listener
@@ -107,7 +114,8 @@ public class Empires extends JavaPlugin {
 				
 				//inform users we have hooked
 				IOUtility.log("TagAPI recognized!");
-			}
+			}*/
+			IOUtility.log("TagAPI is no longer supported by Empires!");
 		}
 		
 		/*

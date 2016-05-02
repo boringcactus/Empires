@@ -31,9 +31,6 @@ public abstract class DataHandler {
 	 */
 	
 	public int getDataVersion() {
-		//if(getFileConfiguration().isSet("data-version"))
-		//	return 0;
-		
 		IOUtility.log("Data-version: " + getFileConfiguration().getInt("data-version"), ChatColor.AQUA);
 		
 		return getFileConfiguration().getInt("data-version");

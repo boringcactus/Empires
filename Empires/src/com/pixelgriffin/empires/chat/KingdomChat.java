@@ -18,7 +18,7 @@ import com.dthielke.api.Chatter;
 import com.dthielke.api.MessageFormatSupplier;
 import com.dthielke.api.TagFormatter;
 
-public class AllyChat implements Channel {
+public class KingdomChat implements Channel {
 
 	//private static final Pattern msgPattern = Pattern.compile("(.*)<(.*)%1\\$s(.*)> %2\\$s");
 	//private final ChannelStorage chStore = Herochat.getChannelManager().getStorage();
@@ -51,7 +51,7 @@ public class AllyChat implements Channel {
 
 	@Override
 	public ChatColor getColor() {
-		return ChatColor.DARK_PURPLE;
+		return ChatColor.GOLD;
 	}
 
 	@Override
@@ -86,12 +86,12 @@ public class AllyChat implements Channel {
 
 	@Override
 	public String getName() {
-		return "Ally";
+		return "Kingdom";
 	}
 
 	@Override
 	public String getNick() {
-		return "A";
+		return "K";
 	}
 
 	@Override

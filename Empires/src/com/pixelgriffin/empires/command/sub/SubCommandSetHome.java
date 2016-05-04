@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -34,16 +35,11 @@ public class SubCommandSetHome extends SubCommand {
 				return false;
 			}
 			
-			try {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_HOME, invokerRole)) {
-					setError("You do not have permission to set the home of your civilization!");
-					return false;
-				}
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				setError("Something went wrong!");
+			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+			//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_HOME, invokerRole)) {
+			if(!joined.getPermissionForRole(invokerRole, GroupPermission.SET_HOME)) {
+				setError("You do not have permission to set the home of your civilization!");
 				return false;
 			}
 			
@@ -52,18 +48,13 @@ public class SubCommandSetHome extends SubCommand {
 				return false;
 			}
 			
-			try {
-				Empires.m_joinableHandler.setJoinableHome(joinedName, invokerLoc);
-				
-				Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has set a new home for the civilization!");
-				
-				return true;
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				setError("Something went wrong!");
-				return false;
-			}
+			//Empires.m_joinableHandler.setJoinableHome(joinedName, invokerLoc);
+			joined.setHome(invokerLoc);
+			
+			//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has set a new home for the civilization!");
+			joined.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getDisplayName() + " has set a new home for the civilization!");
+			
+			return true;
 		}
 		
 		setError("Only players can invoke the 'sethome' method");

@@ -15,6 +15,7 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.enums.TerritoryFlag;
 import com.pixelgriffin.empires.enums.TerritoryGroup;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -36,22 +37,17 @@ public class SubCommandFlag extends SubCommand {
 				return false;
 			}
 			
-			try {
+			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
+				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
+				if(!joined.getPermissionForRole(invokerRole, GroupPermission.PERMS)) {
 					setError("You do not have permission to edit flags!");
 					return false;
 				}
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
 				
-				setError("Something went wrong!");
-				return false;
-			}
-			
 			if(_args.length == 0) {
 				invoker.sendMessage(ChatColor.GRAY + "Global Flag Settings:");
-				try {
 					ArrayList<String> flags;
 					String outString = "";
 					ChatColor accessCol;
@@ -60,7 +56,8 @@ public class SubCommandFlag extends SubCommand {
 						outString = ChatColor.GRAY + f.toString() + ": ";
 						
 						for(TerritoryGroup g : TerritoryGroup.values()) {
-							flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(joinedName, g);
+							//flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(joinedName, g);
+							flags = joined.getDefaultGlobalFlagsForGroup(g);
 							accessCol = ChatColor.RED;
 							
 							if(flags.contains(f.toString())) {
@@ -84,7 +81,8 @@ public class SubCommandFlag extends SubCommand {
 					//single value territory
 					//IGNORE_RELATIONS
 					outString = ChatColor.GRAY + "IGNORE_RELATIONS: ";
-					boolean val = Empires.m_joinableHandler.getJoinableIgnoresRelations(joinedName);
+					//boolean val = Empires.m_joinableHandler.getJoinableIgnoresRelations(joinedName);
+					boolean val = joined.getIgnoresRelations();
 					
 					accessCol = ChatColor.RED;
 					if(val)
@@ -95,7 +93,8 @@ public class SubCommandFlag extends SubCommand {
 					//SPAWN_MOBS
 					if(EmpiresConfig.m_mobSpawnManaging) {
 						outString = ChatColor.GRAY + "SPAWN_MOBS: ";
-						val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+						//val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+						val = joined.getAllowsMobs();
 						
 						accessCol = ChatColor.RED;
 						if(val)
@@ -103,19 +102,13 @@ public class SubCommandFlag extends SubCommand {
 						
 						invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
 					}
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
-					return false;
-				}
 				
 				return true;
 				
 			} else if(_args.length == 1) {
 				if(_args[0].equalsIgnoreCase("IGNORE_RELATIONS")) {
-					try {
-						boolean val = Empires.m_joinableHandler.toggleJoinableIgnoresRelations(joinedName);
+						//boolean val = Empires.m_joinableHandler.toggleJoinableIgnoresRelations(joinedName);
+						boolean val = joined.toggleIgnoreRelations();
 						ChatColor col = ChatColor.RED;
 						
 						if(val)
@@ -124,29 +117,17 @@ public class SubCommandFlag extends SubCommand {
 						invoker.sendMessage(ChatColor.GRAY + "IGNORE_RELATIONS: " + col + String.valueOf(val).toUpperCase());
 						
 						return true;
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						e.printStackTrace();
-						
-						setError("Something went wrong!");
-						return false;
-					}
 				} else if(EmpiresConfig.m_mobSpawnManaging && _args[0].equalsIgnoreCase("SPAWN_MOBS")) {
-					try {
-						boolean val = Empires.m_joinableHandler.toggleJoinableAllowsMobs(joinedName);
-						ChatColor col = ChatColor.RED;
-						
-						if(val)
-							col = ChatColor.GREEN;
-						
-						invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS: " + col + String.valueOf(val).toUpperCase());
-						
-						return true;
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						e.printStackTrace();
-						
-						setError("Something went wrong!");
-						return false;
-					}
+					//boolean val = Empires.m_joinableHandler.toggleJoinableAllowsMobs(joinedName);
+					boolean val = joined.toggleAllowsMobs();
+					ChatColor col = ChatColor.RED;
+					
+					if(val)
+						col = ChatColor.GREEN;
+					
+					invoker.sendMessage(ChatColor.GRAY + "SPAWN_MOBS: " + col + String.valueOf(val).toUpperCase());
+					
+					return true;
 				}
 				
 				setError("Could not find single-value flag '" + _args[0] + "'");
@@ -156,7 +137,8 @@ public class SubCommandFlag extends SubCommand {
 					TerritoryFlag f = TerritoryFlag.valueOf(_args[0].toUpperCase());
 					TerritoryGroup g = TerritoryGroup.valueOf(_args[1].toUpperCase());
 					
-					boolean val = Empires.m_joinableHandler.toggleJoinableFlag(joinedName, g, f);
+					//boolean val = Empires.m_joinableHandler.toggleJoinableFlag(joinedName, g, f);
+					boolean val = joined.toggleDefaultGlobalFlagForGroup(g, f);
 					ChatColor accessCol = ChatColor.RED;
 					
 					if(val)
@@ -167,11 +149,6 @@ public class SubCommandFlag extends SubCommand {
 					return true;
 				} catch(IllegalArgumentException e) {
 					setError("Could not find flag value for '" + _args[0].toUpperCase() + "' at '" + _args[1].toUpperCase() +"'");
-					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
 					return false;
 				}
 			}

@@ -9,6 +9,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -36,11 +37,15 @@ public class SubCommandDisband extends SubCommand {
 				}
 				
 				//does the joinable exist?
-				if(Empires.m_joinableHandler.getJoinableExists(joinedName)) {
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//if(Empires.m_joinableHandler.getJoinableExists(joinedName)) {
+				if(joined != null) {
 					try {
 						//player has permission to disband
-						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DISBAND, Empires.m_playerHandler.getPlayerRole(invokerID))) {
-							Empires.m_joinableHandler.invokeJoinableDisband(joinedName);//run disband
+						//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DISBAND, Empires.m_playerHandler.getPlayerRole(invokerID))) {
+						if(joined.getPermissionForRole(Empires.m_playerHandler.getPlayerRole(invokerID), GroupPermission.DISBAND)) {
+							//Empires.m_joinableHandler.invokeJoinableDisband(joinedName);//run disband
+							joined.disband();
 							
 							//we disbanded successfully
 							return true;
@@ -70,9 +75,12 @@ public class SubCommandDisband extends SubCommand {
 					return false;
 				}
 				
-				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
+				Joinable joined = Empires.m_joinableHandler.getJoinable(_args[0]);
+				//if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
+				if(joined != null) {
 					try {
-						Empires.m_joinableHandler.invokeJoinableDisband(_args[0]);
+						//Empires.m_joinableHandler.invokeJoinableDisband(_args[0]);
+						joined.disband();
 						//successfully disbanded
 						return true;
 					} catch (EmpiresJoinableDoesNotExistException e) {

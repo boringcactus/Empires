@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.util.IDUtility;
 
@@ -50,18 +51,13 @@ public class SubCommandDemote extends SubCommand {
 				
 				//gather invoker's role for later
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-				
-				try {
-					//check for the promote permission
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DEMOTE, invokerRole)) {
-						//no permission, terminate
-						setError("You do not have permission to demote players!");
-						return false;
-					}
-				} catch (EmpiresJoinableDoesNotExistException e) {//joinedName doesn't exist..
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
+			
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//check for the promote permission
+				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DEMOTE, invokerRole)) {
+				if(!joined.getPermissionForRole(invokerRole, GroupPermission.DEMOTE)) {
+					//no permission, terminate
+					setError("You do not have permission to demote players!");
 					return false;
 				}
 				
@@ -91,7 +87,8 @@ public class SubCommandDemote extends SubCommand {
 									Empires.m_playerHandler.setPlayerRole(otherID, role);
 									
 									//inform everyone we set the role
-									Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
+									//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
+									joined.broadcastMessageToJoined(ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
 									
 								} catch (EmpiresJoinableDoesNotExistException e) {
 									e.printStackTrace();

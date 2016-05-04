@@ -340,11 +340,13 @@ public class PlayerHandler extends DataHandler {
 		}
 		
 		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		String joined = sect.getString("j");
+		String joinedName = sect.getString("j");
+		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 		
 		
 		//we cannot remove ourselves from the default civ (wilderness)
-		if(joined.equals(m_defaultCiv))
+		//if(joined.equals(m_defaultCiv))
+		if(joined == null)
 			return;
 		
 		//since we are in a joinable and we exist..
@@ -352,7 +354,7 @@ public class PlayerHandler extends DataHandler {
 		sect.set("j", m_defaultCiv);
 		
 		//and remove ourselves from the previously joined player list
-		Empires.m_joinableHandler.invokeJoinableRemovePlayer(joined, _id);
+		//Empires.m_joinableHandler.invokeJoinableRemovePlayer(joined, _id);
 		
 		//gather the old role
 		Role oldRole = Role.valueOf(sect.getString("r").toUpperCase());
@@ -363,8 +365,9 @@ public class PlayerHandler extends DataHandler {
 		sect.set("t", m_defaultTitle);
 		
 		//if we haven't disbanded then do some extra stuff
-		if(!Empires.m_joinableHandler.getJoinableExists(joined))
-			return;
+		//if(!Empires.m_joinableHandler.getJoinableExists(joined))
+		if(joined.removePlayerPointer(_id))//if we disbanded
+			return;//dont
 		
 		//now that we're out of the previously joined civilization
 		//remove our power value
@@ -372,16 +375,18 @@ public class PlayerHandler extends DataHandler {
 		int powerValue = getPlayerPower(_id);
 		
 		//remove
-		Empires.m_joinableHandler.setJoinablePowerValue(joined, -powerValue, true);
+		//Empires.m_joinableHandler.setJoinablePowerValue(joined, -powerValue, true);
+		joined.setPower(-powerValue, true);
 		
 		//was the removed player the leader?
 		if(oldRole.equals(Role.LEADER)) {
 			//find a new leader.
-			try {
+			/*try {
 				Empires.m_joinableHandler.invokeJoinableFindNewLeader(joined, true);
 			} catch (EmpiresPlayerExistsException e) {
 				e.printStackTrace();//shouldn't happen.. but you never know!
-			}
+			}*/
+			joined.findNewLeader(true);
 		}
 	}
 	
@@ -392,7 +397,7 @@ public class PlayerHandler extends DataHandler {
 	 * @throws EmpiresJoinableExistsException the player in question already has a joinable set
 	 * @throws EmpiresJoinableDoesNotExistException the joinable in question does not exists
 	 */
-	public void setPlayerJoinedCivlization(UUID _playerID, String _joinableID) throws EmpiresJoinableExistsException, EmpiresJoinableDoesNotExistException {
+	public void setPlayerJoinedCivlization(UUID _playerID, Joinable join) throws EmpiresJoinableExistsException, EmpiresJoinableDoesNotExistException {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//id to string for lookup
@@ -413,16 +418,18 @@ public class PlayerHandler extends DataHandler {
 		
 		//since we don't have a joinable and we exist
 		//we set our pointer to the joinable in question
-		sect.set("j", _joinableID);
+		sect.set("j", join.getName());
 		//and add ourselves to the newly joined player list
-		Empires.m_joinableHandler.invokeJoinableAddPlayer(_joinableID, _playerID);
+		//Empires.m_joinableHandler.invokeJoinableAddPlayer(_joinableID, _playerID);
+		join.addPlayerPointer(_playerID);
 		
 		//now that we've added the player, change the power value yo
 		//gather power value
 		int powerValue = getPlayerPower(_playerID);
 		
 		//add the power!
-		Empires.m_joinableHandler.setJoinablePowerValue(_joinableID, powerValue, true);
+		//Empires.m_joinableHandler.setJoinablePowerValue(_joinableID, powerValue, true);
+		join.setPower(powerValue, true);
 	}
 	
 	public void setPlayerRole(UUID _id, Role _role) throws EmpiresJoinableDoesNotExistException {
@@ -509,20 +516,23 @@ public class PlayerHandler extends DataHandler {
 		
 		//update our joined total power
 		//gather joined
-		String joined = sect.getString("j");
+		String joinedName = sect.getString("j");
+		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 		
 		//do not act on wilderness
-		if(joined.equals(m_defaultCiv))
+		//if(joined.equals(m_defaultCiv))
+		if(joined == null)
 			return;
 		
-		try {
+		/*try {
 			//change the power relatively based on the old value and the new one
 			//for example: we're at 10 we die so we set our power to 0
 			//the difference is -10 and therefore 10 power is removed from the joinable
-			Empires.m_joinableHandler.setJoinablePowerValue(joined, _val - oldPower, true);//for our joinable
+			//Empires.m_joinableHandler.setJoinablePowerValue(joined, _val - oldPower, true);//for our joinable
 		} catch (EmpiresJoinableDoesNotExistException e) {
 			e.printStackTrace();//something went wrong! no joinable was found.. boohoo
-		}
+		}*/
+		joined.setPower(_val - oldPower, true);
 	}
 
 	public void overridePlayerJoinedCivilization(UUID _id, String _name) throws EmpiresJoinableDoesNotExistException {
@@ -542,8 +552,8 @@ public class PlayerHandler extends DataHandler {
 			}
 		}
 		
-		if(!Empires.m_joinableHandler.getJoinableExists(_name))
-			throw new EmpiresJoinableDoesNotExistException("Tried to override player civilization to a non-existent joinable '" + _name + "'");
+		//if(!Empires.m_joinableHandler.getJoinableExists(_name))
+		//	throw new EmpiresJoinableDoesNotExistException("Tried to override player civilization to a non-existent joinable '" + _name + "'");
 		
 		ConfigurationSection sect = conf.getConfigurationSection(idString);
 		sect.set("j", _name);

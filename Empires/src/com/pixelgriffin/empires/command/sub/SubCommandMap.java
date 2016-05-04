@@ -73,13 +73,9 @@ public class SubCommandMap extends SubCommand {
 						ChatColor col = ChatColor.GRAY;
 						
 						if(!joinedName.equals(PlayerHandler.m_defaultCiv)) {
-							try {
-								col = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, terHost).getColor();
-							} catch (EmpiresJoinableDoesNotExistException e) {
-								e.printStackTrace();
-								
+							col = Empires.m_joinableHandler.getRelationByName(joinedName, terHost).getColor();
+							if(col == null)
 								col = ChatColor.YELLOW;
-							}
 						}
 						
 						ln = ln + col + "" + c;
@@ -94,13 +90,9 @@ public class SubCommandMap extends SubCommand {
 				ChatColor col = ChatColor.GRAY;
 				
 				if(!joinedName.equals(PlayerHandler.m_defaultCiv)) {
-					try {
-						col = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, jit).getColor();
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						e.printStackTrace();
-						
+					col = Empires.m_joinableHandler.getRelationByName(joinedName, jit).getColor();
+					if(col == null)
 						col = ChatColor.YELLOW;
-					}
 				}
 				
 				jln = jln + col + js.get(jit) + ": " + jit + " ";

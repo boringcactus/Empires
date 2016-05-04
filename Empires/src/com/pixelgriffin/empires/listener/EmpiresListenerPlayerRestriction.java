@@ -28,6 +28,9 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.enums.TerritoryFlag;
 import com.pixelgriffin.empires.enums.TerritoryGroup;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.Joinable;
+import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.util.IOUtility;
 
@@ -356,41 +359,36 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		//does this territory ignore relations?
 		if(!Empires.m_boardHandler.territoryIgnoresRelations(defLoc)) {
 			//if not
-			try {
-				//gather relationship information
-				String defHost, atkHost;
-				defHost = Empires.m_playerHandler.getPlayerJoinedCivilization(defender.getUniqueId());
-				atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getUniqueId());
-				
-				Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(defHost, atkHost);
-				
-				//message string
-				String message = "";
-				
-				//test relation
-				if(rel.equals(Relation.ALLY)) {
-					message = Relation.ALLY.getColor() + "You can't hurt allies!";
-				} else if(rel.equals(Relation.US)) {
-					message = Relation.US.getColor() + "You can't hurt your fellow members!";
-				} else if(rel.equals(Relation.E_K)) {
-					message = Relation.E_K + "You can't hurt members of your empire!";
-				} else {
-					//we must be neutral or enemies
-					//do not send a message and do not cancel damage
-					return;
-				}
-				
-				//cancel damage
-				_evt.setCancelled(true);
-				
-				//inform attacker
-				attacker.sendMessage(message);
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				sendError(defender, "Something went wrong!");
-				sendError(attacker, "Something went wrong!");
+			//gather relationship information
+			String defHost, atkHost;
+			defHost = Empires.m_playerHandler.getPlayerJoinedCivilization(defender.getUniqueId());
+			atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getUniqueId());
+			
+			//Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(defHost, atkHost);
+			Relation rel = Empires.m_joinableHandler.getJoinable(defHost).getRelation(
+						   Empires.m_joinableHandler.getJoinable(atkHost));
+			
+			//message string
+			String message = "";
+			
+			//test relation
+			if(rel.equals(Relation.ALLY)) {
+				message = Relation.ALLY.getColor() + "You can't hurt allies!";
+			} else if(rel.equals(Relation.US)) {
+				message = Relation.US.getColor() + "You can't hurt your fellow members!";
+			} else if(rel.equals(Relation.E_K)) {
+				message = Relation.E_K + "You can't hurt members of your empire!";
+			} else {
+				//we must be neutral or enemies
+				//do not send a message and do not cancel damage
+				return;
 			}
+			
+			//cancel damage
+			_evt.setCancelled(true);
+			
+			//inform attacker
+			attacker.sendMessage(message);
 		}
 	}
 	
@@ -416,41 +414,44 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 					damaged.sendMessage(ChatColor.GREEN + "30% less damage taken on your land!");
 					_evt.setDamage(_evt.getDamage() * 0.7D);
 				} else {
-					try {
-						if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-							//we are an empire
-							//check if host is in our empire
-							if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(host.toLowerCase())) {
-								damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
-								_evt.setDamage(_evt.getDamage() * 0.7D);
-							}
+					Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+					
+					if(joined.isEmpire()) {
+						Empire empire = (Empire)joined;
+						//we are an empire
+						//check if host is in our empire
+						//if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(host.toLowerCase())) {
+						if(empire.getKingdomSet().contains(host.toLowerCase())) {
+							damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
+							_evt.setDamage(_evt.getDamage() * 0.7D);
+						}
+					} else {
+						//we are kingdom
+						Kingdom kingdom = (Kingdom)joined;
+						
+						//gather empire name
+						//String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
+						String empireName = kingdom.getEmpire();
+						
+						
+						//no empire, no need to check
+						if(empireName.equals(""))
+							return;
+						
+						if(empireName.equalsIgnoreCase(host)) {
+							//the host is our empire
+							damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
+							_evt.setDamage(_evt.getDamage() * 0.7D);
 						} else {
-							//we are kingdom
-							//gather empire name
-							String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
+							//is the host part of our empire?
+							Empire ourEmpire = (Empire)Empires.m_joinableHandler.getJoinable(empireName);
 							
-							//no empire, no need to check
-							if(empireName.equals(""))
-								return;
-							
-							if(empireName.equalsIgnoreCase(host)) {
-								//the host is our empire
+							//if(Empires.m_joinableHandler.getEmpireKingdomList(empireName).contains(host.toLowerCase())) {
+							if(ourEmpire.getKingdomSet().contains(host.toLowerCase())) {
 								damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
 								_evt.setDamage(_evt.getDamage() * 0.7D);
-							} else {
-								//is the host part of our empire?
-								if(Empires.m_joinableHandler.getEmpireKingdomList(empireName).contains(host.toLowerCase())) {
-									damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
-									_evt.setDamage(_evt.getDamage() * 0.7D);
-								}
 							}
 						}
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						e.printStackTrace();
-						
-						sendError(damaged, "Something went wrong!");
-						
-						return;
 					}
 				}
 			}
@@ -502,12 +503,14 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			return TerritoryGroup.MEMBER;
 		}
 		
-		Relation rel = null;
-		try {
+		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+		
+		Relation rel = joined.getRelation(Empires.m_joinableHandler.getJoinable(_host));
+		/*try {
 			rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, _host);
 		} catch (EmpiresJoinableDoesNotExistException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		//we have a relation to the host
 		if(rel != null) {

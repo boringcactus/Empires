@@ -15,6 +15,8 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableInvalidCharacterException;
+import com.pixelgriffin.empires.handler.Joinable;
+import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.util.IOUtility;
 
@@ -60,23 +62,13 @@ public class SubCommandCreate extends SubCommand {
 						//	return false;
 						
 						//create kingdom
-						try {
-							Empires.m_joinableHandler.invokeCreateBlankJoinable(_args[0]);
-						} catch (EmpiresJoinableExistsException e) {
-							setError("A civilization with the name " + _args[0] + " already exists!");
-							return false;
-						}  catch(EmpiresJoinableInvalidCharacterException e) {
-							e.printStackTrace();
-							
-							setError("Invalid characters found in name! Try a different name.");
-							return true;
-						}
+						Joinable newJoinable = Empires.m_joinableHandler.createNewKingdom(_args[0]);
 						
 						//once the joinable was successfully created
 						try {
 							//attempt to set the player to this new civilization
 							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerID);//shouldn't happen but as a precaution remove them from any pre-existing joinable
-							Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, _args[0]);
+							Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, newJoinable);
 							Empires.m_playerHandler.setPlayerRole(invokerID, Role.LEADER);
 							
 							player.sendMessage(ChatColor.GRAY + "Welcome to leadership! Helpful tips:");
@@ -142,30 +134,25 @@ public class SubCommandCreate extends SubCommand {
 								//return false;
 							
 							//empire creation
-							try {
-								//if we're not an empire already
-								if(!Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-									Empires.m_joinableHandler.setKingdomAsEmpire(joinedName);
-									
-									//remove money from balance
-									if(Empires.m_vaultActive)
-										Empires.m_economy.withdrawPlayer(player.getName(), EmpiresConfig.m_empireCost);
-									
-									//inform the server of your success!
-									Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + joinedName + " has become an empire!");
-									return true;
-								}
+							//if we're not an empire already
+							Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+							
+							//if(!Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
+							if(!joined.isEmpire()) {
+								//Empires.m_joinableHandler.setKingdomAsEmpire(joinedName);
+								((Kingdom)joined).setAsEmpire();
 								
-								setError("You already own an Empire, you have no greater aspirations!");
-								return false;
-							} catch (EmpiresJoinableDoesNotExistException e) {
-								e.printStackTrace();
+								//remove money from balance
+								if(Empires.m_vaultActive)
+									Empires.m_economy.withdrawPlayer(player.getName(), EmpiresConfig.m_empireCost);
 								
-								//fail gracefully - kingdom pointer exists but no kingdom exists
-								
-								setError("Something went wrong!");
-								return false;
+								//inform the server of your success!
+								Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + joinedName + " has become an empire!");
+								return true;
 							}
+							
+							setError("You already own an Empire, you have no greater aspirations!");
+							return false;
 						}
 						
 						setError("You must be a leader to create an Empire!");

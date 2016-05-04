@@ -11,6 +11,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -34,32 +35,33 @@ public class SubCommandDesc extends SubCommand {
 					return false;
 				}
 				
-				try {
-					//do we have permission?
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_DESC, invokerRole)) {
-						//build description
-						String desc = "";
-						for(int i = 0; i < _args.length; i++) {
-							desc = desc + " "+_args[i];
-						}
-						
-						desc = desc.substring(1);
-						
-						//set description
-						Empires.m_joinableHandler.setJoinableDescription(joinedName, desc);
-						
-						//inform everyone
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " updated the civilization description!");
-						
-						return true;//success!
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				
+				//do we have permission?
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_DESC, invokerRole)) {
+				if(joined.getPermissionForRole(invokerRole, GroupPermission.SET_DESC)) {
+					//build description
+					String desc = "";
+					for(int i = 0; i < _args.length; i++) {
+						desc = desc + " "+_args[i];
 					}
 					
-					setError("You don't have permission to change the description!");
-					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
+					desc = desc.substring(1);
+					
+					//set description
+					//Empires.m_joinableHandler.setJoinableDescription(joinedName, desc);
+					joined.setDescription(desc);
+					
+					//inform everyone
+					//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " updated the civilization description!");
+					joined.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getDisplayName() + " updated the civilization description!");
+					
+					return true;//success!
 				}
+				
+				setError("You don't have permission to change the description!");
+				return false;
 			}
 			
 			setError("Invalid arguments!");

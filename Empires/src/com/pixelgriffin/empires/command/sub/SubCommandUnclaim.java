@@ -13,6 +13,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresEmptyTerritoryException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -41,8 +42,10 @@ public class SubCommandUnclaim extends SubCommand {
 				Role playerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				try {
+					Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 					//if the player has permission to unclaim
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.UNCLAIM, playerRole)) {
+					//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.UNCLAIM, playerRole)) {
+					if(joined.getPermissionForRole(playerRole, GroupPermission.UNCLAIM)) {
 						
 						//is this OUR territory?
 						String host = Empires.m_boardHandler.getTerritoryHost(loc);
@@ -52,11 +55,12 @@ public class SubCommandUnclaim extends SubCommand {
 						}
 						
 						//unclaim
-						Empires.m_boardHandler.unclaimTerritoryForJoinable(loc, joinedName);
+						Empires.m_boardHandler.unclaimTerritoryForJoinable(loc, joined);
 						
 						
 						//let them know what we did!
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + player.getDisplayName() + " unclaimed land for you civilization at (...)");
+						//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + player.getDisplayName() + " unclaimed land for you civilization at (...)");
+						joined.broadcastMessageToJoined(ChatColor.YELLOW + player.getDisplayName() + " unclaimed land for you civilization at (" + loc.getChunk().getX() + ", " + loc.getChunk().getZ() + ")");
 						return true;
 					}
 				} catch (EmpiresJoinableDoesNotExistException e) {

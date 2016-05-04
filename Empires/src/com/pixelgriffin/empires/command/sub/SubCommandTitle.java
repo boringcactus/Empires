@@ -11,6 +11,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.util.IDUtility;
 
@@ -52,14 +53,10 @@ public class SubCommandTitle extends SubCommand {
 				}
 				
 				//does the invoker have permission to set titles?
-				try {
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(invokerJoinedName, GroupPermission.SET_TITLE, invokerRole)) {
-						setError("You do not have permission to set titles!");
-						return false;
-					}
-				} catch(EmpiresJoinableDoesNotExistException e) {//player apparently holds a pointer to a non-existent joinable
-					setError("You belong to the wilderness!");
-					e.printStackTrace();
+				Joinable joined = Empires.m_joinableHandler.getJoinable(invokerJoinedName);
+				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(invokerJoinedName, GroupPermission.SET_TITLE, invokerRole)) {
+				if(!joined.getPermissionForRole(invokerRole, GroupPermission.SET_TITLE)) {
+					setError("You do not have permission to set titles!");
 					return false;
 				}
 				
@@ -112,11 +109,8 @@ public class SubCommandTitle extends SubCommand {
 				
 				//set the title successfully
 				//let everyone know about the new title
-				try {
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(invokerJoinedName, ChatColor.YELLOW + _args[0] + "'s title has been set to '" + _args[1] + "'");
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-				}
+				//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(invokerJoinedName, ChatColor.YELLOW + _args[0] + "'s title has been set to '" + _args[1] + "'");
+				joined.broadcastMessageToJoined(ChatColor.YELLOW + _args[0] + "'s title has been set to '" + _args[1] + "'");
 				return true;
 			}
 			

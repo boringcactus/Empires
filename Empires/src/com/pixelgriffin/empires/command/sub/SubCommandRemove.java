@@ -11,6 +11,9 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.Joinable;
+import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -35,22 +38,32 @@ public class SubCommandRemove extends SubCommand {
 					return false;
 				}
 				
-				try {
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				
 					//are we an empire?
-					if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
+					//if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
+					if(joined.isEmpire()) {
 						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 						
 						//are we the leader?
-						if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.REMOVE, invokerRole)) {
+						//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.REMOVE, invokerRole)) {
+						if(joined.getPermissionForRole(invokerRole, GroupPermission.REMOVE)) {
 							//do we have that kingdom in our empire?
-							if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(otherName)) {
+							Empire eUs = (Empire)joined;
+							//if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(otherName)) {
+							if(eUs.getKingdomSet().contains(otherName)) {
 								//remove them
-								Empires.m_joinableHandler.invokeKingdomSecedeEmpire(otherName);
+								//Empires.m_joinableHandler.invokeKingdomSecedeEmpire(otherName);
+								Kingdom other = (Kingdom)Empires.m_joinableHandler.getJoinable(otherName);
+								other.leaveEmpire();
 								
 								//inform everyone
-								String displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherName);
+								/*String displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherName);
 								Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + displayName + " has been removed from the empire.");
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherName, ChatColor.YELLOW + "We have seceded from our empire.");
+								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherName, ChatColor.YELLOW + "We have seceded from our empire.");*/
+								String displayName = other.getDisplayName();
+								eUs.broadcastToEmpire(ChatColor.YELLOW + displayName + " has been removed from the empire.");
+								other.broadcastMessageToJoined(ChatColor.YELLOW + "We have seceded from our empire.");
 								
 								return true;
 							}
@@ -66,12 +79,6 @@ public class SubCommandRemove extends SubCommand {
 					
 					setError("You do not belong to an empire");
 					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong");
-					return false;
-				}
 			}
 			
 			setError("Invalid arguments");

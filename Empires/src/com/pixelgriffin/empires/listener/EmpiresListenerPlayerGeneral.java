@@ -16,6 +16,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -111,25 +112,22 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		
 		//since the new host is different and not wilderness
 		//gather relationship
-		try {
-			//gather relation
-			Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, toHost);
-			
-			//gather toHost display name
-			String displayName = Empires.m_joinableHandler.getJoinableDisplayName(toHost);
-			
-			//gather toHost description
-			String description = Empires.m_joinableHandler.getJoinableDescription(toHost);
-			
-			//print relation
-			invoker.sendMessage(rel.getColor() + "~" + displayName + " - " + description);
-			
-		} catch (EmpiresJoinableDoesNotExistException e) {
-			//toHost or joinedName do not exist
-			//serious error, territory remained after disband?
-			//better to let this fail
-			e.printStackTrace();
-		}
+		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+		Joinable host = Empires.m_joinableHandler.getJoinable(toHost);
+		//gather relation
+		//Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, toHost);
+		Relation rel = joined.getRelation(host);
+		
+		//gather toHost display name
+		//String displayName = Empires.m_joinableHandler.getJoinableDisplayName(toHost);
+		String displayName = host.getDisplayName();
+		
+		//gather toHost description
+		//String description = Empires.m_joinableHandler.getJoinableDescription(toHost);
+		String description = host.getDescription();
+		
+		//print relation
+		invoker.sendMessage(rel.getColor() + "~" + displayName + " - " + description);
 	}
 	
 	//checks if a player has moved from chunk to chunk

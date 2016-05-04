@@ -14,6 +14,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresEmptyTerritoryException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -42,16 +43,11 @@ public class SubCommandAccess extends SubCommand {
 					return false;
 				}
 				
-				try {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.ACCESS, invokerRole)) {
-						setError("You do not have permission to give access to chunks!");
-						return false;
-					}
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.ACCESS, invokerRole)) {
+				if(!joined.getPermissionForRole(invokerRole, GroupPermission.ACCESS)) {
+					setError("You do not have permission to give access to chunks!");
 					return false;
 				}
 				

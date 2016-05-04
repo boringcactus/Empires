@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableInvalidCharacterException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -34,20 +35,18 @@ public class SubCommandName extends SubCommand {
 					return false;
 				}
 				
-				try {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RENAME, invokerRole)) {
-						setError("You do not have permission to rename your civilization!");
-						return false;
-					}
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RENAME, invokerRole)) {
+				if(!joined.getPermissionForRole(invokerRole, GroupPermission.RENAME)) {
+					setError("You do not have permission to rename your civilization!");
 					return false;
 				}
 				
-				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
+				Joinable other = Empires.m_joinableHandler.getJoinable(_args[0]);
+				//if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
+				if(other != null) {
 					setError("A civilization with the name '" + _args[0] + "' already exists!");
 					return false;
 				}
@@ -60,25 +59,15 @@ public class SubCommandName extends SubCommand {
 					}
 				}
 				
-				try {
-					//update name
-					Empires.m_joinableHandler.setJoinableName(joinedName, _args[0]);
-					
-					//inform
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invoker.getDisplayName() + " renamed the civilization to '" + _args[0] + "!'");
-					
-					return true;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
-					return false;
-				} catch(EmpiresJoinableInvalidCharacterException e) {
-					e.printStackTrace();
-					
-					setError("Invalid characters found in name! Try a different name.");
-					return true;
-				}
+				//update name
+				//Empires.m_joinableHandler.setJoinableName(joinedName, _args[0]);
+				joined.setName(_args[0]);
+				
+				//inform
+				//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + invoker.getDisplayName() + " renamed the civilization to '" + _args[0] + "!'");
+				joined.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getDisplayName() + " renamed the civilization to '" + _args[0] + "!'");
+				
+				return true;
 			}
 			
 			setError("Invalid arguments!");

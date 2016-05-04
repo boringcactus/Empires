@@ -36,7 +36,8 @@ public class SubCommandLeader extends SubCommand {
 			try {
 				//set the old leader as a member
 				Empires.m_playerHandler.setPlayerRole(
-						Empires.m_joinableHandler.getJoinableLeader(joinedName), Role.MEMBER);
+						Empires.m_joinableHandler.getJoinable(joinedName).getLeader(), Role.MEMBER);
+						//Empires.m_joinableHandler.getJoinableLeader(joinedName), Role.MEMBER);
 				
 				//set us as the new leader
 				Empires.m_playerHandler.setPlayerRole(invoker.getUniqueId(), Role.LEADER);

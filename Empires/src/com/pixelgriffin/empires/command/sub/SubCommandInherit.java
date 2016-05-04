@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.util.IDUtility;
 
 /**
@@ -48,21 +50,21 @@ public class SubCommandInherit extends SubCommand {
 				
 				//player exists and is in our civilization
 				//set the heir
-				try {
-					Empires.m_joinableHandler.setJoinableHeir(joinedName, heirID);
-					
-					//inform everyone of the new heir
-					//if we're an empire inform EVERYONE
-					if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-						Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + invoker.getName() + " has declared " + heir + " as the heir of the empire!");
-					} else {//not an empire, just inform us
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getName() + " has declared " + heir + " as the heir of the kingdom!");
-					}
-				} catch(EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
-					return false;
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//Empires.m_joinableHandler.setJoinableHeir(joinedName, heirID);
+				joined.setHeir(heirID);
+				
+				//inform everyone of the new heir
+				//if we're an empire inform EVERYONE
+				/*if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
+					Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + invoker.getName() + " has declared " + heir + " as the heir of the empire!");
+				} else {//not an empire, just inform us
+					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getName() + " has declared " + heir + " as the heir of the kingdom!");
+				}*/
+				if(joined.isEmpire()) {
+					((Empire)joined).broadcastToEmpire(ChatColor.YELLOW + invoker.getName() + " has declared " + heir + " as the heir of the empire!");
+				} else {
+					joined.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getName() + " has declared " + heir + " as the heir of the kingdom!");
 				}
 				
 				//worked out okay

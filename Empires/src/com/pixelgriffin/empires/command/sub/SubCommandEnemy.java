@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -52,58 +53,58 @@ public class SubCommandEnemy extends SubCommand {
 				//gather player role
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
-				try {
-					//does the player have permission?
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
-						Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.ENEMY);
-						
-						//build messages
-						String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
-						String messageA = Relation.ENEMY.getColor() + displayName + " is now an enemy";
-						
-						//switch displayName
-						displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
-						String messageB = Relation.ENEMY.getColor() + invoker.getName() + " has declared " + displayName + " an enemy";
-						
-						//gather relation change message if there is one
-						if(_args.length > 1) {
-							String reasonMessage = "";
-							//construct message from the arguments
-							for(String word : _args) {
-								//do not count the first argument
-								if(word.equals(_args[0]))
-									continue;
-								
-								reasonMessage = reasonMessage + word + " ";
-							}
+				//does the player have permission?
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				
+				//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
+				if(joined.getPermissionForRole(invokerRole, GroupPermission.RELATION)) {
+					//Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.ENEMY);
+					Joinable other = Empires.m_joinableHandler.getJoinable(otherJoinable);
+					
+					joined.setRelationWish(other, Relation.ENEMY);
+					
+					//build messages
+					//String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
+					String displayName = joined.getDisplayName();
+					String messageA = Relation.ENEMY.getColor() + displayName + " is now an enemy";
+					
+					//switch displayName
+					//displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
+					displayName = other.getDisplayName();
+					String messageB = Relation.ENEMY.getColor() + invoker.getName() + " has declared " + displayName + " an enemy";
+					
+					//gather relation change message if there is one
+					if(_args.length > 1) {
+						String reasonMessage = "";
+						//construct message from the arguments
+						for(String word : _args) {
+							//do not count the first argument
+							if(word.equals(_args[0]))
+								continue;
 							
-							//message wasn't corrupt or something
-							if(!reasonMessage.equals("")) {
-								messageA = messageA + ". Reason: " + reasonMessage;
-								messageB = messageB + ". Reason: " + reasonMessage;
-							}
+							reasonMessage = reasonMessage + word + " ";
 						}
 						
-						//inform the other civilization of our intentions
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable,messageA);
-						
-						//inform us of our actions!
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, messageB);
-						
-						return true;//yay
+						//message wasn't corrupt or something
+						if(!reasonMessage.equals("")) {
+							messageA = messageA + ". Reason: " + reasonMessage;
+							messageB = messageB + ". Reason: " + reasonMessage;
+						}
 					}
 					
-					setError("You do not have permission to change civilization relations!");
-					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
+					//inform the other civilization of our intentions
+					//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable,messageA);
+					other.broadcastMessageToJoined(messageA);
 					
-					//joinedName does not exist
-					//invoker points to non existent joinable
+					//inform us of our actions!
+					//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, messageB);
+					joined.broadcastMessageToJoined(messageB);
 					
-					setError("Something went wrong!");
-					return false;
+					return true;//yay
 				}
+				
+				setError("You do not have permission to change civilization relations!");
+				return false;
 			}
 			
 			setError("Invalid arguments!");
@@ -124,9 +125,11 @@ public class SubCommandEnemy extends SubCommand {
 		//the user could be talking about a player OR a joinable
 		//this determines what they're refering to
 		String joinedName = PlayerHandler.m_defaultCiv;
+		Joinable referenced = Empires.m_joinableHandler.getJoinable(_reference);
 		
 		//does the joinable exist?
-		if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
+		//if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
+		if(referenced != null) {
 			joinedName = _reference;//then we're talking about _reference
 		} else {
 			Player p = Bukkit.getPlayer(_reference);

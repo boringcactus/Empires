@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 
 /**
  * 
@@ -29,30 +30,24 @@ public class SubCommandList extends SubCommand {
 		TreeMap<String, Integer> kingdomsMap = new TreeMap<String, Integer>();
 		
 		{
-			try {
-				//get display name list of all joinables
-				ArrayList<String> nameList = Empires.m_joinableHandler.getJoinableList();
+			//get display name list of all joinables
+			//ArrayList<String> nameList = Empires.m_joinableHandler.getJoinableList();
+			ArrayList<Joinable> all = Empires.m_joinableHandler.getAllJoinables();
+			
+			int powerValue;
+			//for(String name : nameList) {
+			for(Joinable j : all) {
+				//gather empire status
+				//isEmpire = Empires.m_joinableHandler.getJoinableEmpireStatus(name);
 				
-				boolean isEmpire;
-				int powerValue;
-				for(String name : nameList) {
-					//gather empire status
-					isEmpire = Empires.m_joinableHandler.getJoinableEmpireStatus(name);
-					
-					powerValue = Empires.m_joinableHandler.getJoinablePowerValue(name);
-					
-					if(isEmpire) {
-						empiresMap.put(name, powerValue);
-					} else {
-						kingdomsMap.put(name, powerValue);
-					}
+				//powerValue = Empires.m_joinableHandler.getJoinablePowerValue(name);
+				powerValue = j.getPower();
+				
+				if(j.isEmpire()) {
+					empiresMap.put(j.getDisplayName(), powerValue);
+				} else {
+					kingdomsMap.put(j.getDisplayName(), powerValue);
 				}
-				
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				setError("Something went wrong!");
-				return false;
 			}
 		}
 		

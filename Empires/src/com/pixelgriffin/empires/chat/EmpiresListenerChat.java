@@ -27,6 +27,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 public class EmpiresListenerChat implements Listener {
@@ -66,10 +67,7 @@ public class EmpiresListenerChat implements Listener {
 		//msg = msg.replace("{sender}", sender.getPlayer().getDisplayName());
 		msg = msg.replace("{title}", Empires.m_playerHandler.getPlayerTitle(evt.getChatter().getPlayer().getUniqueId()));
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(evt.getChatter().getPlayer().getUniqueId()).getPrefix());
-		try {
-			msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinableDisplayName(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())));
-		} catch (EmpiresJoinableDoesNotExistException ignore) {
-		}
+		msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName());
 		
 		evt.setFormat(msg);
 	}
@@ -85,11 +83,7 @@ public class EmpiresListenerChat implements Listener {
 		msg = msg.replace("{sender}", sender.getPlayer().getDisplayName());
 		msg = msg.replace("{title}", Empires.m_playerHandler.getPlayerTitle(sender.getPlayer().getUniqueId()));
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(sender.getPlayer().getUniqueId()).getPrefix());
-		try {
-			msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinableDisplayName(Empires.m_playerHandler.getPlayerJoinedCivilization(sender.getPlayer().getUniqueId())));
-		} catch (EmpiresJoinableDoesNotExistException ignore) {
-		}
-		
+		msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName());
 		
 		for(Player listen : recv) {
 			listen.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
@@ -106,38 +100,36 @@ public class EmpiresListenerChat implements Listener {
 		
 		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(pid);
 		if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
-			try {
-				Set<String> relations = Empires.m_joinableHandler.getJoinableRelationNameSet(joinedName);
-				ArrayList<UUID> players = new ArrayList<UUID>();
-				
-				for(String relation : relations) {
-					if(allyRelations.contains(Empires.m_joinableHandler.getJoinableRelationTo(joinedName, relation))) {
-						players.addAll(Empires.m_joinableHandler.getJoinableJoinedPlayers(relation));
-						
-						Player temp;
-						for(UUID player : players) {
-							temp = Bukkit.getPlayer(player);
-							if(temp != null) {
-								allies.add(temp);
-							}
+			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			
+			//Set<String> relations = Empires.m_joinableHandler.getJoinableRelationNameSet(joinedName);
+			Set<String> relations = joined.getRelationWishSet();
+			ArrayList<UUID> players = new ArrayList<UUID>();
+			
+			for(String relation : relations) {
+				Joinable other = Empires.m_joinableHandler.getJoinable(relation);
+				if(allyRelations.contains(joined.getRelation(other))) {
+					players.addAll(other.getJoined());
+					
+					Player temp;
+					for(UUID player : players) {
+						temp = Bukkit.getPlayer(player);
+						if(temp != null) {
+							allies.add(temp);
 						}
 					}
 				}
-				
-				players.clear();
-				players.addAll(Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName));
-				
-				Player temp;
-				for(UUID player : players) {
-					temp = Bukkit.getPlayer(player);
-					if(temp != null) {
-						allies.add(temp);
-					}
+			}
+			
+			players.clear();
+			players.addAll(joined.getJoined());
+			
+			Player temp;
+			for(UUID player : players) {
+				temp = Bukkit.getPlayer(player);
+				if(temp != null) {
+					allies.add(temp);
 				}
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				p.sendMessage(ChatColor.RED + "Something went wrong!");
 			}
 		}
 		
@@ -155,11 +147,7 @@ public class EmpiresListenerChat implements Listener {
 		msg = msg.replace("{sender}", sender.getPlayer().getDisplayName());
 		msg = msg.replace("{title}", Empires.m_playerHandler.getPlayerTitle(sender.getPlayer().getUniqueId()));
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(sender.getPlayer().getUniqueId()).getPrefix());
-		try {
-			msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinableDisplayName(Empires.m_playerHandler.getPlayerJoinedCivilization(sender.getPlayer().getUniqueId())));
-		} catch (EmpiresJoinableDoesNotExistException ignore) {
-		}
-		
+		msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName());
 		
 		for(Player listen : recv) {
 			listen.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
@@ -178,26 +166,21 @@ public class EmpiresListenerChat implements Listener {
 		
 		//is it wilderness?
 		if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
-			try {
-				//gather our players
-				ArrayList<UUID> players = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
-				
-				Player p;
-				for(UUID player : players) {
-					//if they are online
-					p = Bukkit.getPlayer(player);
-					
-					if(p != null) {
-						ret.add(p);//send them the message
-					}
-				}
-				
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				sen.sendMessage(ChatColor.RED + "Something went wrong!");
-			}
+			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 			
+			//gather our players
+			//ArrayList<UUID> players = Empires.m_joinableHandler.getJoinableJoinedPlayers(joinedName);
+			ArrayList<UUID> players = joined.getJoined();
+			
+			Player p;
+			for(UUID player : players) {
+				//if they are online
+				p = Bukkit.getPlayer(player);
+				
+				if(p != null) {
+					ret.add(p);//send them the message
+				}
+			}
 		}
 		
 		//return a set of recipients

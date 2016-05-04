@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresNoFundsException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -34,17 +35,12 @@ public class SubCommandWithdraw extends SubCommand {
 					return false;
 				}
 				
-				try {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-					
-					if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.WITHDRAW, invokerRole)) {
-						setError("You do not have permission to withdraw money!");
-						return false;
-					}
-				} catch (EmpiresJoinableDoesNotExistException e1) {
-					e1.printStackTrace();
-					
-					setError("Something went wrong!");
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				
+				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.WITHDRAW, invokerRole)) {
+				if(!joined.getPermissionForRole(invokerRole, GroupPermission.WITHDRAW)) {
+					setError("You do not have permission to withdraw money!");
 					return false;
 				}
 				
@@ -57,22 +53,14 @@ public class SubCommandWithdraw extends SubCommand {
 					return false;
 				}
 				
-				try {
-					Empires.m_joinableHandler.invokeJoinableWithdrawMoney(joinedName, invoker.getName(), amount);
-					
-					//inform of a successful deposit!
-					Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
-					
-					return true;//success
-				} catch (EmpiresNoFundsException e) {
-					setError(joinedName + " does not have the funds to withdraw " + Empires.m_economy.format(amount) + "!");
-					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					setError("Something went wrong!");
-					return false;
-				}
+				//Empires.m_joinableHandler.invokeJoinableWithdrawMoney(joinedName, invoker.getName(), amount);
+				joined.withdrawMoney(invoker.getName(), amount);
+				
+				//inform of a successful deposit!
+				//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
+				joined.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getDisplayName() + " withdrew " + Empires.m_economy.format(amount) + " from the civilization bank!");
+				
+				return true;//success
 			}
 			
 			setError("Invalid arguments!");

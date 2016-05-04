@@ -16,6 +16,7 @@ import com.pixelgriffin.empires.enums.TerritoryFlag;
 import com.pixelgriffin.empires.enums.TerritoryGroup;
 import com.pixelgriffin.empires.exception.EmpiresEmptyTerritoryException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -43,16 +44,11 @@ public class SubCommandChunk extends SubCommand {
 				return false;
 			}
 			
-			try {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-				if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
-					setError("You do not have permission to edit chunk flags!");
-					return false;
-				}
-			} catch (EmpiresJoinableDoesNotExistException e) {
-				e.printStackTrace();
-				
-				setError("Something went wrong!");
+			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+			//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
+			if(!joined.getPermissionForRole(invokerRole, GroupPermission.PERMS)) {
+				setError("You do not have permission to edit chunk flags!");
 				return false;
 			}
 			
@@ -99,19 +95,15 @@ public class SubCommandChunk extends SubCommand {
 				
 				//SPAWN_MOBS
 				if(EmpiresConfig.m_mobSpawnManaging) {
-					try {
 					outString = ChatColor.GRAY + "SPAWN_MOBS: ";
-						val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
-						
-						accessCol = ChatColor.RED;
-						if(val)
-						accessCol = ChatColor.GREEN;
-						
-						invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
-					} catch(EmpiresJoinableDoesNotExistException e) {
-						setError("Something went wrong");
-						return false;
-					}
+					//val = Empires.m_joinableHandler.getJoinableAllowsMobs(joinedName);
+					val = joined.getAllowsMobs();
+					
+					accessCol = ChatColor.RED;
+					if(val)
+					accessCol = ChatColor.GREEN;
+					
+					invoker.sendMessage(outString + accessCol + String.valueOf(val).toUpperCase());
 				}
 				
 				return true;

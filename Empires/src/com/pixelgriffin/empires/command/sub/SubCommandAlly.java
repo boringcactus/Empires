@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -52,47 +53,47 @@ public class SubCommandAlly extends SubCommand {
 				//gather player role
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
-				try {
-					//does the player have permission?
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
-						Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.ALLY);
-						
-						//get our new relation
-						Relation currentRelation = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, otherJoinable);
-						
-						//gather display names/messages for printing
-						String displayNameA = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
-						String displayMessageA = Relation.ALLY.getColor() + displayNameA + " wishes to be allies";
-						String displayNameB = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
-						String displayMessageB = Relation.ALLY.getColor() + invoker.getDisplayName() + " has asked " + displayNameB + " to be allies";
-						
-						//if we are now allies
-						if(currentRelation.equals(Relation.ALLY)) {
-							//change the messages to display such
-							displayMessageA = Relation.ALLY.getColor() + displayNameA + " is now an ally";
-							displayMessageB = Relation.ALLY.getColor() + displayNameB + " is now an ally";
-						}
-						
-						//inform the other civilization of our intentions
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable, displayMessageA);
-						
-						//inform us of our actions!
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, displayMessageB);
-						
-						return true;//yay
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				
+				//does the player have permission?
+				//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
+				if(joined.getPermissionForRole(invokerRole, GroupPermission.RELATION)) {
+					//Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.ALLY);
+					Joinable other = Empires.m_joinableHandler.getJoinable(otherJoinable);
+					joined.setRelationWish(other, Relation.ALLY);
+					
+					//get our new relation
+					//Relation currentRelation = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, otherJoinable);
+					Relation currentRelation = joined.getRelation(other);
+					
+					//gather display names/messages for printing
+					//String displayNameA = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
+					String displayNameA = joined.getDisplayName();
+					String displayMessageA = Relation.ALLY.getColor() + displayNameA + " wishes to be allies";
+					//String displayNameB = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
+					String displayNameB = other.getDisplayName();
+					String displayMessageB = Relation.ALLY.getColor() + invoker.getDisplayName() + " has asked " + displayNameB + " to be allies";
+					
+					//if we are now allies
+					if(currentRelation.equals(Relation.ALLY)) {
+						//change the messages to display such
+						displayMessageA = Relation.ALLY.getColor() + displayNameA + " is now an ally";
+						displayMessageB = Relation.ALLY.getColor() + displayNameB + " is now an ally";
 					}
 					
-					setError("You do not have permission to change civilization relations!");
-					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
+					//inform the other civilization of our intentions
+					//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable, displayMessageA);
+					other.broadcastMessageToJoined(displayMessageA);
 					
-					//joinedName does not exist
-					//invoker points to non existent joinable
+					//inform us of our actions!
+					//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, displayMessageB);
+					joined.broadcastMessageToJoined(displayMessageB);
 					
-					setError("Something went wrong!");
-					return false;
+					return true;//yay
 				}
+				
+				setError("You do not have permission to change civilization relations!");
+				return false;
 			}
 			
 			setError("Invalid arguments!");
@@ -113,9 +114,11 @@ public class SubCommandAlly extends SubCommand {
 		//the user could be talking about a player OR a joinable
 		//this determines what they're refering to
 		String joinedName = PlayerHandler.m_defaultCiv;
+		Joinable referenced = Empires.m_joinableHandler.getJoinable(_reference);
 		
 		//does the joinable exist?
-		if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
+		//if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
+		if(referenced != null) {
 			joinedName = _reference;//then we're talking about _reference
 		} else {
 			Player p = Bukkit.getPlayer(_reference);

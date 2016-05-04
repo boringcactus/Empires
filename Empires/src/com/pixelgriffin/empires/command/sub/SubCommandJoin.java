@@ -14,6 +14,9 @@ import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsEmpireException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsNotEmpireException;
+import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.Joinable;
+import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -36,7 +39,10 @@ public class SubCommandJoin extends SubCommand {
 				//gather the joinedName
 				//the user could be talking about a player OR a joinable
 				//this determines what they're refering to
-				if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
+				Joinable tojoin = Empires.m_joinableHandler.getJoinable(_args[0]);
+				
+				//if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
+				if(tojoin != null) {
 					newJoinedName = _args[0];
 				} else if(other != null) {
 					UUID otherID = other.getUniqueId();
@@ -56,93 +62,83 @@ public class SubCommandJoin extends SubCommand {
 					return false;
 				}
 				
+				tojoin = Empires.m_joinableHandler.getJoinable(newJoinedName);
+				
 				/*
 				 * Empire jazz
 				 */
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 				
 				//we're a leader
 				if(invokerRole.equals(Role.LEADER)) {
 					//join empire
-					try {
-						//we are a kingdom
-						try {
-							//doesn't have an empire
-							if(Empires.m_joinableHandler.getKingdomEmpire(joinedName).equals("")) {
-								//we've been requested
-								if(Empires.m_joinableHandler.getEmpireRequestedKingdom(newJoinedName, joinedName)) {
-									//set our empire
-									try {
-										Empires.m_joinableHandler.setKingdomEmpire(joinedName, newJoinedName);
-										
-										//inform
-										String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
-										Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(newJoinedName, ChatColor.YELLOW + displayName + " has joined the empire!");
-										Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
-										
-										return true;
-									} catch (EmpiresJoinableIsNotEmpireException e) {
-										e.printStackTrace();
-										
-										setError("You tried to join a kingdom as an empire..");
-										return false;
-									}
-								}
+					//we are a kingdom
+						if(!joined.isEmpire()) {
+						//doesn't have an empire
+						//if(Empires.m_joinableHandler.getKingdomEmpire(joinedName).equals("")) {
+						Kingdom kUs = (Kingdom)joined;
+						if(kUs.getEmpire().isEmpty()) {
+							//we've been requested
+							//if(Empires.m_joinableHandler.getEmpireRequestedKingdom(newJoinedName, joinedName)) {
+							if(tojoin.isEmpire()) {
+							Empire eOther = (Empire)tojoin;
+							if(eOther.isKingdomInvited(kUs)) {
+								//set our empire
+								//Empires.m_joinableHandler.setKingdomEmpire(joinedName, newJoinedName);
+								kUs.setEmpire(eOther);
 								
-								setError("You have not been invited to that empire");
-								return false;
+								//inform
+								//String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
+								//Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(newJoinedName, ChatColor.YELLOW + displayName + " has joined the empire!");
+								//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
+								String displayName = kUs.getDisplayName();
+								eOther.broadcastToEmpire(ChatColor.YELLOW + displayName + " has joined the empire!");
+								kUs.broadcastMessageToJoined(ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
+								
+								return true;
 							}
 							
-							setError("You already have an empire!");
-							return false;
-						} catch (EmpiresJoinableIsEmpireException e) {
-							setError("You are already part of an empire");
+							setError("You have not been invited to that empire");
 							return false;
 						}
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						e.printStackTrace();
-						
-						setError("Something went wrong!");
+						setError("Kingdoms cannot join other Kingdoms!");
 						return false;
-					}
-					
+						}
+						
+						setError("You already have an empire!");
+						return false;
+				}
+						setError("Empires cannot join other civilizations!");
+						return false;
 				} else {//not the leader of a kingdom!
 					//player is trying to join a kingdom & has override perms
-					try {
-						if(invoker.hasPermission("Empires.force.join") || Empires.m_joinableHandler.getJoinableRequestedPlayer(newJoinedName, invokerID)) {//force join
-							try {
-								//set the civilization
-								Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, newJoinedName);
-								
-								//remove from the request list
-								Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerID);
-							} catch (EmpiresJoinableExistsException e) {
-								setError("You must leave your current civilization first!");
-								return false;
-							} catch (EmpiresJoinableDoesNotExistException e) {
-								setError("Could not find the civilization '" + newJoinedName + "'");
-								return false;
-							}
+					//if(invoker.hasPermission("Empires.force.join") || Empires.m_joinableHandler.getJoinableRequestedPlayer(newJoinedName, invokerID)) {//force join
+					if(invoker.hasPermission("Empires.force.join") || tojoin.isPlayerInvited(invokerID)) {
+						try {
+							//set the civilization
+							Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, tojoin);
 							
-							//inform everyone we joined
-							try {
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(newJoinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has joined the civilization!");
-							} catch (EmpiresJoinableDoesNotExistException e) {
-								e.printStackTrace();
-								
-								setError("Something went wrong!");
-								return false;
-							}
-							return true;
+							//remove from the request list
+							//Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerID);
+							tojoin.uninvitePlayer(invokerID);
+						} catch (EmpiresJoinableExistsException e) {
+							setError("You must leave your current civilization first!");
+							return false;
+						} catch (EmpiresJoinableDoesNotExistException e) {
+							setError("Could not find the civilization '" + newJoinedName + "'");
+							return false;
 						}
 						
-						setError("You have not been invited to " + newJoinedName + "!");
-						return false;
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						setError("Could not find the civilization '" + newJoinedName +"'");
-						return false;
+						//inform everyone we joined
+						//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(newJoinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has joined the civilization!");
+						tojoin.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getDisplayName() + " has joined the civilization!");
+						return true;
 					}
+					
+					setError("You have not been invited to " + newJoinedName + "!");
+					return false;
 				}
 			}
 			

@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -52,18 +53,24 @@ public class SubCommandNeutral extends SubCommand {
 				//gather player role
 				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
-				try {
+					Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 					//does the player have permission?
-					if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
-						Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.NEUTRAL);
+					//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.RELATION, invokerRole)) {
+					if(joined.getPermissionForRole(invokerRole, GroupPermission.RELATION)) {
+						//Empires.m_joinableHandler.setJoinableRelationWish(joinedName, otherJoinable, Relation.NEUTRAL);
+						Joinable other = Empires.m_joinableHandler.getJoinable(otherJoinable);
+						joined.setRelationWish(other, Relation.NEUTRAL);
 						
 						//get our new relation
-						Relation currentRelation = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, otherJoinable);
+						//Relation currentRelation = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, otherJoinable);
+						Relation currentRelation = joined.getRelation(other);
 						
 						//gather display names/messages for printing
-						String displayNameA = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
+						//String displayNameA = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
+						String displayNameA = joined.getDisplayName();
 						String displayMessageA = Relation.NEUTRAL.getColor() + displayNameA + " wishes to be neutral";
-						String displayNameB = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
+						//String displayNameB = Empires.m_joinableHandler.getJoinableDisplayName(otherJoinable);
+						String displayNameB = other.getDisplayName();
 						String displayMessageB = Relation.ALLY.getColor() + invoker.getDisplayName() + " has asked to cease relations with " + displayNameB;
 						
 						//if we are now allies
@@ -74,25 +81,18 @@ public class SubCommandNeutral extends SubCommand {
 						}
 						
 						//inform the other civilization of our intentions
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable, displayMessageA);
+						//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherJoinable, displayMessageA);
+						other.broadcastMessageToJoined(displayMessageA);
 						
 						//inform us of our actions!
-						Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, displayMessageB);
+						//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, displayMessageB);
+						other.broadcastMessageToJoined(displayMessageB);
 						
 						return true;//yay
 					}
 					
 					setError("You do not have permission to change civilization relations!");
 					return false;
-				} catch (EmpiresJoinableDoesNotExistException e) {
-					e.printStackTrace();
-					
-					//joinedName does not exist
-					//invoker points to non existent joinable
-					
-					setError("Something went wrong!");
-					return false;
-				}
 			}
 			
 			setError("Invalid arguments!");
@@ -114,9 +114,11 @@ public class SubCommandNeutral extends SubCommand {
 		//the user could be talking about a player OR a joinable
 		//this determines what they're refering to
 		String joinedName = PlayerHandler.m_defaultCiv;
+		Joinable referenced = Empires.m_joinableHandler.getJoinable(_reference);
 		
 		//does the joinable exist?
-		if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
+		//if(Empires.m_joinableHandler.getJoinableExists(_reference)) {
+		if(referenced != null) {
 			joinedName = _reference;//then we're talking about _reference
 		} else {
 			Player p = Bukkit.getPlayer(_reference);

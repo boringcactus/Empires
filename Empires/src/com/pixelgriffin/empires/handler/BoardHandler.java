@@ -52,27 +52,31 @@ public class BoardHandler extends DataHandler {
 	 * @param _id
 	 * @throws EmpiresJoinableDoesNotExistException
 	 */
-	public void claimTerritoryForJoinable(Location _loc, String _id) throws EmpiresJoinableDoesNotExistException {
+	public void claimTerritoryForJoinable(Location _loc, Joinable owner) throws EmpiresJoinableDoesNotExistException {
 		
 		
-		setTerritoryHostAt(_loc, _id);//copy over flags & host
+		setTerritoryHostAt(_loc, owner);//copy over flags & host
 
 		//claim size
-		Empires.m_joinableHandler.setJoinableClaimSize(_id, 1, true);
+		//Empires.m_joinableHandler.setJoinableClaimSize(_id, 1, true);
+		owner.setClaimSize(1, true);
 	}
 	
-	public void unclaimAllTerritoryForJoinable(String _id) throws EmpiresJoinableDoesNotExistException {
-		removeAllTerritoryForHost(_id);
+	public void unclaimAllTerritoryForJoinable(Joinable owner) throws EmpiresJoinableDoesNotExistException {
+		removeAllTerritoryForHost(owner);
 		
 		//set claim size to 0
-		Empires.m_joinableHandler.setJoinableClaimSize(_id, 0);
+		//Empires.m_joinableHandler.setJoinableClaimSize(_id, 0);
+		owner.setClaimSize(0, false);
+		
 	}
 	
-	public void unclaimTerritoryForJoinable(Location _loc, String _id) throws EmpiresEmptyTerritoryException, EmpiresJoinableDoesNotExistException {
+	public void unclaimTerritoryForJoinable(Location _loc, Joinable owner) throws EmpiresEmptyTerritoryException, EmpiresJoinableDoesNotExistException {
 		removeTerritoryAt(_loc);
 		
 		//claim size -1
-		Empires.m_joinableHandler.setJoinableClaimSize(_id, -1, true);
+		//Empires.m_joinableHandler.setJoinableClaimSize(_id, -1, true);
+		owner.setClaimSize(-1, true);
 	}
 	
 	private void removeTerritoryAt(Location _loc) throws EmpiresEmptyTerritoryException {
@@ -97,12 +101,12 @@ public class BoardHandler extends DataHandler {
 	 * @param _loc - location of claim
 	 * @throws EmpiresJoinableDoesNotExistException 
 	 */
-	public void setTerritoryHostAt(Location _loc, String _id) throws EmpiresJoinableDoesNotExistException {
+	public void setTerritoryHostAt(Location _loc, Joinable owner) throws EmpiresJoinableDoesNotExistException {
 		//proper lookup
-		_id = _id.toLowerCase();
+		/*_id = _id.toLowerCase();
 		
 		if(!Empires.m_joinableHandler.getJoinableExists(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to set territory host to a non-existent joinable '" + _id + "'");
+			throw new EmpiresJoinableDoesNotExistException("Tried to set territory host to a non-existent joinable '" + _id + "'");*/
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
@@ -114,7 +118,7 @@ public class BoardHandler extends DataHandler {
 		}
 		
 		//set new host name
-		sect.set("h", _id);
+		sect.set("h", owner.getName());
 		
 		//create blank access list
 		sect.set("a", new ArrayList<String>());
@@ -125,21 +129,17 @@ public class BoardHandler extends DataHandler {
 		//iterate over groups
 		ArrayList<String> flags;//temporary array list of the flags to copy
 		for(TerritoryGroup grouping : TerritoryGroup.values()) {
-			try {
-				//gather flags for this group
-				flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(_id, grouping);
-				
-				//set flags for this group
-				sect.set("f." + grouping.toString(), flags.clone());
-				
-			} catch (EmpiresJoinableDoesNotExistException e) {//impossible? but hey, that's programming!
-				e.printStackTrace();//default
-			}
+			//gather flags for this group
+			//flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(_id, grouping);
+			flags = owner.getDefaultGlobalFlagsForGroup(grouping);
+			
+			//set flags for this group
+			sect.set("f." + grouping.toString(), flags.clone());
 		}
 		
 		//add the single value flags
-		sect.set("ignore-relations", Empires.m_joinableHandler.getJoinableIgnoresRelations(_id));
-		sect.set("spawn-mobs", Empires.m_joinableHandler.getJoinableAllowsMobs(_id));
+		sect.set("ignore-relations", owner.getIgnoresRelations());
+		sect.set("spawn-mobs", owner.getAllowsMobs());
 	}
 	
 	/**
@@ -147,12 +147,12 @@ public class BoardHandler extends DataHandler {
 	 * @param _id host id
 	 * @throws EmpiresJoinableDoesNotExistException 
 	 */
-	public void removeAllTerritoryForHost(String _id) throws EmpiresJoinableDoesNotExistException {
+	public void removeAllTerritoryForHost(Joinable owner) throws EmpiresJoinableDoesNotExistException {
 		//proper lookup, requires lowercase
-		_id = _id.toLowerCase();
+		//_id = _id.toLowerCase();
 		
-		if(!Empires.m_joinableHandler.getJoinableExists(_id))
-			throw new EmpiresJoinableDoesNotExistException("Tried to remove territory from a non-existent joinable '" + _id + "'");
+		//if(!Empires.m_joinableHandler.getJoinableExists(_id))
+		//	throw new EmpiresJoinableDoesNotExistException("Tried to remove territory from a non-existent joinable '" + _id + "'");
 		
 		YamlConfiguration conf = getFileConfiguration();
 		
@@ -171,7 +171,7 @@ public class BoardHandler extends DataHandler {
 				//then it is a chunk data section
 				if(workingSect.contains("h")) {
 					//if the host is _id
-					if(workingSect.getString("h").equals(_id)) {
+					if(workingSect.getString("h").equals(owner.getName())) {
 						//remove this section
 						conf.set(path, null);
 					}
@@ -251,10 +251,9 @@ public class BoardHandler extends DataHandler {
 		return accessList.contains(idString);
 	}
 	
-	public void renameAllTerritoryForJoinable(String _id, String _name) {
+	public void renameAllTerritoryForJoinable(Joinable owner, String _name) {
 		YamlConfiguration conf = getFileConfiguration();
 		
-		_id = _id.toLowerCase();
 		_name = _name.toLowerCase();
 		
 		ConfigurationSection workingSect;
@@ -266,7 +265,7 @@ public class BoardHandler extends DataHandler {
 				workingSect = conf.getConfigurationSection(path);
 				
 				if(workingSect.contains("h")) {
-					if(workingSect.getString("h").equals(_id)) {
+					if(workingSect.getString("h").equals(owner.getName())) {
 						workingSect.set("h", _name);
 					}
 				}
@@ -274,12 +273,10 @@ public class BoardHandler extends DataHandler {
 		}
 	}
 	
-	public boolean hasJoinableClaimedInWorld(String _w, String _id) {
+	public boolean hasJoinableClaimedInWorld(String _w, Joinable owner) {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//proper lookup
-		_id = _id.toLowerCase();
-		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
 			if(path.equals("data-version"))
@@ -293,7 +290,7 @@ public class BoardHandler extends DataHandler {
 				//is it territory?
 				if(workingSect.contains("h")) {
 					//is the territory _id's?
-					if(workingSect.getString("h").equals(_id))
+					if(workingSect.getString("h").equals(owner.getName()))
 						return true;
 				}
 			}
@@ -302,12 +299,10 @@ public class BoardHandler extends DataHandler {
 		return false;
 	}
 	
-	public boolean isLocationSurrounded(String _id, Location _loc) {
+	public boolean isLocationSurrounded(Joinable owner, Location _loc) {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//proper lookup
-		_id = _id.toLowerCase();
-		
 		ConfigurationSection workingSect;//working section
 		//Location workingLoc;
 		String path;
@@ -334,7 +329,7 @@ public class BoardHandler extends DataHandler {
 						
 						if(workingSect.contains("h")) {
 							//found us around here
-							if(workingSect.getString("h").equals(_id))
+							if(workingSect.getString("h").equals(owner.getName()))
 								return true;
 						}
 					}
@@ -446,12 +441,10 @@ public class BoardHandler extends DataHandler {
 		return toggleVal;
 	}
 	
-	public void updateTerritoryIgnoresRelations(String _id, boolean _val) {
+	public void updateTerritoryIgnoresRelations(Joinable owner, boolean _val) {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		//proper lookup
-		_id = _id.toLowerCase();
-		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
 			if(path.equals("data-version"))
@@ -465,7 +458,7 @@ public class BoardHandler extends DataHandler {
 				//is it territory?
 				if(workingSect.contains("h")) {
 					//is the territory _id's?
-					if(workingSect.getString("h").equals(_id)) {
+					if(workingSect.getString("h").equals(owner.getName())) {
 						workingSect.set("ignore-relations", _val);
 					}
 				}
@@ -473,11 +466,8 @@ public class BoardHandler extends DataHandler {
 		}
 	}
 	
-	public void updateTerritoryAllowsMobs(String _id, boolean _val) {
+	public void updateTerritoryAllowsMobs(Joinable owner, boolean _val) {
 		YamlConfiguration conf = getFileConfiguration();
-		
-		//proper lookup
-		_id = _id.toLowerCase();
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
@@ -492,7 +482,7 @@ public class BoardHandler extends DataHandler {
 				//is it territory?
 				if(workingSect.contains("h")) {
 					//is the territory _id's?
-					if(workingSect.getString("h").equals(_id)) {
+					if(workingSect.getString("h").equals(owner.getName())) {
 						workingSect.set("spawn-mobs", _val);
 					}
 				}
@@ -500,13 +490,10 @@ public class BoardHandler extends DataHandler {
 		}
 	}
 	
-	public void updateTerritoryWithFlags(String _id, TerritoryGroup _g, ArrayList<String> _flags) {
+	public void updateTerritoryWithFlags(Joinable owner, TerritoryGroup _g, ArrayList<String> _flags) {
 		YamlConfiguration conf = getFileConfiguration();
 		
 		System.out.println("update");
-		
-		//proper lookup
-		_id = _id.toLowerCase();
 		
 		ConfigurationSection workingSect;
 		for(String path : conf.getKeys(true)) {
@@ -521,7 +508,7 @@ public class BoardHandler extends DataHandler {
 				//is it territory?
 				if(workingSect.contains("h")) {
 					//is the territory _id's?
-					if(workingSect.getString("h").equals(_id)) {
+					if(workingSect.getString("h").equals(owner.getName())) {
 						workingSect.getConfigurationSection("f").set(_g.toString(), _flags.clone());
 					}
 				}

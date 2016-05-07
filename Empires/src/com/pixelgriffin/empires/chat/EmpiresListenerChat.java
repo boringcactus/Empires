@@ -58,16 +58,26 @@ public class EmpiresListenerChat implements Listener {
 		System.out.println("format: ");
 		
 		if(msg.contains("{default}")) {
-			msg = msg.replace("{default}", "{color}[{nick}§l§f {role}{joined} {title} {color}§f{sender}{color}] §f{msg}");
+			msg = msg.replace("{default}", "{color}[{nick}§l§f {role}{joined}{title}{color}§f{sender}{color}] §f{msg}");
 		}
 		
 		//msg = msg.replace("{msg}", evt.getMessage());
 		//msg = msg.replace("{color}", evt.getChannel().getColor().toString());
 		//msg = msg.replace("{nick}", evt.getChannel().getNick());
 		//msg = msg.replace("{sender}", sender.getPlayer().getDisplayName());
-		msg = msg.replace("{title}", Empires.m_playerHandler.getPlayerTitle(evt.getChatter().getPlayer().getUniqueId()));
+		String ourTitle = Empires.m_playerHandler.getPlayerTitle(evt.getChatter().getPlayer().getUniqueId());
+		if(!ourTitle.isEmpty()) {
+			ourTitle = ourTitle + " ";
+		}
+		msg = msg.replace("{title}", ourTitle);
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(evt.getChatter().getPlayer().getUniqueId()).getPrefix());
-		msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName());
+		String ourJoined = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName();
+		if(ourJoined.equals(PlayerHandler.m_defaultCiv)) {
+			ourJoined = "";
+		} else {
+			ourJoined = ourJoined + " ";
+		}
+		msg = msg.replace("{joined}", ourJoined);
 		
 		evt.setFormat(msg);
 	}
@@ -81,9 +91,19 @@ public class EmpiresListenerChat implements Listener {
 		msg = msg.replace("{color}", evt.getChannel().getColor().toString());
 		msg = msg.replace("{nick}", evt.getChannel().getNick());
 		msg = msg.replace("{sender}", sender.getPlayer().getDisplayName());
-		msg = msg.replace("{title}", Empires.m_playerHandler.getPlayerTitle(sender.getPlayer().getUniqueId()));
+		String ourTitle = Empires.m_playerHandler.getPlayerTitle(evt.getChatter().getPlayer().getUniqueId());
+		if(!ourTitle.isEmpty()) {
+			ourTitle = ourTitle + " ";
+		}
+		msg = msg.replace("{title}", ourTitle);
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(sender.getPlayer().getUniqueId()).getPrefix());
-		msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName());
+		String ourJoined = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName();
+		if(ourJoined.equals(PlayerHandler.m_defaultCiv)) {
+			ourJoined = "";
+		} else {
+			ourJoined = ourJoined + " ";
+		}
+		msg = msg.replace("{joined}", ourJoined);
 		
 		for(Player listen : recv) {
 			listen.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
@@ -145,9 +165,19 @@ public class EmpiresListenerChat implements Listener {
 		msg = msg.replace("{color}", evt.getChannel().getColor().toString());
 		msg = msg.replace("{nick}", evt.getChannel().getNick());
 		msg = msg.replace("{sender}", sender.getPlayer().getDisplayName());
-		msg = msg.replace("{title}", Empires.m_playerHandler.getPlayerTitle(sender.getPlayer().getUniqueId()));
+		String ourTitle = Empires.m_playerHandler.getPlayerTitle(evt.getChatter().getPlayer().getUniqueId());
+		if(!ourTitle.isEmpty()) {
+			ourTitle = ourTitle + " ";
+		}
+		msg = msg.replace("{title}", ourTitle);
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(sender.getPlayer().getUniqueId()).getPrefix());
-		msg = msg.replace("{joined}", Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName());
+		String ourJoined = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName();
+		if(ourJoined.equals(PlayerHandler.m_defaultCiv)) {
+			ourJoined = "";
+		} else {
+			ourJoined = ourJoined + " ";
+		}
+		msg = msg.replace("{joined}", ourJoined);
 		
 		for(Player listen : recv) {
 			listen.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));

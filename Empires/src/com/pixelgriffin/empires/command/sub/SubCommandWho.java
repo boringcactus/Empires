@@ -119,11 +119,11 @@ public class SubCommandWho extends SubCommand {
 					
 					//gather role & title data
 					role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();
-					title = Empires.m_playerHandler.getPlayerTitle(playerID);
+					title = ChatColor.translateAlternateColorCodes('&', Empires.m_playerHandler.getPlayerTitle(playerID));
 					
 					//add space
 					if(!title.equals("")) {
-						title = title + " ";
+						title = title + " " + ChatColor.GREEN;
 					}
 					
 					//add role & title data

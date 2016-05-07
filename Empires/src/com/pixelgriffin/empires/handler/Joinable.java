@@ -556,7 +556,7 @@ public abstract class Joinable {
 		if(isEmpire())
 			civType = "Empire";
 		
-		Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "The " + civType + " '" + displayName + "' disbanded!");
+		//Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "The " + civType + " '" + displayName + "' disbanded!");
 	}
 	
 	public void invitePlayer(UUID player) {

@@ -30,6 +30,7 @@ public class SubCommandHome extends SubCommand {
 			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			if(joined != null) {
 			if(_args.length == 0) {//we are teleporting to our home
 				//Location homeLoc = Empires.m_joinableHandler.getJoinableHome(joinedName);
 				Location homeLoc = joined.getHome();
@@ -75,6 +76,9 @@ public class SubCommandHome extends SubCommand {
 				
 				setError("Could not find a civilization named '" + _args[0] + "'");
 				return false;
+			}
+			setError("The wild has no home!");
+			return false;
 			}
 			
 		}

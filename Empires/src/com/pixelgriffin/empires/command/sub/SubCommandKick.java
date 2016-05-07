@@ -63,12 +63,18 @@ public class SubCommandKick extends SubCommand {
 						
 						//yes
 						if(otherRole.getIntValue() < invokerRole.getIntValue()) {
+							//remove them
+							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(otherID);
+							
 							//inform everyone
 							//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invoker.getDisplayName() + " kicked " + other + " from the civilization!");
 							joined.broadcastMessageToJoined(ChatColor.YELLOW + invoker.getDisplayName() + " kicked " + other + " from the civilization!");
 							
-							//remove them
-							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(otherID);
+							//inform the kicked
+							Player kicked = Bukkit.getPlayer(other);
+							if(kicked != null) {
+								kicked.sendMessage(ChatColor.YELLOW + "You were kicked from your civilization!");
+							}
 							
 							return true;//success
 						}

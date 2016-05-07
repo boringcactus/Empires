@@ -28,6 +28,13 @@ public class Empire extends Joinable {
 				}
 			}
 		}
+		
+		for(UUID id : getJoined()) {
+			sendTo = Bukkit.getPlayer(id);
+			if(sendTo != null) {
+				sendTo.sendMessage(msg);
+			}
+		}
 	}
 	
 	public void addKingdom(Kingdom kingdom) {
@@ -51,7 +58,7 @@ public class Empire extends Joinable {
 	}
 	
 	public boolean isKingdomInvited(Kingdom kingdom) {
-		return getKingdomSet().contains(kingdom.getName());
+		return ((ArrayList<String>)ymlData.getList("requested-kingdoms")).contains(kingdom.getName());
 	}
 	
 	public void inviteKingdom(Kingdom kingdom) {

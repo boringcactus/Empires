@@ -73,7 +73,7 @@ public class SubCommandNeutral extends SubCommand {
 						String displayNameB = other.getDisplayName();
 						String displayMessageB = Relation.ALLY.getColor() + invoker.getDisplayName() + " has asked to cease relations with " + displayNameB;
 						
-						//if we are now allies
+						//if we are now neutral
 						if(currentRelation.equals(Relation.NEUTRAL)) {
 							//change the messages to display such
 							displayMessageA = Relation.NEUTRAL.getColor() + displayNameA + " is now neutral";
@@ -86,7 +86,7 @@ public class SubCommandNeutral extends SubCommand {
 						
 						//inform us of our actions!
 						//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, displayMessageB);
-						other.broadcastMessageToJoined(displayMessageB);
+						joined.broadcastMessageToJoined(displayMessageB);
 						
 						return true;//yay
 					}

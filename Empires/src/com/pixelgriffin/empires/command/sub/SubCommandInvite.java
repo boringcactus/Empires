@@ -136,7 +136,7 @@ public class SubCommandInvite extends SubCommand {
 											eUs.broadcastToEmpire(ChatColor.YELLOW + displayName + " is no longer invited to the empire");
 											//them
 											//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + "empire");
-											kOther.broadcastMessageToJoined(ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + "empire");
+											kOther.broadcastMessageToJoined(ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + " empire");
 											
 											return true;
 										}

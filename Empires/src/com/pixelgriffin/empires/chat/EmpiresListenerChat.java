@@ -71,7 +71,12 @@ public class EmpiresListenerChat implements Listener {
 		}
 		msg = msg.replace("{title}", ourTitle);
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(evt.getChatter().getPlayer().getUniqueId()).getPrefix());
-		String ourJoined = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName();
+		
+		Joinable j = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId()));
+		String ourJoined = PlayerHandler.m_defaultCiv;
+		if(j != null) {
+			ourJoined = j.getDisplayName();
+		}
 		if(ourJoined.equals(PlayerHandler.m_defaultCiv)) {
 			ourJoined = "";
 		} else {
@@ -97,7 +102,11 @@ public class EmpiresListenerChat implements Listener {
 		}
 		msg = msg.replace("{title}", ourTitle);
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(sender.getPlayer().getUniqueId()).getPrefix());
-		String ourJoined = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName();
+		Joinable j = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId()));
+		String ourJoined = PlayerHandler.m_defaultCiv;
+		if(j != null) {
+			ourJoined = j.getDisplayName();
+		}
 		if(ourJoined.equals(PlayerHandler.m_defaultCiv)) {
 			ourJoined = "";
 		} else {
@@ -171,7 +180,11 @@ public class EmpiresListenerChat implements Listener {
 		}
 		msg = msg.replace("{title}", ourTitle);
 		msg = msg.replace("{role}", Empires.m_playerHandler.getPlayerRole(sender.getPlayer().getUniqueId()).getPrefix());
-		String ourJoined = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId())).getDisplayName();
+		Joinable j = Empires.m_joinableHandler.getJoinable(Empires.m_playerHandler.getPlayerJoinedCivilization(evt.getChatter().getPlayer().getUniqueId()));
+		String ourJoined = PlayerHandler.m_defaultCiv;
+		if(j != null) {
+			ourJoined = j.getDisplayName();
+		}
 		if(ourJoined.equals(PlayerHandler.m_defaultCiv)) {
 			ourJoined = "";
 		} else {

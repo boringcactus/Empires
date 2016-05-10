@@ -63,6 +63,10 @@ public class SubCommandCreate extends SubCommand {
 						
 						//create kingdom
 						Joinable newJoinable = Empires.m_joinableHandler.createNewKingdom(_args[0]);
+						if(newJoinable == null) {
+							setError("Make sure your name is not taken and does not contain ':', '.' or '-'");
+							return false;
+						}
 						
 						//once the joinable was successfully created
 						try {

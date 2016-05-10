@@ -54,18 +54,29 @@ public class SubCommandRemove extends SubCommand {
 							if(eUs.getKingdomSet().contains(otherName)) {
 								//remove them
 								//Empires.m_joinableHandler.invokeKingdomSecedeEmpire(otherName);
-								Kingdom other = (Kingdom)Empires.m_joinableHandler.getJoinable(otherName);
-								other.leaveEmpire();
+								Joinable other = Empires.m_joinableHandler.getJoinable(otherName);
+								if(other != null) {
+									if(!other.isEmpire()) {
+										Kingdom kOther = (Kingdom)other;
+										kOther.leaveEmpire();
+										
+										//inform everyone
+										/*String displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherName);
+										Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + displayName + " has been removed from the empire.");
+										Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherName, ChatColor.YELLOW + "We have seceded from our empire.");*/
+										String displayName = other.getDisplayName();
+										eUs.broadcastToEmpire(ChatColor.YELLOW + displayName + " has been removed from the empire.");
+										other.broadcastMessageToJoined(ChatColor.YELLOW + "We have been removed from our empire.");
+										
+										return true;
+									}
+									
+									setError("You cannot remove an Empire from an Empire!");
+									return false;
+								}
 								
-								//inform everyone
-								/*String displayName = Empires.m_joinableHandler.getJoinableDisplayName(otherName);
-								Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(joinedName, ChatColor.YELLOW + displayName + " has been removed from the empire.");
-								Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(otherName, ChatColor.YELLOW + "We have seceded from our empire.");*/
-								String displayName = other.getDisplayName();
-								eUs.broadcastToEmpire(ChatColor.YELLOW + displayName + " has been removed from the empire.");
-								other.broadcastMessageToJoined(ChatColor.YELLOW + "We have seceded from our empire.");
-								
-								return true;
+								setError("Could not find a kingdom named '" + otherName + "!'");
+								return false;
 							}
 							
 							setError("You do not have the kingdom '" + otherName + "' in your Empire");

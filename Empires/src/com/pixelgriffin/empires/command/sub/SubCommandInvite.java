@@ -105,7 +105,7 @@ public class SubCommandInvite extends SubCommand {
 										//if(!Empires.m_joinableHandler.getEmpireRequestedKingdom(joinedName, _args[0])) {
 										Empire eUs = (Empire)joined;
 										Kingdom kOther = (Kingdom)other;
-										if(eUs.isKingdomInvited(kOther)) {
+										if(!eUs.isKingdomInvited(kOther)) {
 											//request
 											//Empires.m_joinableHandler.invokeEmpireRequestKingdom(joinedName, _args[0]);
 											eUs.inviteKingdom(kOther);

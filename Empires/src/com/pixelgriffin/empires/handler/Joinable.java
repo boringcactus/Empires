@@ -556,15 +556,16 @@ public abstract class Joinable {
 		if(isEmpire())
 			civType = "Empire";
 		
-		//Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "The " + civType + " '" + displayName + "' disbanded!");
+		Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "The " + civType + " '" + displayName + "' disbanded!");
 	}
 	
 	public void invitePlayer(UUID player) {
 		ArrayList<String> invited = (ArrayList<String>)ymlData.getList("requested-players");
 		
-		invited.add(player.toString());
-		
-		ymlData.set("requested-players", invited);
+		if(!invited.contains(player.toString())) {
+			invited.add(player.toString());
+			ymlData.set("requested-players", invited);
+		}
 	}
 	
 	public void uninvitePlayer(UUID player) {
@@ -575,7 +576,7 @@ public abstract class Joinable {
 	}
 	
 	public boolean isPlayerInvited(UUID player) {
-		return ymlData.getList("requested-players").contains(player.toString());
+		return ((ArrayList<String>)ymlData.getList("requested-players")).contains(player.toString());
 	}
 	
 	public void depositMoney(String depositer, double val) {

@@ -161,6 +161,8 @@ public class JoinableHandler extends DataHandler {
 	public Kingdom createNewKingdom(String name) {
 		if(name.contains(":") || name.contains(".") || name.contains("-"))
 			return null;
+		if(getFileConfiguration().getKeys(false).contains(name.toLowerCase()))
+			return null;
 		
 		String lookup = name.toLowerCase();
 		
@@ -277,11 +279,49 @@ public class JoinableHandler extends DataHandler {
 		_a = _a.toLowerCase();
 		_b = _b.toLowerCase();
 		
-		ConfigurationSection sect = conf.getConfigurationSection(_a);
-		if(sect == null)
+		ConfigurationSection aSect = conf.getConfigurationSection(_a);
+		if(aSect == null)
+			return null;
+		ConfigurationSection bSect = conf.getConfigurationSection(_b);
+		if(bSect == null)
 			return null;
 		
-		ConfigurationSection wishes = sect.getConfigurationSection("relation-wish");
+		if(_a.equals(_b))
+			return Relation.US;
+		
+		if(aSect.getBoolean("is-empire")) {
+			if(!bSect.getBoolean("is-empire")) {
+				if(bSect.getString("empire").equalsIgnoreCase(_a)) {
+					return Relation.E_K;
+				}
+			}
+		} else {//if the other is our empire
+			if(bSect.getBoolean("is-empire")) {
+				if(aSect.getString("empire").equalsIgnoreCase(_b)) {
+					return Relation.E_K;
+				}
+			}
+		}
+		
+		Relation aWish, bWish;
+		try {
+			aWish = Relation.valueOf(aSect.getConfigurationSection("relation-wish").getString(_b));
+		} catch(Exception e) {
+			aWish = Relation.NEUTRAL;
+		}
+		
+		try {
+			bWish = Relation.valueOf(bSect.getConfigurationSection("relation-wish").getString(_a));
+		} catch(Exception e) {
+			bWish = Relation.NEUTRAL;
+		}
+		
+		if(aWish.getIntValue() > bWish.getIntValue())
+			return aWish;
+		else
+			return bWish;
+		
+		/*ConfigurationSection wishes = sect.getConfigurationSection("relation-wish");
 		
 		if(wishes.contains(_b)) {
 			try {
@@ -294,7 +334,7 @@ public class JoinableHandler extends DataHandler {
 		} else {
 			//we have no wishes towards them
 			return Relation.NEUTRAL;
-		}
+		}*/
 	}
 	
 	private void setRelationByName(String _joinableName, String _otherName, Relation _wish) {

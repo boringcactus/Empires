@@ -354,6 +354,9 @@ public class BoardHandler extends DataHandler {
 		sect = getTerritorySection(_loc);
 		
 		if(sect != null) {
+			if(!sect.isConfigurationSection("f"))
+				return false;
+			
 			ArrayList<String> tempList = (ArrayList<String>)sect.getConfigurationSection("f").getList(_group.toString());//NPEing
 			if(tempList == null)
 				return false;

@@ -8,6 +8,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
 /**
@@ -33,6 +34,7 @@ public class SubCommandLeader extends SubCommand {
 				return false;
 			}
 			
+			if(Empires.m_playerHandler.getPlayerRole(invoker.getUniqueId()).equals(Role.LEADER) || invoker.hasPermission("Empires.force.leader")) {
 			try {
 				//set the old leader as a member
 				Empires.m_playerHandler.setPlayerRole(
@@ -49,6 +51,10 @@ public class SubCommandLeader extends SubCommand {
 				e.printStackTrace();
 				
 				setError("Something went wrong!");
+				return false;
+			}
+			} else {
+				setError("You are not allowed to choose a new leader!");
 				return false;
 			}
 		}

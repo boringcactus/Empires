@@ -64,17 +64,17 @@ public class Empire extends Joinable {
 	public void inviteKingdom(Kingdom kingdom) {
 		ArrayList<String> requested = (ArrayList<String>)ymlData.getList("requested-kingdoms");
 		
-		requested.add(kingdom.getName());
-		
-		ymlData.set("requested-kingdoms", requested);
+		if(!requested.contains(kingdom.getName())) {
+			requested.add(kingdom.getName());
+			ymlData.set("requested-kingdoms", requested);
+		}
 	}
 	
 	public void uninviteKingdom(Kingdom kingdom) {
 		ArrayList<String> requested = (ArrayList<String>)ymlData.getList("requested-kingdoms");
 		
-		requested.remove(kingdom.getName());
-		
-		ymlData.set("requested-kingdoms", requested);
+		if(requested.remove(kingdom.getName()))
+			ymlData.set("requested-kingdoms", requested);
 	}
 	
 	//abstration implementation

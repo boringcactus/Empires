@@ -15,8 +15,10 @@ public class Kingdom extends Joinable {
 	}
 	
 	public boolean setEmpire(Empire other) {
-		if(other == null)
-			return false;
+		if(other == null) {
+			ymlData.set("empire", null);
+			return true;
+		}
 	
 		ymlData.set("empire", other.getName());
 		
@@ -31,10 +33,10 @@ public class Kingdom extends Joinable {
 	}
 	
 	public void leaveEmpire() {
-		ymlData.set("empire", "");
-		
 		Empire ourEmpire = (Empire)Empires.m_joinableHandler.getJoinable(getEmpire());
 		ourEmpire.removeKingdom(this);
+		
+		ymlData.set("empire", "");
 	}
 	
 	@Override

@@ -61,10 +61,10 @@ public class SubCommandClaim extends SubCommand {
 				
 				//gather proper display name
 				//String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
-				String displayName = joined.getDisplayName();
+				//String displayName = joined.getDisplayName();
 				
 				//don't overclaim!
-				setError("You cannot claim over " + displayName + "'s land!");
+				setError("You cannot claim over " + currentHost + "'s land!");
 				return false;
 			}
 			

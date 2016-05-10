@@ -93,9 +93,8 @@ public class SubCommandJoin extends SubCommand {
 								//String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
 								//Empires.m_joinableHandler.invokeEmpireBroadcastToNetwork(newJoinedName, ChatColor.YELLOW + displayName + " has joined the empire!");
 								//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
-								String displayName = kUs.getDisplayName();
-								eOther.broadcastToEmpire(ChatColor.YELLOW + displayName + " has joined the empire!");
-								kUs.broadcastMessageToJoined(ChatColor.YELLOW + "We have joined the " + displayName + " empire!");
+								eOther.broadcastToEmpire(ChatColor.YELLOW + kUs.getDisplayName() + " has joined the empire!");
+								kUs.broadcastMessageToJoined(ChatColor.YELLOW + "We have joined the " + eOther.getDisplayName() + " empire!");
 								
 								return true;
 							}

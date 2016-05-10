@@ -78,6 +78,10 @@ public class SubCommandWho extends SubCommand {
 			
 			//gather data based on joined name
 			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			if(joined == null) {
+				setError("Could not find a reference for '" + _args[0] + "!");
+				return false;
+			}
 			/*String displayName = Empires.m_joinableHandler.getJoinableDisplayName(joinedName);
 			String description = Empires.m_joinableHandler.getJoinableDescription(joinedName);
 			
@@ -144,16 +148,16 @@ public class SubCommandWho extends SubCommand {
 			
 			{
 				//Set<String> relationNames = Empires.m_joinableHandler.getJoinableRelationNameSet(joinedName);
-				Set<String> relationNames = joined.getRelationWishSet();
+				ArrayList<Joinable> relations = Empires.m_joinableHandler.getAllJoinables();//joined.getRelationWishSet();
 				
 				Relation rel;
-				for(String name : relationNames) {
-					rel = Empires.m_joinableHandler.getRelationByName(joinedName, name);
+				for(Joinable j : relations) {
+					rel = joined.getRelation(j);
 					
 					if(rel.equals(Relation.ALLY)) {
-						alliedJoinables.add(name);
+						alliedJoinables.add(j.getName());
 					} else if(rel.equals(Relation.ENEMY)) {
-						enemiedJoinables.add(name);
+						enemiedJoinables.add(j.getName());
 					}
 				}
 			}

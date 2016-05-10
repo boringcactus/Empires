@@ -79,7 +79,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 	@EventHandler
 	//when a player tries to place a liquid somewhere
 	public void onPlayerPlaceLiquid(PlayerBucketEmptyEvent _evt) {
-		Location placeLoc = _evt.getBlockClicked().getLocation();
+		/*Location placeLoc = _evt.getBlockClicked().getLocation();
 		Player invoker = _evt.getPlayer();
 		String host = Empires.m_boardHandler.getTerritoryHost(placeLoc);
 		
@@ -95,6 +95,35 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		//check for territory flags
 		TerritoryGroup tg = getInvokerGroup(invoker.getUniqueId(), host, placeLoc);
 		if(!Empires.m_boardHandler.territoryHasFlag(placeLoc, tg, TerritoryFlag.ALLOW_BUILD)) {
+			//cancel building
+			_evt.setCancelled(true);
+			//inform
+			sendError(_evt.getPlayer(), "You are not allowed to build here");
+		}*/
+		
+		if(_evt.isCancelled())
+			return;
+		
+		Location loc = _evt.getBlockClicked().getLocation();
+		String host = Empires.m_boardHandler.getTerritoryHost(loc);
+		
+		if(EmpiresConfig.m_whitelistPlaceableBlocks.contains(_evt.getBucket().toString())) {
+			return;
+		}
+		
+		//do not block building in default civ
+		if(host.equals(PlayerHandler.m_defaultCiv))
+			return;
+		
+		if(_evt.getPlayer() == null) {
+			IOUtility.log("Detected null player during BlockPlaceEvent.. cancelling", ChatColor.RED);
+			return;
+		}
+		
+		//if we can't build here
+		//check for territory flags
+		TerritoryGroup tg = getInvokerGroup(_evt.getPlayer().getUniqueId(), host, loc);
+		if(!Empires.m_boardHandler.territoryHasFlag(loc, tg, TerritoryFlag.ALLOW_BUILD)) {
 			//cancel building
 			_evt.setCancelled(true);
 			//inform
@@ -212,7 +241,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 				TerritoryGroup invokerGroup = getInvokerGroup(invoker.getUniqueId(), host, invokerLoc);
 				
 				//handle buckets of lava/water
-				if(_evt.getItem() != null) {
+				/*if(_evt.getItem() != null) {
 					Material itemType = _evt.getItem().getType();
 					if(itemType.equals(Material.LAVA_BUCKET) || itemType.equals(Material.WATER_BUCKET)) {
 						if(Empires.m_boardHandler.territoryHasFlag(invokerLoc, invokerGroup, TerritoryFlag.ALLOW_BUILD)) {
@@ -221,7 +250,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 							return;//do not continue from here
 						}
 					}
-				}
+				}*/
 				
 				//we have a block
 				if(b != null) {
@@ -416,40 +445,42 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 				} else {
 					Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 					
-					if(joined.isEmpire()) {
-						Empire empire = (Empire)joined;
-						//we are an empire
-						//check if host is in our empire
-						//if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(host.toLowerCase())) {
-						if(empire.getKingdomSet().contains(host.toLowerCase())) {
-							damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
-							_evt.setDamage(_evt.getDamage() * 0.7D);
-						}
-					} else {
-						//we are kingdom
-						Kingdom kingdom = (Kingdom)joined;
-						
-						//gather empire name
-						//String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
-						String empireName = kingdom.getEmpire();
-						
-						
-						//no empire, no need to check
-						if(empireName.equals(""))
-							return;
-						
-						if(empireName.equalsIgnoreCase(host)) {
-							//the host is our empire
-							damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
-							_evt.setDamage(_evt.getDamage() * 0.7D);
-						} else {
-							//is the host part of our empire?
-							Empire ourEmpire = (Empire)Empires.m_joinableHandler.getJoinable(empireName);
-							
-							//if(Empires.m_joinableHandler.getEmpireKingdomList(empireName).contains(host.toLowerCase())) {
-							if(ourEmpire.getKingdomSet().contains(host.toLowerCase())) {
+					if(joined != null) {
+						if(joined.isEmpire()) {
+							Empire empire = (Empire)joined;
+							//we are an empire
+							//check if host is in our empire
+							//if(Empires.m_joinableHandler.getEmpireKingdomList(joinedName).contains(host.toLowerCase())) {
+							if(empire.getKingdomSet().contains(host.toLowerCase())) {
 								damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
 								_evt.setDamage(_evt.getDamage() * 0.7D);
+							}
+						} else {
+							//we are kingdom
+							Kingdom kingdom = (Kingdom)joined;
+							
+							//gather empire name
+							//String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
+							String empireName = kingdom.getEmpire();
+							
+							
+							//no empire, no need to check
+							if(empireName.equals(""))
+								return;
+							
+							if(empireName.equalsIgnoreCase(host)) {
+								//the host is our empire
+								damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
+								_evt.setDamage(_evt.getDamage() * 0.7D);
+							} else {
+								//is the host part of our empire?
+								Empire ourEmpire = (Empire)Empires.m_joinableHandler.getJoinable(empireName);
+								
+								//if(Empires.m_joinableHandler.getEmpireKingdomList(empireName).contains(host.toLowerCase())) {
+								if(ourEmpire.getKingdomSet().contains(host.toLowerCase())) {
+									damaged.sendMessage(ChatColor.GOLD + "30% less damage taken on empire land!");
+									_evt.setDamage(_evt.getDamage() * 0.7D);
+								}
 							}
 						}
 					}
@@ -505,7 +536,9 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		
 		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 		
-		Relation rel = joined.getRelation(Empires.m_joinableHandler.getJoinable(_host));
+		Relation rel = Relation.NEUTRAL;
+		if(joined != null)
+			rel = joined.getRelation(Empires.m_joinableHandler.getJoinable(_host));
 		/*try {
 			rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, _host);
 		} catch (EmpiresJoinableDoesNotExistException e) {

@@ -116,18 +116,26 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		Joinable host = Empires.m_joinableHandler.getJoinable(toHost);
 		//gather relation
 		//Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, toHost);
-		Relation rel = joined.getRelation(host);
+		Relation rel = Relation.NEUTRAL;
+		if(joined != null)
+			rel = joined.getRelation(host);
 		
 		//gather toHost display name
 		//String displayName = Empires.m_joinableHandler.getJoinableDisplayName(toHost);
-		String displayName = host.getDisplayName();
+		if(host != null) {
+			String displayName = host.getDisplayName();
+			String description = host.getDescription();
+			invoker.sendMessage(rel.getColor() + "~" + displayName + " - " + description);
+		} else {
+			invoker.sendMessage(ChatColor.DARK_GREEN + "~" + PlayerHandler.m_defaultCiv);
+		}
 		
 		//gather toHost description
 		//String description = Empires.m_joinableHandler.getJoinableDescription(toHost);
-		String description = host.getDescription();
+		//String description = host.getDescription();
 		
 		//print relation
-		invoker.sendMessage(rel.getColor() + "~" + displayName + " - " + description);
+		//invoker.sendMessage(rel.getColor() + "~" + displayName + " - " + description);
 	}
 	
 	//checks if a player has moved from chunk to chunk

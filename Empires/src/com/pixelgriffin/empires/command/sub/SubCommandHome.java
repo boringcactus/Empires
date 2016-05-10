@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.Empire;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.task.TeleportTask;
@@ -47,22 +48,11 @@ public class SubCommandHome extends SubCommand {
 				Joinable other = Empires.m_joinableHandler.getJoinable(_args[0]);
 				//if(Empires.m_joinableHandler.getJoinableExists(_args[0])) {
 				if(other != null) {
-					//if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
-					if(other.isEmpire()) {
-						//we are an empire
-						setError("You cannot teleport there!");
-						return false;
-					} else {
-						//we are NOT an empire
-						//is this joinable our empire?
-						//if(Empires.m_joinableHandler.getKingdomEmpire(joinedName).equalsIgnoreCase(_args[0])) {
-						Kingdom kUs = (Kingdom)joined;
-						if(kUs.getEmpire().equalsIgnoreCase(_args[0])) {
-							//allow teleportation
-							//gather location
-							//Location homeLoc = Empires.m_joinableHandler.getJoinableHome(_args[0]);
+					if(joined.isEmpire()) {
+						Empire eUs = (Empire)joined;
+						//We are an empire and we want to teleport to our kingdom
+						if(eUs.getKingdomSet().contains(other.getName())) {
 							Location homeLoc = other.getHome();
-							
 							if(homeLoc != null) {
 								teleport(invoker, homeLoc);
 								return true;
@@ -71,16 +61,79 @@ public class SubCommandHome extends SubCommand {
 							setError(_args[0] + " does not have a home set!");
 							return false;
 						}
+						
+						setError("You do not control " + other.getDisplayName() + " and cannot go to their home!");
+						return false;
+					} else {
+						Kingdom kUs = (Kingdom)joined;
+						//We are a kingdom and we are trying to teleport to our empire
+						/*if(kUs.getEmpire().equalsIgnoreCase(_args[0])) {
+							Location homeLoc = other.getHome();
+							if(homeLoc != null) {
+								teleport(invoker, homeLoc);
+								return true;
+							}
+							
+							setError(_args[0] + " does not have a home set!");
+							return false;
+						}*/
+						if(!kUs.getEmpire().isEmpty()) {
+							Empire ourEmpire = (Empire)Empires.m_joinableHandler.getJoinable(kUs.getEmpire());
+							if(ourEmpire.getKingdomSet().contains(_args[0].toLowerCase()) || kUs.getEmpire().equalsIgnoreCase(_args[0])) {
+								Location homeLoc = other.getHome();
+								if(homeLoc != null) {
+									teleport(invoker, homeLoc);
+									return true;
+								}
+								
+								setError(other.getDisplayName() + " does not have a home set!");
+								return false;
+							}
+						}
+						
+						setError("You are not allowed to teleport to " + other.getDisplayName() + "!");
+						return false;
 					}
+					
+					//if(Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
+					/*if(!other.isEmpire()) {
+						//we are an empire
+						setError("You cannot teleport there!");
+						return false;
+					} else {
+						if(!joined.isEmpire()) {
+							//we are NOT an empire
+							//is this joinable our empire?
+							//if(Empires.m_joinableHandler.getKingdomEmpire(joinedName).equalsIgnoreCase(_args[0])) {
+							Kingdom kUs = (Kingdom)joined;
+							if(kUs.getEmpire().equalsIgnoreCase(_args[0])) {
+								//allow teleportation
+								//gather location
+								//Location homeLoc = Empires.m_joinableHandler.getJoinableHome(_args[0]);
+								Location homeLoc = other.getHome();
+								
+								if(homeLoc != null) {
+									teleport(invoker, homeLoc);
+									return true;
+								}
+								
+								setError(_args[0] + " does not have a home set!");
+								return false;
+							}
+						}
+						setError("Empires cannot teleport to other kingdoms?");
+						return false;
+					}*/
 				}
 				
 				setError("Could not find a civilization named '" + _args[0] + "'");
 				return false;
 			}
+				setError("Too many arguments!");
+				return false;
+			}
 			setError("The wild has no home!");
 			return false;
-			}
-			
 		}
 		
 		setError("Only players can invoke the 'home' command");

@@ -26,8 +26,7 @@ public class SubCommandDeposit extends SubCommand {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
 				String invokerName = invoker.getName();
-				UUID invokerID = invoker.getUniqueId();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				String joinedName = Empires.m_playerHandler.getPlayer(invoker.getUniqueId()).getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 				
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
 					setError("You cannot deposit money to " + PlayerHandler.m_defaultCiv);

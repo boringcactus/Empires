@@ -15,6 +15,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
@@ -32,13 +33,14 @@ public class SubCommandWho extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player player = (Player)_sender;
+			EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(player.getUniqueId());
 			
 			String joinedName = "noname";
 			
 			//here we determine whether or not we're talking about our own joined status or someone/something else
 			if(_args.length == 0) {
 				//gather the player's joined name
-				joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(player.getUniqueId());
+				joinedName = ep.getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(player.getUniqueId());
 				
 				//no data avilable for default civilization
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -57,8 +59,11 @@ public class SubCommandWho extends SubCommand {
 				if(other != null) {
 					joinedName = _args[0];
 				} else if(otherID != null) {
-						if(Empires.m_playerHandler.getPlayerExists(otherID)) {
-						joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+					EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherID);
+					//if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+					if(otherEP != null) {
+						//joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+						joinedName = otherEP.getJoined().getName();
 						
 						//if the user belongs to the wilderness we cannot print anything
 						if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -122,8 +127,11 @@ public class SubCommandWho extends SubCommand {
 					}
 					
 					//gather role & title data
-					role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();
-					title = ChatColor.translateAlternateColorCodes('&', Empires.m_playerHandler.getPlayerTitle(playerID));
+					EmpiresPlayer playerEP = Empires.m_playerHandler.getPlayer(playerID);
+					//role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();
+					role = playerEP.getRole().getPrefix();
+					//title = ChatColor.translateAlternateColorCodes('&', Empires.m_playerHandler.getPlayerTitle(playerID));
+					title = ChatColor.translateAlternateColorCodes('&', playerEP.getTitle());
 					
 					//add space
 					if(!title.equals("")) {

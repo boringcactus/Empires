@@ -66,7 +66,7 @@ public class AllyChat implements Channel {
 
 	@Override
 	public String getFormat() {
-		return "{color}[{nick}§l§f {role}{joined}{title}{color}§f{sender}{color}] §f{msg}";
+		return "{color}[{nick}§l§f {role}{joined}{title}{color}§f{prefix}{sender}{color}] §f{msg}";
 	}
 
 	@Override

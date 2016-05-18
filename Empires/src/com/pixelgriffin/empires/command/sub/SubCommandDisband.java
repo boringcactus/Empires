@@ -9,6 +9,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -26,24 +27,27 @@ public class SubCommandDisband extends SubCommand {
 			if(_sender instanceof Player) {
 				//gather player information
 				Player player = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(player.getUniqueId());
 				UUID invokerID = player.getUniqueId();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Joinable joined = ep.getJoined();
 				
 				//m_joinableHandler methods don't allow default to be targeted
 				//but we should let the player know
-				if(joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
+				//if(joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
+				if(joined == null) {
 					setError(PlayerHandler.m_defaultCiv + " cannot be disbanded!");
 					return false;
 				}
 				
 				//does the joinable exist?
-				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 				//if(Empires.m_joinableHandler.getJoinableExists(joinedName)) {
 				if(joined != null) {
 					try {
 						//player has permission to disband
 						//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DISBAND, Empires.m_playerHandler.getPlayerRole(invokerID))) {
-						if(joined.getPermissionForRole(Empires.m_playerHandler.getPlayerRole(invokerID), GroupPermission.DISBAND)) {
+						if(joined.getPermissionForRole(ep.getRole(), GroupPermission.DISBAND)) {
 							//Empires.m_joinableHandler.invokeJoinableDisband(joinedName);//run disband
 							joined.disband();
 							
@@ -58,7 +62,7 @@ public class SubCommandDisband extends SubCommand {
 					}
 				}
 				
-				setError("Could not find the civilization '" + joinedName +"'");
+				setError("Could not find your civilization!");
 				return false;
 			}
 			

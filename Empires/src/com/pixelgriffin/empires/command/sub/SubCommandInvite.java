@@ -14,6 +14,7 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsEmpireException;
 import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
@@ -32,19 +33,22 @@ public class SubCommandInvite extends SubCommand {
 			if(_args.length == 1) {
 				//gather info
 				Player invoker = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 				UUID invokerID = invoker.getUniqueId();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				Joinable joined = ep.getJoined();
 				
-				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				if(joined == null) {
 					setError("You cannot invite people to " + PlayerHandler.m_defaultCiv);
 					return false;
 				}
 				
-					Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+					//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 					//do we have permission?
 					//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.INVITE, invokerRole)) {
-					if(joined.getPermissionForRole(invokerRole, GroupPermission.INVITE)) {
+					if(joined.getPermissionForRole(ep.getRole(), GroupPermission.INVITE)) {
 						UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
 						if(otherID == null) {
 							setError(ChatColor.RED + "Could not find the player '" + _args[0] + "'");
@@ -52,7 +56,9 @@ public class SubCommandInvite extends SubCommand {
 						}
 						
 						//is the arg0 a player?
-						if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+						//if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+						EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherID);
+						if(otherEP != null) {
 							//handle player
 							//did we request them?
 							//if(Empires.m_joinableHandler.getJoinableRequestedPlayer(joinedName, otherID)) {
@@ -99,7 +105,7 @@ public class SubCommandInvite extends SubCommand {
 								//is the other an empire too?
 								if(!other.isEmpire()) {
 								//are we a leader?
-								if(invokerRole.equals(Role.LEADER)) {
+								if(ep.getRole().equals(Role.LEADER)) {
 									//invite kingdoms to empire
 										//did we request them yet?
 										//if(!Empires.m_joinableHandler.getEmpireRequestedKingdom(joinedName, _args[0])) {
@@ -119,7 +125,7 @@ public class SubCommandInvite extends SubCommand {
 											eUs.broadcastToEmpire(ChatColor.YELLOW + displayName + " was invited to join the empire");
 											//them
 											//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " was invited to join the " + joinedName + " empire");
-											kOther.broadcastMessageToJoined(ChatColor.YELLOW + displayName + " was invited to join the " + joinedName + " empire");
+											kOther.broadcastMessageToJoined(ChatColor.YELLOW + displayName + " was invited to join the " + joined.getDisplayName() + " empire");
 											
 											return true;
 										} else {//guess we did
@@ -136,7 +142,7 @@ public class SubCommandInvite extends SubCommand {
 											eUs.broadcastToEmpire(ChatColor.YELLOW + displayName + " is no longer invited to the empire");
 											//them
 											//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(_args[0], ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + "empire");
-											kOther.broadcastMessageToJoined(ChatColor.YELLOW + displayName + " is no longer invited to the " + joinedName + " empire");
+											kOther.broadcastMessageToJoined(ChatColor.YELLOW + displayName + " is no longer invited to the " + joined.getDisplayName() + " empire");
 											
 											return true;
 										}

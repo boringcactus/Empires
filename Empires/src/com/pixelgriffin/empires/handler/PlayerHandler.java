@@ -1,31 +1,19 @@
 package com.pixelgriffin.empires.handler;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
-import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
-import com.pixelgriffin.empires.exception.EmpiresPlayerExistsException;
 import com.pixelgriffin.empires.util.IDUtility;
 import com.pixelgriffin.empires.util.IOUtility;
 
-/**
- * 
- * @author Nathan
- *
- */
 public class PlayerHandler extends DataHandler {
-	
 	//the player file without plugin data folder directory
 	private final String m_file = "players.dat";
 	
@@ -98,20 +86,21 @@ public class PlayerHandler extends DataHandler {
 	 * Player specific loading
 	 */
 	
-	/**
-	 * "Instantiates" a new player in YML
-	 * @param _name
-	 */
-	private void invokeCreatePlayerSpace(UUID _id) throws EmpiresPlayerExistsException {
-		YamlConfiguration conf = getFileConfiguration();
-		String idString = _id.toString();
+	public EmpiresPlayer getPlayer(UUID id) {
+		String idString = id.toString();
+		if(getFileConfiguration().isConfigurationSection(idString)) {
+			return new EmpiresPlayer(Bukkit.getPlayer(id), getFileConfiguration().getConfigurationSection(idString));
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean createPlayer(UUID id) {
+		String idString = id.toString();
+		if(getFileConfiguration().isConfigurationSection(idString))
+			return false;
 		
-		//a player with this name already exists in the YML, creating new space is unadvisable
-		if(conf.isConfigurationSection(idString))
-			throw new EmpiresPlayerExistsException("A player with the UUID " + idString + " found to exist when attemting to create new space");
-		
-		//create a default player space
-		ConfigurationSection sect = conf.createSection(idString);
+		ConfigurationSection sect = getFileConfiguration().createSection(idString);
 		
 		sect.set("j", m_defaultCiv);//set civilization name
 		sect.set("p", m_defaultPower);//set power value
@@ -123,495 +112,21 @@ public class PlayerHandler extends DataHandler {
 		sect.set("ac", false);
 		//set TPID
 		sect.set("tp-id", -1);
+		
+		return true;
 	}
 	
-	//methods already create a player if he is found to be non-existent
-	//however when you don't want to create a player on accident use this
-	public boolean getPlayerExists(UUID _id) {
-		return getFileConfiguration().isConfigurationSection(_id.toString());
-	}
-	
-	public Role getPlayerRole(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return m_defaultRole;
-		} else {
-			ConfigurationSection sect = conf.getConfigurationSection(idString);
-			
-			try {
-				return Role.valueOf(sect.getString("r"));
-			} catch(Exception e) {//corrupted role value found
-				e.printStackTrace();
-				return Role.MEMBER;
-			}
-		}
-	}
-	
-	/**
-	 * Gather player's joined civilization name
-	 * @param _name - the name of the player in question
-	 * @return the name of the civilization the player is joined with (m_defaultCiv if none)
-	 */
-	public String getPlayerJoinedCivilization(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//if this player does not exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return m_defaultCiv;//will have set the civ to this by default creation
-		} else {
-			//he does exist, return his joinable
-			return conf.getConfigurationSection(idString).getString("j");//grab the j (joinable) YML stored string
-		}
-	}
-	
-	public String getPlayerTitle(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//if this player does not exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return m_defaultTitle;//return default just set
-		} else {
-			//he does exist, return his joinable
-			return conf.getConfigurationSection(idString).getString("t");//grab the j (joinable) YML stored string
-		}
-	}
-	
-	public int getPlayerPower(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist??
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return m_defaultPower;//return default just set
-		} else {
-			//he exists
-			return conf.getConfigurationSection(idString).getInt("p");
-		}
-	}
-	
-	public boolean getPlayerAutoClaiming(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist??
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return false;//return default just set
-		} else {
-			//he exists
-			return conf.getConfigurationSection(idString).getBoolean("ac");
-		}
-	}
-	
-	public void setPlayerAutoClaiming(UUID _id, boolean _val) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-
-		//finally set our auto claiming value
-		sect.set("ac", _val);
-	}
-	
-	public void setPlayerTPID(UUID _id, int _val) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-
-		//finally set our auto claiming value
-		sect.set("tp-id", _val);
-	}
-	
-	public int getPlayerTPID(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist??
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return -1;//return default just set
-		} else {
-			//he exists
-			return conf.getConfigurationSection(idString).getInt("tp-id");
-		}
-	}
-	
-	/**
-	 * Removes a player from a joined civilization. Reset both the player's pointer and the joinable's reference
-	 * @param _name
-	 * @throws EmpiresJoinableDoesNotExistException
-	 */
-	@SuppressWarnings("deprecation")
-	public void invokeRemovePlayerFromJoinedJoinable(UUID _id) throws EmpiresJoinableDoesNotExistException {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-			
-			//no reason to do anything in here since he had no joinable set to begin with
-			return;
-		}
-		
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		String joinedName = sect.getString("j");
-		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
-		
-		
-		//we cannot remove ourselves from the default civ (wilderness)
-		//if(joined.equals(m_defaultCiv))
-		if(joined == null)
-			return;
-		
-		//since we are in a joinable and we exist..
-		//we will change our pointer to the default (wilderness)
-		sect.set("j", m_defaultCiv);
-		
-		//and remove ourselves from the previously joined player list
-		//Empires.m_joinableHandler.invokeJoinableRemovePlayer(joined, _id);
-		
-		//gather the old role
-		Role oldRole = Role.valueOf(sect.getString("r").toUpperCase());
-		
-		//reset our role as well
-		sect.set("r", m_defaultRole.toString());
-		//reset our title
-		sect.set("t", m_defaultTitle);
-		
-		//if we haven't disbanded then do some extra stuff
-		//if(!Empires.m_joinableHandler.getJoinableExists(joined))
-		if(joined.removePlayerPointer(_id))//if we disbanded
-			return;//dont
-		
-		//now that we're out of the previously joined civilization
-		//remove our power value
-		//gather
-		int powerValue = getPlayerPower(_id);
-		
-		//remove
-		//Empires.m_joinableHandler.setJoinablePowerValue(joined, -powerValue, true);
-		joined.setPower(-powerValue, true);
-		
-		//was the removed player the leader?
-		if(oldRole.equals(Role.LEADER)) {
-			//find a new leader.
-			/*try {
-				Empires.m_joinableHandler.invokeJoinableFindNewLeader(joined, true);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();//shouldn't happen.. but you never know!
-			}*/
-			joined.findNewLeader(true);
-		}
-	}
-	
-	/**
-	 * Adds a player to a civilization.
-	 * @param _playerID Player UUID
-	 * @param _joinableID Joinable id
-	 * @throws EmpiresJoinableExistsException the player in question already has a joinable set
-	 * @throws EmpiresJoinableDoesNotExistException the joinable in question does not exists
-	 */
-	public void setPlayerJoinedCivlization(UUID _playerID, Joinable join) throws EmpiresJoinableExistsException, EmpiresJoinableDoesNotExistException {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _playerID.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_playerID);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		if(!sect.getString("j").equals(m_defaultCiv))
-			throw new EmpiresJoinableExistsException("The player '" + idString + "' already has a joinable set. Use removePlayerFromJoinedCivilization to remove him from one");
-		
-		//since we don't have a joinable and we exist
-		//we set our pointer to the joinable in question
-		sect.set("j", join.getName());
-		//and add ourselves to the newly joined player list
-		//Empires.m_joinableHandler.invokeJoinableAddPlayer(_joinableID, _playerID);
-		join.addPlayerPointer(_playerID);
-		
-		//now that we've added the player, change the power value yo
-		//gather power value
-		int powerValue = getPlayerPower(_playerID);
-		
-		//add the power!
-		//Empires.m_joinableHandler.setJoinablePowerValue(_joinableID, powerValue, true);
-		join.setPower(powerValue, true);
-	}
-	
-	public void setPlayerRole(UUID _id, Role _role) throws EmpiresJoinableDoesNotExistException {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//in the case that someone tries to change the name of nobody..?
-		if(_id == null)
-			return;
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		//make sure we're in a joinable so we can set the role
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		
-		if(sect.getString("j").equals(m_defaultCiv))
-			throw new EmpiresJoinableDoesNotExistException("Attempted to set a role for " + idString + " who is not involved with a joinable");
-		
-		//finally set our role
-		sect.set("r", _role.toString());
-	}
-	
-	public void setPlayerTitle(UUID _id, String _title) throws EmpiresJoinableDoesNotExistException {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		//make sure we're in a joinable so we can set the role
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		if(sect.getString("j").equals(m_defaultCiv))
-			throw new EmpiresJoinableDoesNotExistException("Attempted to set a role for " + idString + " who is not involved with a joinable");
-		
-		//finally set our role
-		sect.set("t", _title);
-	}
-	
-	/**
-	 * Changes player's power and absolutely affects the player's joinable
-	 * @param _name
-	 * @param _val
-	 */
-	public void setPlayerPower(UUID _id, int _val) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		//gather sect
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		
-		//gather old power
-		int oldPower = sect.getInt("p");
-		
-		//set our new power
-		sect.set("p", _val);
-		
-		//update our joined total power
-		//gather joined
-		String joinedName = sect.getString("j");
-		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
-		
-		//do not act on wilderness
-		//if(joined.equals(m_defaultCiv))
-		if(joined == null)
-			return;
-		
-		/*try {
-			//change the power relatively based on the old value and the new one
-			//for example: we're at 10 we die so we set our power to 0
-			//the difference is -10 and therefore 10 power is removed from the joinable
-			//Empires.m_joinableHandler.setJoinablePowerValue(joined, _val - oldPower, true);//for our joinable
-		} catch (EmpiresJoinableDoesNotExistException e) {
-			e.printStackTrace();//something went wrong! no joinable was found.. boohoo
-		}*/
-		joined.setPower(_val - oldPower, true);
-	}
-
-	public void overridePlayerJoinedCivilization(UUID _id, String _name) throws EmpiresJoinableDoesNotExistException {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//lower case the name for proper lookup
-		_name = _name.toLowerCase();
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		//if(!Empires.m_joinableHandler.getJoinableExists(_name))
-		//	throw new EmpiresJoinableDoesNotExistException("Tried to override player civilization to a non-existent joinable '" + _name + "'");
-		
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		sect.set("j", _name);
-	}
-	
-	public void setPlayerLastPlayedTime(UUID _id, long _time) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist in YML
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		ConfigurationSection sect = conf.getConfigurationSection(idString);
-		
-		sect.set("pt", _time);
-	}
-	
-	public long getPlayerLastPlayedTime(UUID _id) {
-		YamlConfiguration conf = getFileConfiguration();
-		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		//player doesn't exist??
-		if(!conf.isConfigurationSection(idString)) {
-			try {
-				//attempt to create him
-				invokeCreatePlayerSpace(_id);
-			} catch (EmpiresPlayerExistsException e) {//unlikely - but that's programming!
-				e.printStackTrace();
-			}
-			
-			return System.currentTimeMillis();//return default just set
-		} else {
-			//he exists
-			return conf.getConfigurationSection(idString).getLong("pt");
-		}
-	}
-	
-	public void removeDormantPlayer(UUID _id) throws EmpiresJoinableDoesNotExistException {
+	public void removeDormantPlayer(UUID id) {
 		//remove us from any joinable we were in
-		invokeRemovePlayerFromJoinedJoinable(_id);
+		//invokeRemovePlayerFromJoinedJoinable(_id);
+		EmpiresPlayer ep = getPlayer(id);
+		if(ep == null)
+			return;
 		
-		//remove our data
-		YamlConfiguration conf = getFileConfiguration();
+		ep.leaveJoined();
 		
-		//id to string for lookup
-		String idString = _id.toString();
-		
-		conf.set(idString, null);
+		String idString = id.toString();
+		getFileConfiguration().set(idString, null);
 	}
 	
 	/**
@@ -626,16 +141,12 @@ public class PlayerHandler extends DataHandler {
 				continue;
 			
 			if(conf.isConfigurationSection(player)) {
-				long playTime = getPlayerLastPlayedTime(UUID.fromString(player));
+				long playTime = conf.getConfigurationSection(player).getLong("pt");
 				long timeDiff = (System.currentTimeMillis() - playTime)/(86400000);
 				
 				if(timeDiff >= 20) {//20 days
 					//they're inactive
-					try {
-						removeDormantPlayer(UUID.fromString(player));
-					} catch (EmpiresJoinableDoesNotExistException e) {
-						e.printStackTrace();
-					}
+					removeDormantPlayer(UUID.fromString(player));
 				}
 			}
 		}

@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.util.IDUtility;
@@ -28,6 +29,7 @@ public class SubCommandDemote extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 				UUID invokerID = invoker.getUniqueId();
 				UUID otherID = IDUtility.getUUIDForPlayer(_args[0]);
 				if(otherID == null) {
@@ -35,10 +37,12 @@ public class SubCommandDemote extends SubCommand {
 					return false;
 				}
 				String invokerName =  invoker.getName();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Joinable joined = ep.getJoined();
 				
 				//can't work with default civ
-				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				if(joined == null) {
 					setError("You cannot demote people in the wilderness!");
 					return false;
 				}
@@ -50,31 +54,34 @@ public class SubCommandDemote extends SubCommand {
 				}
 				
 				//gather invoker's role for later
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 			
-				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 				//check for the promote permission
 				//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.DEMOTE, invokerRole)) {
-				if(!joined.getPermissionForRole(invokerRole, GroupPermission.DEMOTE)) {
+				if(!joined.getPermissionForRole(ep.getRole(), GroupPermission.DEMOTE)) {
 					//no permission, terminate
 					setError("You do not have permission to demote players!");
 					return false;
 				}
 				
 				//does the player exist? (don't want to create a blank player)
-				if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+				//if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+				EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherID);
+				if(otherEP != null) {
 					//are they in our joinable?
-					if(Empires.m_playerHandler.getPlayerJoinedCivilization(otherID).equalsIgnoreCase(joinedName)) {
+					//if(Empires.m_playerHandler.getPlayerJoinedCivilization(otherID).equalsIgnoreCase(joinedName)) {
+					if(otherEP.getJoined().getName().equalsIgnoreCase(joined.getName())) {
 						//gather role values
-						Role otherRole = Empires.m_playerHandler.getPlayerRole(otherID);
+						//Role otherRole = Empires.m_playerHandler.getPlayerRole(otherID);
 						
-						if(otherRole.equals(Role.MEMBER)) {
+						if(otherEP.getRole().equals(Role.MEMBER)) {
 							setError("You can't demote " + _args[0] + " any further!");
 							return false;
 						}
 						
-						int otherRoleValue = otherRole.getIntValue();
-						int invokerRoleValue = invokerRole.getIntValue();
+						int otherRoleValue = otherEP.getRole().getIntValue();
+						int invokerRoleValue = ep.getRole().getIntValue();
 						
 						//are we ranked high enough to demote them?
 						if(otherRoleValue < invokerRoleValue) {//ex: officer_1 (1) < officer_2 (2) OK
@@ -82,21 +89,14 @@ public class SubCommandDemote extends SubCommand {
 
 							//role is possibly null when newRoleValue is incorrect
 							if(role != null) {
-								try {
-									//set the role
-									Empires.m_playerHandler.setPlayerRole(otherID, role);
-									
-									//inform everyone we set the role
-									//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
-									joined.broadcastMessageToJoined(ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
-									
-								} catch (EmpiresJoinableDoesNotExistException e) {
-									e.printStackTrace();
-									
-									setError("Something went wrong!");
-									return false;
-								}
+								//set the role
+								//Empires.m_playerHandler.setPlayerRole(otherID, role);
+								otherEP.setRole(role);
 								
+								//inform everyone we set the role
+								//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(joinedName, ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
+								joined.broadcastMessageToJoined(ChatColor.YELLOW + invokerName + " demoted " + _args[0] + " to " + role.toString().toLowerCase().replaceAll("_", " ") + "!");
+							
 								//success!
 								return true;
 							}

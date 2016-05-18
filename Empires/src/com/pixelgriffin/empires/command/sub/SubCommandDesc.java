@@ -11,6 +11,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -26,21 +27,24 @@ public class SubCommandDesc extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length > 0) {
 				Player invoker = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 				UUID invokerID = invoker.getUniqueId();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Joinable joined = ep.getJoined();
 				
 				//default does not have a desc!
-				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				if(joined == null) {
 					setError("You cannot change " + PlayerHandler.m_defaultCiv + " description");
 					return false;
 				}
 				
-				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 				
 				//do we have permission?
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_DESC, invokerRole)) {
-				if(joined.getPermissionForRole(invokerRole, GroupPermission.SET_DESC)) {
+				if(joined.getPermissionForRole(ep.getRole(), GroupPermission.SET_DESC)) {
 					//build description
 					String desc = "";
 					for(int i = 0; i < _args.length; i++) {

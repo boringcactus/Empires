@@ -11,6 +11,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -25,18 +26,21 @@ public class SubCommandPerm extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
+			EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 			UUID invokerID = invoker.getUniqueId();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			Joinable joined = ep.getJoined();
 			
-			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+			//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+			if(joined == null) {
 				setError("You cannot edit permissions for " + PlayerHandler.m_defaultCiv + "!");
 				return false;
 			}
 			
-			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
-			Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+			//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 			//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.PERMS, invokerRole)) {
-			if(!joined.getPermissionForRole(invokerRole, GroupPermission.PERMS)) {
+			if(!joined.getPermissionForRole(ep.getRole(), GroupPermission.PERMS)) {
 				setError("You do not have permission to edit permissions!");
 				return false;
 			}

@@ -15,6 +15,7 @@ import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableInvalidCharacterException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
@@ -31,12 +32,15 @@ public class SubCommandCreate extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {//only a player could possibly create a civilization
 			Player player = (Player)_sender;//gather player
+			EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(player.getUniqueId());
 			UUID invokerID = player.getUniqueId();
 			
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);//gather joined
+			//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);//gather joined
+			Joinable joined = ep.getJoined();
 			
 			//if the player is NOT in a real civilization (is in wilderness) then he is creating a kingdom
-			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {//KINGDOM
+			//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {//KINGDOM
+			if(joined == null) {
 				if(_args.length == 1)  {
 					if(EmpiresConfig.m_kingdomCreation) {
 						
@@ -69,31 +73,17 @@ public class SubCommandCreate extends SubCommand {
 						}
 						
 						//once the joinable was successfully created
-						try {
-							//attempt to set the player to this new civilization
-							Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerID);//shouldn't happen but as a precaution remove them from any pre-existing joinable
-							Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, newJoinable);
-							Empires.m_playerHandler.setPlayerRole(invokerID, Role.LEADER);
-							
-							player.sendMessage(ChatColor.GRAY + "Welcome to leadership! Helpful tips:");
-							player.sendMessage(ChatColor.GRAY + "/e perm to view permission settings");
-							player.sendMessage(ChatColor.GRAY + "/e flag to view flag settings");
-							
-						} catch (EmpiresJoinableExistsException e) {//shouldn't happen, but that's coding!
-							e.printStackTrace();//print the error
-							
-							//fail gracefully - delete created joinable, reset role?
-							
-							setError("Something went wrong!");
-							return false;
-						} catch (EmpiresJoinableDoesNotExistException e) {//shouldn't happen, but that's coding!
-							e.printStackTrace();//print the error
-							
-							//fail gracefully - delete created joinable, reset role
-							
-							setError("Something went wrong!");
-							return false;
-						}
+						//attempt to set the player to this new civilization
+						//Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(invokerID);//shouldn't happen but as a precaution remove them from any pre-existing joinable
+						//Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, newJoinable);
+						//Empires.m_playerHandler.setPlayerRole(invokerID, Role.LEADER);
+						ep.leaveJoined();
+						ep.joinJoinable(newJoinable);
+						ep.setRole(Role.LEADER);
+						
+						player.sendMessage(ChatColor.GRAY + "Welcome to leadership! Helpful tips:");
+						player.sendMessage(ChatColor.GRAY + "/e perm to view permission settings");
+						player.sendMessage(ChatColor.GRAY + "/e flag to view flag settings");
 						
 						//remove money from balance
 						if(Empires.m_vaultActive)
@@ -117,11 +107,11 @@ public class SubCommandCreate extends SubCommand {
 				if(_args.length == 0) {
 					if(EmpiresConfig.m_empireCreation) {
 						//gather invoker role
-						Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-						IOUtility.log(invokerRole.toString());
+						//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+						//IOUtility.log(invokerRole.toString());
 						
 						//invoker must be a leader
-						if(invokerRole.equals(Role.LEADER)) {
+						if(ep.getRole().equals(Role.LEADER)) {
 							
 							//money check
 							if(Empires.m_vaultActive) {
@@ -139,7 +129,7 @@ public class SubCommandCreate extends SubCommand {
 							
 							//empire creation
 							//if we're not an empire already
-							Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+							//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 							
 							//if(!Empires.m_joinableHandler.getJoinableEmpireStatus(joinedName)) {
 							if(!joined.isEmpire()) {
@@ -151,7 +141,7 @@ public class SubCommandCreate extends SubCommand {
 									Empires.m_economy.withdrawPlayer(player.getName(), EmpiresConfig.m_empireCost);
 								
 								//inform the server of your success!
-								Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + joinedName + " has become an empire!");
+								Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + joined.getDisplayName() + " has become an empire!");
 								return true;
 							}
 							

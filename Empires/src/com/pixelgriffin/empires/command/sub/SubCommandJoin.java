@@ -15,6 +15,7 @@ import com.pixelgriffin.empires.exception.EmpiresJoinableExistsException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsEmpireException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableIsNotEmpireException;
 import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
@@ -31,6 +32,7 @@ public class SubCommandJoin extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 				UUID invokerID = invoker.getUniqueId();
 				String newJoinedName = "noname";
 				
@@ -47,8 +49,10 @@ public class SubCommandJoin extends SubCommand {
 				} else if(other != null) {
 					UUID otherID = other.getUniqueId();
 					
-					if(Empires.m_playerHandler.getPlayerExists(otherID)) {
-						newJoinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+					EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherID);
+					//if(Empires.m_playerHandler.getPlayerExists(otherID)) {
+					if(otherEP != null) {
+						newJoinedName = otherEP.getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
 						
 						//if the user belongs to the wilderness we cannot print anything
 						if(newJoinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -63,16 +67,21 @@ public class SubCommandJoin extends SubCommand {
 				}
 				
 				tojoin = Empires.m_joinableHandler.getJoinable(newJoinedName);
+				if(tojoin == null) {
+					setError("Could not find the civilization '" + newJoinedName + "'");
+					return false;
+				}
 				
 				/*
 				 * Empire jazz
 				 */
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
-				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				Joinable joined = ep.getJoined();
 				
 				//we're a leader
-				if(invokerRole.equals(Role.LEADER)) {
+				if(ep.getRole().equals(Role.LEADER)) {
 					//join empire
 					//we are a kingdom
 						if(!joined.isEmpire()) {
@@ -115,20 +124,13 @@ public class SubCommandJoin extends SubCommand {
 					//player is trying to join a kingdom & has override perms
 					//if(invoker.hasPermission("Empires.force.join") || Empires.m_joinableHandler.getJoinableRequestedPlayer(newJoinedName, invokerID)) {//force join
 					if(invoker.hasPermission("Empires.force.join") || tojoin.isPlayerInvited(invokerID)) {
-						try {
-							//set the civilization
-							Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, tojoin);
-							
-							//remove from the request list
-							//Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerID);
-							tojoin.uninvitePlayer(invokerID);
-						} catch (EmpiresJoinableExistsException e) {
-							setError("You must leave your current civilization first!");
-							return false;
-						} catch (EmpiresJoinableDoesNotExistException e) {
-							setError("Could not find the civilization '" + newJoinedName + "'");
-							return false;
-						}
+						//set the civilization
+						//Empires.m_playerHandler.setPlayerJoinedCivlization(invokerID, tojoin);
+						ep.joinJoinable(tojoin);
+						
+						//remove from the request list
+						//Empires.m_joinableHandler.invokeJoinableRemoveRequestedPlayer(newJoinedName, invokerID);
+						tojoin.uninvitePlayer(invokerID);
 						
 						//inform everyone we joined
 						//Empires.m_joinableHandler.invokeJoinableBroadcastToJoined(newJoinedName, ChatColor.YELLOW + invoker.getDisplayName() + " has joined the civilization!");

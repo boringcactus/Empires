@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -26,24 +27,27 @@ public class SubCommandSetHome extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
+			EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 			UUID invokerID = invoker.getUniqueId();
 			Location invokerLoc = invoker.getLocation();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			Joinable joined = ep.getJoined();
 			
-			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+			//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+			if(joined == null) {
 				setError("You cannot set the home of " + PlayerHandler.m_defaultCiv + "!");
 				return false;
 			}
 			
-			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
-			Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+			//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 			//if(!Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SET_HOME, invokerRole)) {
-			if(!joined.getPermissionForRole(invokerRole, GroupPermission.SET_HOME)) {
+			if(!joined.getPermissionForRole(ep.getRole(), GroupPermission.SET_HOME)) {
 				setError("You do not have permission to set the home of your civilization!");
 				return false;
 			}
 			
-			if(!Empires.m_boardHandler.getTerritoryHost(invokerLoc).equalsIgnoreCase(joinedName)) {
+			if(!Empires.m_boardHandler.getTerritoryHost(invokerLoc).equalsIgnoreCase(joined.getName())) {
 				setError("You can only set your home on your land!");
 				return false;
 			}

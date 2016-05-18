@@ -73,7 +73,7 @@ public class EmpiresCommands implements CommandExecutor {
 		if(_cmd.getName().equalsIgnoreCase("Empires")) {
 			if(_args.length == 0) {
 				//just /e
-				Bukkit.getServer().dispatchCommand(_sender, "e help 9");
+				Bukkit.getServer().dispatchCommand(_sender, "e help");
 			} else {
 				//gather command from map
 				SubCommand command = this.m_commandMap.get(_args[0]);

@@ -13,6 +13,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresEmptyTerritoryException;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -28,28 +29,31 @@ public class SubCommandUnclaim extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 0) {
 				Player player = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(player.getUniqueId());
 				Location loc = player.getLocation();
 				UUID invokerID = player.getUniqueId();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Joinable joined = ep.getJoined();
 				
 				//are they part of the default civ?
-				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+				if(joined == null) {
 					//inform
 					setError("You can't unclaim " + PlayerHandler.m_defaultCiv + "!");
 					return false;
 				}
 				
-				Role playerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+				//Role playerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 				
 				try {
-					Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+					//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 					//if the player has permission to unclaim
 					//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.UNCLAIM, playerRole)) {
-					if(joined.getPermissionForRole(playerRole, GroupPermission.UNCLAIM)) {
+					if(joined.getPermissionForRole(ep.getRole(), GroupPermission.UNCLAIM)) {
 						
 						//is this OUR territory?
 						String host = Empires.m_boardHandler.getTerritoryHost(loc);
-						if(!host.equalsIgnoreCase(joinedName)) {
+						if(!host.equalsIgnoreCase(joined.getName())) {
 							setError("You don't own this territory!");
 							return false;
 						}

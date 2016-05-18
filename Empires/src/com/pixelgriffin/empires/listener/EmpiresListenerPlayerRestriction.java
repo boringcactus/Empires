@@ -29,6 +29,7 @@ import com.pixelgriffin.empires.enums.TerritoryFlag;
 import com.pixelgriffin.empires.enums.TerritoryGroup;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
@@ -389,13 +390,15 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		if(!Empires.m_boardHandler.territoryIgnoresRelations(defLoc)) {
 			//if not
 			//gather relationship information
-			String defHost, atkHost;
+			/*String defHost, atkHost;
 			defHost = Empires.m_playerHandler.getPlayerJoinedCivilization(defender.getUniqueId());
-			atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getUniqueId());
+			atkHost = Empires.m_playerHandler.getPlayerJoinedCivilization(attacker.getUniqueId());*/
 			
 			//Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(defHost, atkHost);
-			Relation rel = Empires.m_joinableHandler.getJoinable(defHost).getRelation(
-						   Empires.m_joinableHandler.getJoinable(atkHost));
+			/*Relation rel = Empires.m_joinableHandler.getJoinable(defHost).getRelation(
+						   Empires.m_joinableHandler.getJoinable(atkHost));*/
+			Relation rel = Empires.m_playerHandler.getPlayer(defender.getUniqueId()).getJoined().getRelation(
+					Empires.m_playerHandler.getPlayer(attacker.getUniqueId()).getJoined());
 			
 			//message string
 			String message = "";
@@ -436,7 +439,8 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			String host = Empires.m_boardHandler.getTerritoryHost(damaged.getLocation());
 			
 			if(!host.equals(PlayerHandler.m_defaultCiv)) {
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(damaged.getUniqueId());
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(damaged.getUniqueId());
+				String joinedName = Empires.m_playerHandler.getPlayer(damaged.getUniqueId()).getJoined().getName();
 				
 				//this is our territory
 				if(joinedName.equalsIgnoreCase(host)) {
@@ -526,7 +530,7 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			return TerritoryGroup.NEUTRAL;
 			
 		//gather player info
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_id);
+		//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(_id);
 		TerritoryGroup group = TerritoryGroup.NEUTRAL;
 		
 		//if someone has access to this chunk they are treated as a member
@@ -534,7 +538,9 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			return TerritoryGroup.MEMBER;
 		}
 		
-		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+		//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+		EmpiresPlayer player = Empires.m_playerHandler.getPlayer(_id);
+		Joinable joined = player.getJoined();
 		
 		Relation rel = Relation.NEUTRAL;
 		if(joined != null)
@@ -554,8 +560,8 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 			} else if(rel.equals(Relation.NEUTRAL)) {
 				group = TerritoryGroup.NEUTRAL;
 			} else if(rel.equals(Relation.US)) {
-				Role invokerRole = Empires.m_playerHandler.getPlayerRole(_id);
-				group = TerritoryGroup.fromRole(invokerRole);
+				//Role invokerRole = Empires.m_playerHandler.getPlayerRole(_id);
+				group = TerritoryGroup.fromRole(player.getRole());
 			}
 		} else {
 			return TerritoryGroup.NEUTRAL;

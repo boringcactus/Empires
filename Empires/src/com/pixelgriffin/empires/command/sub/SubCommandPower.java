@@ -19,7 +19,7 @@ public class SubCommandPower extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			int powerVal = Empires.m_playerHandler.getPlayerPower(invoker.getUniqueId());
+			int powerVal = Empires.m_playerHandler.getPlayer(invoker.getUniqueId()).getPower();//Empires.m_playerHandler.getPlayerPower(invoker.getUniqueId());
 			
 			//construct the initial string
 			String powerStr = ChatColor.GRAY + "[" + ChatColor.GREEN;

@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires;
 
+import java.util.ArrayList;
+
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -9,6 +11,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.dthielke.Herochat;
+import com.dthielke.api.Channel;
 import com.dthielke.api.event.ChannelChatEvent;
 import com.pixelgriffin.empires.chat.AllyChat;
 import com.pixelgriffin.empires.chat.KingdomChat;
@@ -90,8 +93,25 @@ public class Empires extends JavaPlugin {
 				
 				//create channels for usage
 				//Herochat.getChannelManager().addChannel(new CityChatOld());
-				Herochat.getChannelManager().addChannel(new AllyChat());
-				Herochat.getChannelManager().addChannel(new KingdomChat());
+				ArrayList<Channel> channels = (ArrayList<Channel>)Herochat.getChannelManager().getChannels();
+				boolean containsAlly = false;
+				boolean containsKingdoms = false;
+				
+				for(Channel ch : channels) {
+					if(ch.getName().equalsIgnoreCase("kingdom")) {
+						containsKingdoms = true;
+					} else if(ch.getName().equalsIgnoreCase("ally")) {
+						containsAlly = true;
+					}
+					
+					if(containsKingdoms && containsAlly)
+						break;
+				}
+				
+				if(!containsAlly)
+					Herochat.getChannelManager().addChannel(new AllyChat());
+				if(!containsKingdoms)
+					Herochat.getChannelManager().addChannel(new KingdomChat());
 				//Herochat.getChannelManager().addChannel(new VoidChat());
 				
 				//new EmpiresListenerChatOld(this);//registers self

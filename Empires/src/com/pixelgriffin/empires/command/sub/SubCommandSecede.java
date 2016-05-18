@@ -12,6 +12,7 @@ import com.pixelgriffin.empires.enums.GroupPermission;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.Kingdom;
 import com.pixelgriffin.empires.handler.PlayerHandler;
@@ -27,26 +28,29 @@ public class SubCommandSecede extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
+			EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 			UUID invokerID = invoker.getUniqueId();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			Joinable joined = ep.getJoined();
 			
 			//no default civ actions
-			if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+			//if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
+			if(joined == null) {
 				setError("You cannot have " + PlayerHandler.m_defaultCiv + " secede");
 				return false;
 			}
 			
-			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+			//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 			//empire exists
 			//String empireName = Empires.m_joinableHandler.getKingdomEmpire(joinedName);
 			if(!joined.isEmpire()) {
 				Kingdom kUs = (Kingdom)joined;
 				if(!kUs.getEmpire().isEmpty()) {
-					Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
+					//Role invokerRole = Empires.m_playerHandler.getPlayerRole(invokerID);
 					
 					//player has permission
 					//if(Empires.m_joinableHandler.getJoinableHasPermissionForRole(joinedName, GroupPermission.SECEDE, invokerRole)) {
-					if(joined.getPermissionForRole(invokerRole, GroupPermission.SECEDE)) {
+					if(joined.getPermissionForRole(ep.getRole(), GroupPermission.SECEDE)) {
 						//secede
 						//Empires.m_joinableHandler.invokeKingdomSecedeEmpire(joinedName);
 						Empire other = (Empire)Empires.m_joinableHandler.getJoinable(kUs.getEmpire());

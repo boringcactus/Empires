@@ -11,6 +11,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.command.SubCommand;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.Empire;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.util.IDUtility;
 
@@ -26,8 +27,10 @@ public class SubCommandInherit extends SubCommand {
 		if(_sender instanceof Player) {
 			if(_args.length == 1) {
 				Player invoker = (Player)_sender;
+				EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
 				UUID invokerID = invoker.getUniqueId();
-				String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+				Joinable joined = ep.getJoined();
 				
 				String heir = _args[0];
 				UUID heirID = IDUtility.getUUIDForPlayer(_args[0]);
@@ -37,20 +40,25 @@ public class SubCommandInherit extends SubCommand {
 				}
 				
 				//does the player exist?
-				if(!Empires.m_playerHandler.getPlayerExists(heirID)) {
+				//if(!Empires.m_playerHandler.getPlayerExists(heirID)) {
+				EmpiresPlayer heirEP = Empires.m_playerHandler.getPlayer(heirID);
+				if(heirEP == null) {
 					setError("Could not find the player '" + heir +"'");
 					return false;
 				}
 				
 				//is the player in our joinable?
-				if(!Empires.m_playerHandler.getPlayerJoinedCivilization(heirID).equalsIgnoreCase(joinedName)) {
-					setError("The player '" + heir + "' is not in your civilization!");
-					return false;
+				//if(!Empires.m_playerHandler.getPlayerJoinedCivilization(heirID).equalsIgnoreCase(joinedName)) {
+				if(heirEP.getJoined() != null) {
+					if(heirEP.getJoined().getName().equalsIgnoreCase(joined.getName())) {
+						setError("The player '" + heir + "' is not in your civilization!");
+						return false;
+					}
 				}
 				
 				//player exists and is in our civilization
 				//set the heir
-				Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+				//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 				//Empires.m_joinableHandler.setJoinableHeir(joinedName, heirID);
 				joined.setHeir(heirID);
 				

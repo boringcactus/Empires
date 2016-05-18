@@ -16,6 +16,7 @@ import com.pixelgriffin.empires.Empires;
 import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
@@ -29,8 +30,10 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 	//when a player logs in
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent _evt) {
-		//set their last played time to right now
-		Empires.m_playerHandler.setPlayerLastPlayedTime(_evt.getPlayer().getUniqueId(), System.currentTimeMillis());
+		//attempt to create Empires data if necessary
+		Empires.m_playerHandler.createPlayer(_evt.getPlayer().getUniqueId());
+		//update last play time
+		Empires.m_playerHandler.getPlayer(_evt.getPlayer().getUniqueId()).setLastPlayTime(System.currentTimeMillis());
 	}
 	
 	//when a player moves from one block to another
@@ -44,12 +47,15 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 			return;
 		
 		//gather our TPID
-		int tpid = Empires.m_playerHandler.getPlayerTPID(_evt.getPlayer().getUniqueId());
+		//int tpid = Empires.m_playerHandler.getPlayerTPID(_evt.getPlayer().getUniqueId());
+		EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(_evt.getPlayer().getUniqueId());
+		int tpid = ep.getTPID();
 		
 		//if our TPID is not null (-1) then stop the teleport
 		if(tpid != -1) {
 			Bukkit.getScheduler().cancelTask(tpid);//cancel the task in bukkit
-			Empires.m_playerHandler.setPlayerTPID(_evt.getPlayer().getUniqueId(), -1);//remove our old TPID
+			//Empires.m_playerHandler.setPlayerTPID(_evt.getPlayer().getUniqueId(), -1);//remove our old TPID
+			ep.setTPID(-1);
 			
 			//inform
 			_evt.getPlayer().sendMessage(ChatColor.RED + "Teleport cancelled");
@@ -72,9 +78,10 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		if(EmpiresConfig.m_blacklist.contains(invoker.getWorld().getName()))
 			return;
 		
+		EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
+		
 		//gather player info
-		UUID invokerID = invoker.getUniqueId();
-		String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+		//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 		
 		//host names
 		String toHost, fromHost;
@@ -94,7 +101,8 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		}
 		
 		//handle autoclaiming
-		if(Empires.m_playerHandler.getPlayerAutoClaiming(invokerID)) {
+		//if(Empires.m_playerHandler.getPlayerAutoClaiming(invokerID)) {
+		if(ep.isAutoClaiming()) {
 			//run the claim command for us
 			Bukkit.getServer().dispatchCommand(invoker, "e claim");
 		}
@@ -112,7 +120,8 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		
 		//since the new host is different and not wilderness
 		//gather relationship
-		Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+		//Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
+		Joinable joined = ep.getJoined();
 		Joinable host = Empires.m_joinableHandler.getJoinable(toHost);
 		//gather relation
 		//Relation rel = Empires.m_joinableHandler.getJoinableRelationTo(joinedName, toHost);
@@ -162,12 +171,12 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 		
 		//gather player
 		Player invoker = evt.getEntity();
-		UUID invokerID = invoker.getUniqueId();
 		
 		//does the player get to keep their power?
 		if(!invoker.hasPermission("Empires.power.keep")) {
 			//set
-			Empires.m_playerHandler.setPlayerPower(invokerID, 0);
+			//Empires.m_playerHandler.setPlayerPower(invokerID, 0);
+			Empires.m_playerHandler.getPlayer(invoker.getUniqueId()).setPower(0);
 			
 			//inform player
 			invoker.sendMessage(ChatColor.RED + "Your power has been reduced to 0");

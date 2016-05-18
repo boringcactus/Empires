@@ -22,6 +22,7 @@ public class EmpiresConfig {
 	public static ArrayList<String> m_whitelistPlaceableBlocks = new ArrayList<String>();
 	public static ArrayList<String> m_whitelistBreakableBlocks = new ArrayList<String>();
 	
+	public static int m_maxTitleLength;
 	public static int m_powerMax;//done
 	public static int m_power2Max;//done
 	public static boolean m_interworldClaim;//done
@@ -108,6 +109,13 @@ public class EmpiresConfig {
 			m_empireCost = 200;
 		} else {
 			m_empireCost = m_config.getInt("empireCost");
+		}
+		
+		if(!m_config.contains("maxTitleLength")) {
+			m_config.set("maxTitleLength", 10);
+			m_maxTitleLength = 10;
+		} else {
+			m_maxTitleLength = m_config.getInt("maxTitleLength");
 		}
 		
 		if(!m_config.contains("detachClaim")) {

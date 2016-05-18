@@ -179,7 +179,8 @@ public abstract class Joinable {
 		ArrayList<UUID> officers = new ArrayList<UUID>();
 		
 		for(UUID player : getJoined()) {
-			if(Empires.m_playerHandler.getPlayerRole(player).equals(role))
+			//if(Empires.m_playerHandler.getPlayerRole(player).equals(role))
+			if(Empires.m_playerHandler.getPlayer(player).getRole().equals(role))
 				officers.add(player);
 		}
 		
@@ -211,20 +212,28 @@ public abstract class Joinable {
 		ymlData.set("joined-players", players);
 	}
 	
-	public void findNewLeader(boolean announce) throws EmpiresJoinableDoesNotExistException {
-		UUID heir = getHeir();
+	public void findNewLeader(boolean announce) {
+		UUID heirID = getHeir();
 		
-		if(heir != null) {
-			if(Empires.m_playerHandler.getPlayerExists(heir)) {
-				if(Empires.m_playerHandler.getPlayerJoinedCivilization(heir).equals(getName())) {
-					Empires.m_playerHandler.setPlayerRole(heir, Role.LEADER);
+		if(heirID != null) {
+			EmpiresPlayer heir = Empires.m_playerHandler.getPlayer(heirID);
+			
+			//if(Empires.m_playerHandler.getPlayerExists(heir)) {
+			if(heir != null) {
+				//if(Empires.m_playerHandler.getPlayerJoinedCivilization(heir).equals(getName())) {
+				if(heir.getJoined().getName().equals(getName())) {
+					//Empires.m_playerHandler.setPlayerRole(heir, Role.LEADER);
+					heir.setRole(Role.LEADER);
 					setHeir(null);
 					
 					//inform
 					if(announce) {
-						OfflinePlayer officer = Bukkit.getPlayer(heir);
+						//OfflinePlayer officer = Bukkit.getPlayer(heir);
+						//if(officer == null)
+						//	officer = Bukkit.getOfflinePlayer(heir);
+						OfflinePlayer officer = heir.getBukkitPlayer();
 						if(officer == null)
-							officer = Bukkit.getOfflinePlayer(heir);
+							officer = Bukkit.getOfflinePlayer(heirID);
 						
 						broadcastMessageToJoined(ChatColor.YELLOW + officer.getName()  + " has become the new leader of " + getDisplayName() + "!");
 					}
@@ -241,7 +250,8 @@ public abstract class Joinable {
 				if(officers.isEmpty())
 					continue;
 				
-				Empires.m_playerHandler.setPlayerRole(officers.get(0), Role.LEADER);
+				//Empires.m_playerHandler.setPlayerRole(officers.get(0), Role.LEADER);
+				Empires.m_playerHandler.getPlayer(officers.get(0)).setRole(Role.LEADER);
 				
 				if(announce) {
 					OfflinePlayer officer = Bukkit.getPlayer(officers.get(0));
@@ -256,7 +266,8 @@ public abstract class Joinable {
 		}
 		
 		UUID one = getJoined().get(0);
-		Empires.m_playerHandler.setPlayerRole(one, Role.LEADER);
+		//Empires.m_playerHandler.setPlayerRole(one, Role.LEADER);
+		Empires.m_playerHandler.getPlayer(one).setRole(Role.LEADER);
 		
 		if(announce) {
 			OfflinePlayer officer = Bukkit.getPlayer(one);
@@ -268,10 +279,10 @@ public abstract class Joinable {
 	}
 	
 	//return true if disbanding
-	public boolean removePlayerPointer(UUID player) {
+	public boolean removePlayerPointer(EmpiresPlayer player) {
 		//ArrayList<UUID> players = getJoined();
 		ArrayList<String> players = (ArrayList<String>)ymlData.getList("joined-players");
-		if(players.remove(player.toString())) {
+		if(players.remove(player.getBukkitPlayer().getUniqueId().toString())) {
 			ymlData.set("joined-players", players);
 			
 			if(players.isEmpty()) {
@@ -289,7 +300,8 @@ public abstract class Joinable {
 	
 	public UUID getLeader() {
 		for(UUID player : getJoined()) {
-			if(Empires.m_playerHandler.getPlayerRole(player).equals(Role.LEADER)) {
+			//if(Empires.m_playerHandler.getPlayerRole(player).equals(Role.LEADER)) {
+			if(Empires.m_playerHandler.getPlayer(player).getRole().equals(Role.LEADER)) {
 				return player;
 			}
 		}
@@ -339,6 +351,14 @@ public abstract class Joinable {
 	public boolean getPermissionForRole(Role role, GroupPermission perm) {
 		if(role.equals(Role.LEADER))
 			return true;
+		
+		if(!ymlData.isConfigurationSection("permissions")) {
+			return false;
+		}
+		
+		if(ymlData.getList(role.toString()) == null) {
+			return false;
+		}
 		
 		return ymlData.getConfigurationSection("permissions").getList(role.toString()).contains(perm.toString());
 	}
@@ -431,11 +451,12 @@ public abstract class Joinable {
 		}
 		
 		for(UUID player : getJoined()) {
-			try {
+			Empires.m_playerHandler.getPlayer(player).setJoinedPointer(newName);
+			/*try {
 				Empires.m_playerHandler.overridePlayerJoinedCivilization(player, newName);
 			} catch (EmpiresJoinableDoesNotExistException e) {
 				e.printStackTrace();
-			}
+			}*/
 		}
 		
 		//if we are a kingdom in an empire, leave it under our old name
@@ -516,7 +537,8 @@ public abstract class Joinable {
 			CopyOnWriteArrayList<UUID> playerList = new CopyOnWriteArrayList<UUID>(new HashSet<UUID>(getJoined()));
 			
 			for(UUID player : playerList) {
-				Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(player);
+				//Empires.m_playerHandler.invokeRemovePlayerFromJoinedJoinable(player);
+				Empires.m_playerHandler.getPlayer(player).leaveJoined();
 			}
 		}
 		

@@ -27,8 +27,8 @@ public class SubCommandHome extends SubCommand {
 	public boolean run(CommandSender _sender, String[] _args) {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
-			UUID invokerID = invoker.getUniqueId();
-			String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			//UUID invokerID = invoker.getUniqueId();
+			String joinedName = Empires.m_playerHandler.getPlayer(invoker.getUniqueId()).getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 			if(joined != null) {
@@ -143,7 +143,9 @@ public class SubCommandHome extends SubCommand {
 	private void teleport(Player _who, Location _where) {
 		_who.sendMessage(ChatColor.GOLD + "Teleport will commence in " + ChatColor.RED + "10 seconds " + ChatColor.GOLD + "don't move!");
 		
-		Empires.m_playerHandler.setPlayerTPID(_who.getUniqueId(), 
-				Bukkit.getScheduler().runTaskLater(Empires.m_instance, new TeleportTask(_who, _where), 20 * 10L).getTaskId());
+		Empires.m_playerHandler.getPlayer(_who.getUniqueId()).setTPID(Bukkit.getScheduler().runTaskLater(Empires.m_instance, new TeleportTask(_who, _where), 20 * 10L).getTaskId());
+		
+		//Empires.m_playerHandler.setPlayerTPID(_who.getUniqueId(), 
+		//		Bukkit.getScheduler().runTaskLater(Empires.m_instance, new TeleportTask(_who, _where), 20 * 10L).getTaskId());
 	}
 }

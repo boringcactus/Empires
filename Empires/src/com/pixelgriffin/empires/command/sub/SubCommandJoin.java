@@ -124,6 +124,14 @@ public class SubCommandJoin extends SubCommand {
 						setError("Empires cannot join other civilizations!");
 						return false;
 				} else {//not the leader of a kingdom!
+					//isn't in a kingdom etc.
+					if(joined != null) {
+						String civType = "Kingdom";
+						if(joined.isEmpire())
+							civType = "Empire";
+						setError("You are already in a " + civType + "!");
+						return false;
+					}
 					//player is trying to join a kingdom & has override perms
 					//if(invoker.hasPermission("Empires.force.join") || Empires.m_joinableHandler.getJoinableRequestedPlayer(newJoinedName, invokerID)) {//force join
 					if(invoker.hasPermission("Empires.force.join") || tojoin.isPlayerInvited(invokerID)) {

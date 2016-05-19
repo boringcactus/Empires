@@ -52,7 +52,10 @@ public class SubCommandJoin extends SubCommand {
 					EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherID);
 					//if(Empires.m_playerHandler.getPlayerExists(otherID)) {
 					if(otherEP != null) {
-						newJoinedName = otherEP.getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+						if(otherEP.getJoined() != null)
+							newJoinedName = otherEP.getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
+						else
+							newJoinedName = PlayerHandler.m_defaultCiv;
 						
 						//if the user belongs to the wilderness we cannot print anything
 						if(newJoinedName.equals(PlayerHandler.m_defaultCiv)) {

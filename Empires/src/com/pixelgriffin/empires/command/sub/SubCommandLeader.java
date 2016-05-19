@@ -1,6 +1,8 @@
 package com.pixelgriffin.empires.command.sub;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -49,11 +51,24 @@ public class SubCommandLeader extends SubCommand {
 				
 				//set us as the new leader
 				//Empires.m_playerHandler.setPlayerRole(invoker.getUniqueId(), Role.LEADER);
-				ep.setRole(Role.LEADER);
+				if(_args.length == 0) {
+					ep.setRole(Role.LEADER);
 				
-				invoker.sendMessage(ChatColor.YELLOW + "You are now the leader!");
+					invoker.sendMessage(ChatColor.YELLOW + "You are now the leader!");
 				
-				return true;
+					return true;
+				} else if(_args.length == 1) {
+					OfflinePlayer otherP = Bukkit.getOfflinePlayer(_args[0]);
+					if(otherP != null) {
+						EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherP.getUniqueId());
+						if(otherEP != null) {
+							otherEP.setRole(Role.LEADER);
+						}
+					}
+				}
+				
+				setError("Invalid arguments!");
+				return false;
 			} else {
 				setError("You are not allowed to choose a new leader!");
 				return false;

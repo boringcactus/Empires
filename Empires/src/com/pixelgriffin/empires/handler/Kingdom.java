@@ -16,7 +16,7 @@ public class Kingdom extends Joinable {
 	
 	public boolean setEmpire(Empire other) {
 		if(other == null) {
-			ymlData.set("empire", null);
+			ymlData.set("empire", "");
 			return true;
 		}
 	

@@ -50,7 +50,7 @@ public class SubCommandInherit extends SubCommand {
 				//is the player in our joinable?
 				//if(!Empires.m_playerHandler.getPlayerJoinedCivilization(heirID).equalsIgnoreCase(joinedName)) {
 				if(heirEP.getJoined() != null) {
-					if(heirEP.getJoined().getName().equalsIgnoreCase(joined.getName())) {
+					if(!heirEP.getJoined().getName().equalsIgnoreCase(joined.getName())) {
 						setError("The player '" + heir + "' is not in your civilization!");
 						return false;
 					}

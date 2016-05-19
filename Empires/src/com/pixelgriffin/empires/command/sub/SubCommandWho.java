@@ -40,7 +40,10 @@ public class SubCommandWho extends SubCommand {
 			//here we determine whether or not we're talking about our own joined status or someone/something else
 			if(_args.length == 0) {
 				//gather the player's joined name
-				joinedName = ep.getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(player.getUniqueId());
+				if(ep.getJoined() != null)
+					joinedName = ep.getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(player.getUniqueId());
+				else
+					joinedName = PlayerHandler.m_defaultCiv;
 				
 				//no data avilable for default civilization
 				if(joinedName.equals(PlayerHandler.m_defaultCiv)) {
@@ -63,7 +66,10 @@ public class SubCommandWho extends SubCommand {
 					//if(Empires.m_playerHandler.getPlayerExists(otherID)) {
 					if(otherEP != null) {
 						//joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(otherID);
-						joinedName = otherEP.getJoined().getName();
+						if(otherEP.getJoined() != null)
+							joinedName = otherEP.getJoined().getName();
+						else
+							joinedName = PlayerHandler.m_defaultCiv;
 						
 						//if the user belongs to the wilderness we cannot print anything
 						if(joinedName.equals(PlayerHandler.m_defaultCiv)) {

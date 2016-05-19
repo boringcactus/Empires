@@ -74,7 +74,7 @@ public class SubCommandPromote extends SubCommand {
 					if(otherEP.getJoined().getName().equals(joined.getName())) {
 						//gather role values
 						//int newRoleValue = Empires.m_playerHandler.getPlayerRole(otherID).getIntValue() + 1;
-						int newRoleValue = otherEP.getRole().getIntValue();
+						int newRoleValue = otherEP.getRole().getIntValue() + 1;
 						//int invokerRoleValue = invokerRole.getIntValue();
 						int invokerRoleValue = ep.getRole().getIntValue();
 						

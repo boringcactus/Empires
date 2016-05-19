@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.command.sub;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -13,6 +15,7 @@ import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
+import com.pixelgriffin.empires.util.IDUtility;
 
 /**
  * 
@@ -46,25 +49,37 @@ public class SubCommandLeader extends SubCommand {
 				/*Empires.m_playerHandler.setPlayerRole(
 						Empires.m_joinableHandler.getJoinable(joinedName).getLeader(), Role.MEMBER);*/
 						//Empires.m_joinableHandler.getJoinableLeader(joinedName), Role.MEMBER);
-				Empires.m_playerHandler.getPlayer(joined.getLeader()).setRole(Role.MEMBER);
-				
-				
 				//set us as the new leader
 				//Empires.m_playerHandler.setPlayerRole(invoker.getUniqueId(), Role.LEADER);
 				if(_args.length == 0) {
+					Empires.m_playerHandler.getPlayer(joined.getLeader()).setRole(Role.MEMBER);
 					ep.setRole(Role.LEADER);
 				
 					invoker.sendMessage(ChatColor.YELLOW + "You are now the leader!");
 				
 					return true;
 				} else if(_args.length == 1) {
-					OfflinePlayer otherP = Bukkit.getOfflinePlayer(_args[0]);
+					UUID otherP = IDUtility.getUUIDForPlayer(_args[0]);
 					if(otherP != null) {
-						EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherP.getUniqueId());
+						EmpiresPlayer otherEP = Empires.m_playerHandler.getPlayer(otherP);
 						if(otherEP != null) {
-							otherEP.setRole(Role.LEADER);
+							if(otherEP.getJoined() != null) {
+								if(otherEP.getJoined().getName().equalsIgnoreCase(joined.getName())) {
+									Empires.m_playerHandler.getPlayer(joined.getLeader()).setRole(Role.MEMBER);
+									otherEP.setRole(Role.LEADER);
+									
+									invoker.sendMessage(ChatColor.YELLOW + _args[0] + " is now the leader!");
+									return true;
+								}
+							}
+							
+							setError(_args[0] + " is not in your civilization!");
+							return false;
 						}
 					}
+					
+					setError("Could not find player '" + _args[0] + "'");
+					return false;
 				}
 				
 				setError("Invalid arguments!");

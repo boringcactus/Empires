@@ -31,7 +31,6 @@ public class SubCommandFlag extends SubCommand {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
 			EmpiresPlayer ep = Empires.m_playerHandler.getPlayer(invoker.getUniqueId());
-			UUID invokerID = invoker.getUniqueId();
 			//String joinedName = Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			Joinable joined = ep.getJoined();
 			

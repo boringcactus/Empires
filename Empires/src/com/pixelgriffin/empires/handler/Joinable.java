@@ -439,13 +439,13 @@ public abstract class Joinable {
 		}
 		
 		ConfigurationSection newPermissions = newData.createSection("permissions");
-		Map<String, Object> permissionMap = relationWish.getValues(true);
+		Map<String, Object> permissionMap = permissions.getValues(true);
 		for(String key : permissionMap.keySet()) {
 			newPermissions.set(key, ((ArrayList<String>)permissionMap.get(key)).clone());
 		}
 		
 		ConfigurationSection newFlags = newData.createSection("flags");
-		Map<String, Object> flagMap = relationWish.getValues(true);
+		Map<String, Object> flagMap = flags.getValues(true);
 		for(String key : flagMap.keySet()) {
 			newFlags.set(key, ((ArrayList<String>)flagMap.get(key)).clone());
 		}

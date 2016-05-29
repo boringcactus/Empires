@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -22,6 +23,7 @@ import com.pixelgriffin.empires.handler.JoinableHandler;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.listener.EmpiresListenerPlayerGeneral;
 import com.pixelgriffin.empires.listener.EmpiresListenerPlayerRestriction;
+import com.pixelgriffin.empires.sql.SQLitePlayerConfiguration;
 import com.pixelgriffin.empires.task.InactivityTask;
 import com.pixelgriffin.empires.task.PowerUpdateTask;
 import com.pixelgriffin.empires.task.SaveTask;
@@ -178,6 +180,11 @@ public class Empires extends JavaPlugin {
 		
 		//create API
 		m_api = new EmpiresAPI();
+		
+		//test
+		//IOUtility.log("STARTING TEST", ChatColor.YELLOW);
+		//SQLitePlayerConfiguration data = new SQLitePlayerConfiguration(null);
+		//data.testWrite();
 	}
 	
 	public EmpiresAPI getAPI() {

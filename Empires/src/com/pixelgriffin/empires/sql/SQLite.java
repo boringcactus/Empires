@@ -23,7 +23,7 @@ public class SQLite extends Database {
             "`kills` int(11) NOT NULL," +
             "`total` int(11) NOT NULL," +
             "PRIMARY KEY (`player`)" +  // This is creating 3 colums Player, Kills, Total. Primary key is what you are going to use as your indexer. Here we want to use player so
-            ");"; // we can search by player, and get kills and total. If you some how were searching kills it would provide total and player.
+            ");"; // we can search by player, and get kills and total. If you some how were searching kills it would provide total and player.*/
 
  
     // SQL creation stuff, You can leave the blow stuff untouched.

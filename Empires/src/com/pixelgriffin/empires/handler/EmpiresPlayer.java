@@ -1,5 +1,7 @@
 package com.pixelgriffin.empires.handler;
 
+import java.util.UUID;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -9,15 +11,15 @@ import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
 
 public class EmpiresPlayer {
 	protected ConfigurationSection ymlData;
-	protected Player bukkitPlayer;
+	protected UUID bukkitID;
 	
-	public EmpiresPlayer(Player bukkit, ConfigurationSection data) {
+	public EmpiresPlayer(UUID id, ConfigurationSection data) {
 		ymlData = data;
-		bukkitPlayer = bukkit;
+		bukkitID = id;
 	}
 	
-	public Player getBukkitPlayer() {
-		return bukkitPlayer;
+	public UUID getID() {
+		return bukkitID;
 	}
 	
 	public Joinable getJoined() {
@@ -37,14 +39,11 @@ public class EmpiresPlayer {
 		if(join == null)
 			return;
 		
-		if(bukkitPlayer == null)
-			return;
-		
 		if(getJoined() != null)
 			return;
 		
 		setJoinedPointer(join.getName());
-		join.addPlayerPointer(bukkitPlayer.getUniqueId());
+		join.addPlayerPointer(bukkitID);
 		join.setPower(getPower(), true);
 	}
 	

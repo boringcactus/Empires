@@ -28,7 +28,13 @@ public class SubCommandHome extends SubCommand {
 		if(_sender instanceof Player) {
 			Player invoker = (Player)_sender;
 			//UUID invokerID = invoker.getUniqueId();
-			String joinedName = Empires.m_playerHandler.getPlayer(invoker.getUniqueId()).getJoined().getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
+			Joinable joinedInit = Empires.m_playerHandler.getPlayer(invoker.getUniqueId()).getJoined();
+			if(joinedInit == null) {
+				setError("You're homeless!");
+				return false;
+			}
+			
+			String joinedName = joinedInit.getName();//Empires.m_playerHandler.getPlayerJoinedCivilization(invokerID);
 			
 			Joinable joined = Empires.m_joinableHandler.getJoinable(joinedName);
 			if(joined != null) {

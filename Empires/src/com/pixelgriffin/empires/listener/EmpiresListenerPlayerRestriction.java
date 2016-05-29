@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -16,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -151,6 +153,35 @@ public class EmpiresListenerPlayerRestriction implements Listener {
 		if(!Empires.m_boardHandler.territoryHasFlag(loc, tg, TerritoryFlag.ALLOW_BUILD)) {
 			_evt.setCancelled(true);
 			sendError(_evt.getPlayer(), "You are not allowed to build here");
+		}
+	}
+	@EventHandler
+	public void onPlayerBreakFrame(HangingBreakByEntityEvent evt) {
+		Location loc = evt.getEntity().getLocation();
+		String host = Empires.m_boardHandler.getTerritoryHost(loc);
+		
+		if(host.equals(PlayerHandler.m_defaultCiv))
+			return;
+		
+		if(EmpiresConfig.m_whitelistBreakableBlocks.contains(evt.getEntity().getType().toString())) {
+			return;
+		}
+		
+		Player remover = null;
+		if(evt.getRemover() instanceof Player)
+			remover = (Player)evt.getRemover();
+		else if(evt.getRemover() instanceof Projectile) {
+			Projectile proj = (Projectile)evt.getRemover();
+			if(proj.getShooter() instanceof Player)
+				remover = (Player)proj.getShooter();
+		}
+		
+		if(remover != null) {
+			TerritoryGroup tg = getInvokerGroup(remover.getUniqueId(), host, loc);
+			if(!Empires.m_boardHandler.territoryHasFlag(loc, tg, TerritoryFlag.ALLOW_BUILD)) {
+				evt.setCancelled(true);
+				sendError(remover, "You are not allowed to build here");
+			}
 		}
 	}
 	

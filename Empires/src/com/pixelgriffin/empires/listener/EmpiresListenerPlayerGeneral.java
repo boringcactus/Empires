@@ -32,6 +32,7 @@ public class EmpiresListenerPlayerGeneral implements Listener {
 	public void onPlayerLogin(PlayerLoginEvent _evt) {
 		//attempt to create Empires data if necessary
 		Empires.m_playerHandler.createPlayer(_evt.getPlayer().getUniqueId());
+		Empires.m_playerHandler.saveFile();
 		//update last play time
 		Empires.m_playerHandler.getPlayer(_evt.getPlayer().getUniqueId()).setLastPlayTime(System.currentTimeMillis());
 	}

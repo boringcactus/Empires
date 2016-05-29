@@ -134,6 +134,9 @@ public class SubCommandWho extends SubCommand {
 					
 					//gather role & title data
 					EmpiresPlayer playerEP = Empires.m_playerHandler.getPlayer(playerID);
+					//if(playerEP == null)
+					//	continue;
+					
 					//role = Empires.m_playerHandler.getPlayerRole(playerID).getPrefix();
 					role = playerEP.getRole().getPrefix();
 					//title = ChatColor.translateAlternateColorCodes('&', Empires.m_playerHandler.getPlayerTitle(playerID));

@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
+import com.pixelgriffin.empires.sql.SQLitePlayerConfiguration;
 import com.pixelgriffin.empires.util.IDUtility;
 import com.pixelgriffin.empires.util.IOUtility;
 
@@ -89,7 +90,7 @@ public class PlayerHandler extends DataHandler {
 	public EmpiresPlayer getPlayer(UUID id) {
 		String idString = id.toString();
 		if(getFileConfiguration().isConfigurationSection(idString)) {
-			return new EmpiresPlayer(Bukkit.getPlayer(id), getFileConfiguration().getConfigurationSection(idString));
+			return new EmpiresPlayer(id, getFileConfiguration().getConfigurationSection(idString));
 		} else {
 			return null;
 		}
@@ -120,8 +121,6 @@ public class PlayerHandler extends DataHandler {
 		//remove us from any joinable we were in
 		//invokeRemovePlayerFromJoinedJoinable(_id);
 		EmpiresPlayer ep = getPlayer(id);
-		if(ep == null)
-			return;
 		
 		ep.leaveJoined();
 		

@@ -231,7 +231,7 @@ public abstract class Joinable {
 						//OfflinePlayer officer = Bukkit.getPlayer(heir);
 						//if(officer == null)
 						//	officer = Bukkit.getOfflinePlayer(heir);
-						OfflinePlayer officer = heir.getBukkitPlayer();
+						OfflinePlayer officer = Bukkit.getPlayer(heirID);
 						if(officer == null)
 							officer = Bukkit.getOfflinePlayer(heirID);
 						
@@ -282,7 +282,7 @@ public abstract class Joinable {
 	public boolean removePlayerPointer(EmpiresPlayer player) {
 		//ArrayList<UUID> players = getJoined();
 		ArrayList<String> players = (ArrayList<String>)ymlData.getList("joined-players");
-		if(players.remove(player.getBukkitPlayer().getUniqueId().toString())) {
+		if(players.remove(player.getID().toString())) {
 			ymlData.set("joined-players", players);
 			
 			if(players.isEmpty()) {
@@ -356,9 +356,9 @@ public abstract class Joinable {
 			return false;
 		}
 		
-		if(ymlData.getList(role.toString()) == null) {
+		/*if(ymlData.getList(role.toString()) == null) {
 			return false;
-		}
+		}*/
 		
 		return ymlData.getConfigurationSection("permissions").getList(role.toString()).contains(perm.toString());
 	}

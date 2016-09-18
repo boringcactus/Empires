@@ -1,7 +1,7 @@
 name: Empires
 main: com.pixelgriffin.empires.Empires
-version: 1.0.0
-softdepend: [TagAPI, Vault, Herochat]
+version: 1.0.2
+softdepend: [Vault, Herochat]
 commands:
   Empires:
     description: Commands of the Empires plugin.

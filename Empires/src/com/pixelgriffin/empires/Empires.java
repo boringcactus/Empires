@@ -1,11 +1,16 @@
 package com.pixelgriffin.empires;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -23,7 +28,6 @@ import com.pixelgriffin.empires.handler.JoinableHandler;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 import com.pixelgriffin.empires.listener.EmpiresListenerPlayerGeneral;
 import com.pixelgriffin.empires.listener.EmpiresListenerPlayerRestriction;
-import com.pixelgriffin.empires.sql.SQLitePlayerConfiguration;
 import com.pixelgriffin.empires.task.InactivityTask;
 import com.pixelgriffin.empires.task.PowerUpdateTask;
 import com.pixelgriffin.empires.task.SaveTask;
@@ -102,8 +106,33 @@ public class Empires extends JavaPlugin {
 				for(Channel ch : channels) {
 					if(ch.getName().equalsIgnoreCase("kingdom")) {
 						containsKingdoms = true;
+						
+						try {
+							YamlConfiguration conf = new YamlConfiguration();
+							conf.load(new File("plugins/Herochat/channels/" + ch.getName() + ".yml"));
+							ch.setFormat(conf.getString("format"), true);
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (InvalidConfigurationException e) {
+							e.printStackTrace();
+						}
+						
 					} else if(ch.getName().equalsIgnoreCase("ally")) {
 						containsAlly = true;
+						
+						try {
+							YamlConfiguration conf = new YamlConfiguration();
+							conf.load(new File("plugins/Herochat/channels/" + ch.getName() + ".yml"));
+							ch.setFormat(conf.getString("format"), true);
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (InvalidConfigurationException e) {
+							e.printStackTrace();
+						}
 					}
 					
 					if(containsKingdoms && containsAlly)
@@ -124,20 +153,6 @@ public class Empires extends JavaPlugin {
 				//inform users we have hooked
 				IOUtility.log("Herochat recognized!");
 			}
-		}
-		
-		//TagAPI
-		if(EmpiresConfig.m_useTagAPI) {
-			/*if(pManager.getPlugin("TagAPI") != null) {
-				m_tagAPIActive = true;
-				
-				//register event to tag listener
-				pManager.registerEvents(new EmpiresListenerPlayerTag(), this);
-				
-				//inform users we have hooked
-				IOUtility.log("TagAPI recognized!");
-			}*/
-			IOUtility.log("TagAPI is no longer supported by Empires!");
 		}
 		
 		/*

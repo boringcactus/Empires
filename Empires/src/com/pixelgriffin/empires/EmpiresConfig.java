@@ -18,7 +18,7 @@ public class EmpiresConfig {
 	 */
 	
 	public static ArrayList<String> m_blacklist = new ArrayList<String>();//done
-	public static ArrayList<String> m_teleportOkayList = new ArrayList<String>();
+	//public static ArrayList<String> m_teleportOkayList = new ArrayList<String>();
 	public static ArrayList<String> m_whitelistPlaceableBlocks = new ArrayList<String>();
 	public static ArrayList<String> m_whitelistBreakableBlocks = new ArrayList<String>();
 	
@@ -31,15 +31,15 @@ public class EmpiresConfig {
 	public static boolean m_detachClaim;//done
 	public static boolean m_deathPowerLoss;//done
 	public static boolean m_moneyBack;//done
-	public static boolean m_interteleport;//done
+	//public static boolean m_interteleport;//done
 	public static boolean m_damageReduc;//done
 	public static boolean m_empireCreation;//done
 	public static boolean m_kingdomCreation;//done
 	public static boolean m_mobSpawnManaging;//done
+	public static String m_defaultChatFormat;
 	
 	//dependency settings
 	public static boolean m_useHerochat;
-	public static boolean m_useTagAPI;
 	public static boolean m_useVault;
 	
 	public static FileConfiguration m_config;
@@ -69,12 +69,19 @@ public class EmpiresConfig {
 			m_whitelistBreakableBlocks = (ArrayList<String>) m_config.getList("whitelistBreakableBlocks");
 		}
 		
-		if(!m_config.contains("teleportOkayList")) {
+		if(!m_config.contains("defaultChatFormat")) {
+			m_defaultChatFormat = "{color}[{nick}§l§f {role}{joined}{title}{color}§f{sender}{color}] §f{msg}";
+			m_config.set("defaultChatFormat", m_defaultChatFormat);
+		} else {
+			m_defaultChatFormat = m_config.getString("defaultChatFormat");
+		}
+		
+		/*if(!m_config.contains("teleportOkayList")) {
 			m_teleportOkayList.add(Bukkit.getWorlds().get(0).getName());
 			m_config.set("teleportOkayList", m_teleportOkayList);
 		} else {
 			m_teleportOkayList = (ArrayList<String>) m_config.getList("teleportOkayList");
-		}
+		}*/
 		
 		if(!m_config.contains("powerMax")) {
 			m_config.set("powerMax", 15);
@@ -139,12 +146,12 @@ public class EmpiresConfig {
 			m_moneyBack = m_config.getBoolean("disbandMoneyBack");
 		}
 		
-		if(!m_config.contains("interteleport")) {
+		/*if(!m_config.contains("interteleport")) {
 			m_config.set("interteleport", true);
 			m_interteleport = true;
 		} else {
 			m_interteleport = m_config.getBoolean("interteleport");
-		}
+		}*/
 		
 		if(!m_config.contains("damageReduction")) {
 			m_config.set("damageReduction", true);
@@ -176,22 +183,15 @@ public class EmpiresConfig {
 		
 		//externals
 		if(!m_config.contains("useVault")) {
-			m_config.set("useVault", true);
-			m_useVault = true;
+			m_config.set("useVault", false);
+			m_useVault = false;
 		} else {
 			m_useVault = m_config.getBoolean("useVault");
 		}
 		
-		if(!m_config.contains("useTagAPI")) {
-			m_config.set("useTagAPI", true);
-			m_useTagAPI = true;
-		} else {
-			m_useTagAPI = m_config.getBoolean("useTagAPI");
-		}
-		
 		if(!m_config.contains("useHerochat")) {
-			m_config.set("useHerochat", true);
-			m_useHerochat = true;
+			m_config.set("useHerochat", false);
+			m_useHerochat = false;
 		} else {
 			m_useHerochat = m_config.getBoolean("useHerochat");
 		}

@@ -9,14 +9,6 @@ import java.util.UUID;
 import com.pixelgriffin.empires.enums.Role;
 
 public class SQLitePlayerConfiguration extends SQLiteConfiguration {
-
-	private String j = null;
-	private int p = 0;
-	private String t = null;
-	private String r = null;
-	private long pt = 0L;
-	private boolean ac = false;
-	private int tpid = 0;
 	
 	protected String UUIDString;
 	
@@ -28,7 +20,7 @@ public class SQLitePlayerConfiguration extends SQLiteConfiguration {
 		}
 	}
 	
-	public void loadData() throws SQLException {
+	/*public void loadData() throws SQLException {
 		if(UUIDString != null) {
 			Connection c = createConnection();
 			if(c == null) {
@@ -56,7 +48,7 @@ public class SQLitePlayerConfiguration extends SQLiteConfiguration {
 		} else {
 			throw new SQLException("Null ID used to lookup data");
 		}
-	}
+	}*/
 	
 	
 	/*public void testWrite() {

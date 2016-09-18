@@ -1,29 +1,33 @@
 package com.pixelgriffin.empires.chat;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.dthielke.Herochat;
 import com.dthielke.api.Channel;
-import com.dthielke.api.ChannelStorage;
 import com.dthielke.api.Chatter;
 import com.dthielke.api.MessageFormatSupplier;
 import com.dthielke.api.TagFormatter;
+import com.dthielke.channel.StandardChannel;
 
 public class KingdomChat implements Channel {
 
 	//private static final Pattern msgPattern = Pattern.compile("(.*)<(.*)%1\\$s(.*)> %2\\$s");
 	//private final ChannelStorage chStore = Herochat.getChannelManager().getStorage();
 	//private final MessageFormatSupplier fmt = Herochat.getChannelManager();
-	
+	private String format = "{color}[{nick}§l§f {role}{joined}{title}{color}§f{sender}{color}] §f{msg}";
 	
 	@Override
 	public String formatTag(String arg0, Player arg1, Channel arg2) {
@@ -62,11 +66,6 @@ public class KingdomChat implements Channel {
 	@Override
 	public int getDistance() {
 		return 0;
-	}
-
-	@Override
-	public String getFormat() {
-		return "{color}[{nick}§l§f {role}{joined}{title}{color}§f{prefix}{sender}{color}] §f{msg}";
 	}
 
 	@Override
@@ -236,6 +235,7 @@ public class KingdomChat implements Channel {
 
 	@Override
 	public void setFormat(String arg0, boolean arg1) {
+		format = arg0;
 	}
 
 	@Override
@@ -282,6 +282,11 @@ public class KingdomChat implements Channel {
 	@Override
 	public void setWorlds(Collection<String> arg0, boolean arg1) {
 		
+	}
+
+	@Override
+	public String getFormat() {
+		return format;
 	}
 	
 }

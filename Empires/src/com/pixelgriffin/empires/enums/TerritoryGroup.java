@@ -19,7 +19,8 @@ public enum TerritoryGroup {
 	MEMBER(3),
 	OFFICER_1(4),
 	OFFICER_2(5),
-	OFFICER_3(6);
+	OFFICER_3(6),
+	LEADER(7);
 	
 	private int id;
 	
@@ -40,6 +41,8 @@ public enum TerritoryGroup {
 			return TerritoryGroup.OFFICER_2;
 		} else if(myRole.equals(Role.OFFICER_3)) {
 			return TerritoryGroup.OFFICER_3;
+		} else if(myRole.equals(Role.LEADER)) {
+			return TerritoryGroup.LEADER;
 		}
 		
 		return null;

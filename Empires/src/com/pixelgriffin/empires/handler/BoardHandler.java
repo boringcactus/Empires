@@ -349,9 +349,13 @@ public class BoardHandler extends DataHandler {
 	 * or even just getting tempList once
 	 */
 	public boolean territoryHasFlag(Location _loc, TerritoryGroup _group, TerritoryFlag _flag) {
-		ConfigurationSection sect;
+		if(_group == null || _loc == null || _flag == null)
+			return false;
 		
-		sect = getTerritorySection(_loc);
+		if(_group.equals(TerritoryGroup.LEADER))
+			return true;
+		
+		ConfigurationSection sect = getTerritorySection(_loc);
 		
 		if(sect != null) {
 			if(!sect.isConfigurationSection("f"))

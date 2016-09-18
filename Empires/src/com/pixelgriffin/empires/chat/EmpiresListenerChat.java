@@ -24,6 +24,7 @@ import com.dthielke.api.event.ChannelChatEvent;
 import com.dthielke.api.event.ChatCompleteEvent;
 import com.dthielke.util.Messaging;
 import com.pixelgriffin.empires.Empires;
+import com.pixelgriffin.empires.EmpiresConfig;
 import com.pixelgriffin.empires.enums.Relation;
 import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.exception.EmpiresJoinableDoesNotExistException;
@@ -59,7 +60,7 @@ public class EmpiresListenerChat implements Listener {
 		System.out.println("format: ");
 		
 		if(msg.contains("{default}")) {
-			msg = msg.replace("{default}", "{color}[{nick}§l§f {role}{joined}{title}{color}§f{sender}{color}] §f{msg}");
+			msg = msg.replace("{default}", EmpiresConfig.m_defaultChatFormat);
 		}
 		
 		//msg = msg.replace("{msg}", evt.getMessage());

@@ -59,6 +59,9 @@ public class SubCommandFlag extends SubCommand {
 						outString = ChatColor.GRAY + f.toString() + ": ";
 						
 						for(TerritoryGroup g : TerritoryGroup.values()) {
+							if(g.equals(TerritoryGroup.LEADER))
+								continue;
+							
 							//flags = Empires.m_joinableHandler.getJoinableGlobalFlagsForGroup(joinedName, g);
 							flags = joined.getDefaultGlobalFlagsForGroup(g);
 							accessCol = ChatColor.RED;

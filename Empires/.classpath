@@ -7,7 +7,8 @@
 			<attribute name="javadoc_location" value="http://jd.bukkit.org/rb/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Nathan/Desktop/Spigot Stuff/Herochat-5.7.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Nathan/Desktop/Spigot Stuff/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nathan/Desktop/Spigot Stuff/Herochat.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nathan/Desktop/Spigot Stuff/Herochat-5.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

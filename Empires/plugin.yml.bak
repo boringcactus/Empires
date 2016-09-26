@@ -1,7 +1,7 @@
 name: Empires
 main: com.pixelgriffin.empires.Empires
-version: 1.0.0
-softdepend: [TagAPI, Vault, Herochat]
+version: 1.1.0
+softdepend: [Vault, Herochat]
 commands:
   Empires:
     description: Commands of the Empires plugin.
@@ -26,9 +26,9 @@ permissions:
   Empires.power.extra:
     description: Overrides the 15 power to allow configurable power.
     default: false
-  Empires.colors.joinable
-    description: Allows a player to put colors in their joinable names
+  Empires.colors.joinable:
+    description: Allows a player to put colors in their joinable names.
     default: false
-  Empires.colors.title
-    description: Allows a player to put colors in their title names
+  Empires.colors.title:
+    description: Allows a player to put colors in their title names.
     default: false

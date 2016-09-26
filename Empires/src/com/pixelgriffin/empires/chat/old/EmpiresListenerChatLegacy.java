@@ -1,43 +1,73 @@
-package com.pixelgriffin.empires.chat;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+package com.pixelgriffin.empires.chat.old;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.EventExecutor;
 
-import com.dthielke.Herochat;
-import com.dthielke.api.ChatResult;
-import com.dthielke.api.Chatter;
-import com.dthielke.api.event.ChannelChatEvent;
+import com.dthielke.herochat.Herochat;
 import com.pixelgriffin.empires.Empires;
-import com.pixelgriffin.empires.EmpiresConfig;
-import com.pixelgriffin.empires.enums.Relation;
+import com.pixelgriffin.empires.enums.Role;
 import com.pixelgriffin.empires.handler.EmpiresPlayer;
 import com.pixelgriffin.empires.handler.Joinable;
 import com.pixelgriffin.empires.handler.PlayerHandler;
 
-public class EmpiresListenerChat implements Listener {
+public class EmpiresListenerChatLegacy implements Listener {
 	
-	private Set<Relation> allyRelations = new HashSet<Relation>();
+	//private static final Pattern msgPattern = Pattern.compile("(.*)<(.*)%1\\$s(.*)> %2\\$s");
 	
-	public EmpiresListenerChat() {
+	public EmpiresListenerChatLegacy(Empires _inst) {
 		Herochat.getChannelManager().addChannel(new AllyChat());
+		//if(!containsKingdoms)
 		Herochat.getChannelManager().addChannel(new KingdomChat());
 		
-		allyRelations.add(Relation.US);
-		allyRelations.add(Relation.E_K);
-		allyRelations.add(Relation.ALLY);
+		Bukkit.getPluginManager().registerEvent(AsyncPlayerChatEvent.class, this, EventPriority.HIGHEST, new ChatFormatExecutor(), _inst, true);
 	}
 	
-	@EventHandler
+	private class ChatFormatExecutor implements EventExecutor {
+		 		@Override
+		 		public void execute(Listener arg0, Event arg1) throws EventException {
+		 			if(!AsyncPlayerChatEvent.class.isAssignableFrom(arg1.getClass()))
+		 				return;
+		 			
+		 			try {
+		 				parse((AsyncPlayerChatEvent)arg1);
+		 			} catch(Throwable t) {
+		 				throw new EventException(t);
+		 			}
+		 		}
+		 		
+		 		private void parse(AsyncPlayerChatEvent evt) {
+		 			
+		 			Player p = evt.getPlayer();
+		 			EmpiresPlayer emp = Empires.m_playerHandler.getPlayer(p.getUniqueId());
+		 			
+		 			ChatColor relCol = ChatColor.WHITE;
+		 			
+		 			String title = emp.getTitle();
+		 			String joinedName = PlayerHandler.m_defaultCiv;
+		 			String joinedDisplayName = PlayerHandler.m_defaultCiv;
+		 			
+		 			Joinable j = emp.getJoined();
+		 			if(j != null) {
+		 				joinedName = j.getName();
+		 				joinedDisplayName = j.getDisplayName();
+		 			}
+		 			 			
+		 			Role role = emp.getRole();
+		 			 			 			
+		 			if(!joinedName.equalsIgnoreCase(PlayerHandler.m_defaultCiv)) {
+		 				evt.setFormat("<"+relCol+"§l"+role.getPrefix()+"§r"+relCol+joinedDisplayName+" "+title+" §f%1$s> %2$s");
+		 			}
+		 		}
+	}
+	
+	/*@EventHandler
 	public void onChannelChat(ChannelChatEvent evt) {
 		if(evt.getChannel().getName().equalsIgnoreCase("ally")) {
 			onAllyChat(evt);
@@ -241,5 +271,7 @@ public class EmpiresListenerChat implements Listener {
 		
 		//return a set of recipients
 		return ret;
-	}
+	}*/
+	
+	
 }

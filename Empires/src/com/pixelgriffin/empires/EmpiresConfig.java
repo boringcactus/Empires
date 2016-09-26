@@ -39,8 +39,8 @@ public class EmpiresConfig {
 	public static String m_defaultChatFormat;
 	
 	//dependency settings
-	public static boolean m_useHerochat;
-	public static boolean m_useVault;
+	public static boolean m_useHerochat = false;
+	public static boolean m_useVault = false;
 	
 	public static FileConfiguration m_config;
 	

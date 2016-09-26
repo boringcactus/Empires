@@ -23,6 +23,7 @@ import com.dthielke.api.Chatter;
 import com.dthielke.api.MessageFormatSupplier;
 import com.dthielke.api.TagFormatter;
 import com.dthielke.channel.StandardChannel;
+import com.pixelgriffin.empires.EmpiresConfig;
 
 public class AllyChat implements Channel {
 
@@ -34,7 +35,7 @@ public class AllyChat implements Channel {
 	
 	@Override
 	public String getFormat() {
-		return format;
+		return EmpiresConfig.m_defaultChatFormat;
 	}
 	
 	@Override

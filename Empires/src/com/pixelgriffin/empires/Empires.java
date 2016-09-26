@@ -1,27 +1,14 @@
 package com.pixelgriffin.empires;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.dthielke.Herochat;
-import com.dthielke.api.Channel;
-import com.dthielke.api.event.ChannelChatEvent;
-import com.pixelgriffin.empires.chat.AllyChat;
-import com.pixelgriffin.empires.chat.KingdomChat;
 import com.pixelgriffin.empires.chat.EmpiresListenerChat;
+import com.pixelgriffin.empires.chat.old.EmpiresListenerChatLegacy;
 import com.pixelgriffin.empires.command.EmpiresCommands;
 import com.pixelgriffin.empires.handler.BoardHandler;
 import com.pixelgriffin.empires.handler.JoinableHandler;
@@ -96,14 +83,13 @@ public class Empires extends JavaPlugin {
 		if(EmpiresConfig.m_useHerochat) {
 			if(pManager.getPlugin("Herochat") != null) {
 				m_herochatActive = true;
-				
 				//create channels for usage
 				//Herochat.getChannelManager().addChannel(new CityChatOld());
-				ArrayList<Channel> channels = (ArrayList<Channel>)Herochat.getChannelManager().getChannels();
+				/*ArrayList<com.dthielke.api.Channel> channels = (ArrayList<com.dthielke.api.Channel>)Herochat.getChannelManager().getChannels();
 				boolean containsAlly = false;
 				boolean containsKingdoms = false;
 				
-				for(Channel ch : channels) {
+				for(com.dthielke.api.Channel ch : channels) {
 					if(ch.getName().equalsIgnoreCase("kingdom")) {
 						containsKingdoms = true;
 						
@@ -137,20 +123,21 @@ public class Empires extends JavaPlugin {
 					
 					if(containsKingdoms && containsAlly)
 						break;
+				}*/
+				
+					//if(!containsAlly
+					//Herochat.getChannelManager().addChannel(new VoidChat());
+					
+				if(pManager.getPlugin("Herochat").getDescription().getVersion().contains("5.7")) {
+					pManager.registerEvents(new EmpiresListenerChat(), this);
+				} else {
+					new EmpiresListenerChatLegacy(this);//registers self
 				}
-				
-				if(!containsAlly)
-					Herochat.getChannelManager().addChannel(new AllyChat());
-				if(!containsKingdoms)
-					Herochat.getChannelManager().addChannel(new KingdomChat());
-				//Herochat.getChannelManager().addChannel(new VoidChat());
-				
-				//new EmpiresListenerChatOld(this);//registers self
-				//register listener to format chatting
-				pManager.registerEvents(new EmpiresListenerChat(), this);
-				
-				
-				//inform users we have hooked
+					//register listener to format chatting
+					
+					//pManager.registerEvents(new EmpiresListenerChat(), this);
+					
+					//inform users we have hooked
 				IOUtility.log("Herochat recognized!");
 			}
 		}
